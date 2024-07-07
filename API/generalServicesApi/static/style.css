@@ -1,0 +1,15 @@
+
+nav{
+    /* border: 1px solid red; */
+}
+.container{
+    margin: auto;
+    /* height: 100vh; */
+    /* display: flex; */
+    /* align-items: center; */
+}
+form{
+    border: 1px solid red;
+    padding: 20px;
+    /* max-width: 75%;; */
+}
