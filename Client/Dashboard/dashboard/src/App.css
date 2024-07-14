@@ -1,0 +1,143 @@
+.App{
+  display: flex;
+}
+nav{
+  height: 100vh;
+  border: 1px solid #ddd;
+  padding: 0 10px;
+  width: 150px;
+  position: relative;
+}
+header{
+  border: 1px solid #ddd;
+  margin-top: 20px;
+}
+.nav-link-container {
+
+}
+.nav-link-container li{
+  border: 1px solid #ddd;
+  padding: 10px;
+  margin-bottom: 5px;
+  display: flex;
+  align-items: center;
+  
+}
+.nav-link-container button{
+  height: 20px;
+  width: 20px;
+  border: 1px solid #ddd;
+  margin-right: 5px;
+}
+.user-container{
+  height: 50px;
+  width: auto;
+  border: 1px solid #ddd;
+  position: absolute;
+  bottom: 0px;
+  right: 0px;
+  left: 0px;
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+}
+.user-container button{
+  height: 20px;
+  width: 20px;
+  border: 1px solid #ddd;
+}
+.user-image{
+  height: 25px;
+  width: 25px;
+  border: 1px solid #ddd;
+  border-radius: 50%;;
+  background-color: #ddd;
+}
+
+main{
+  height: 100vh; 
+  width: 100vw; 
+  overflow: scroll;
+}
+.stream-banner{
+  border-bottom: 1px solid #ddd;
+  padding: 50px;
+}
+.stream-banner ul{
+  margin-left: 20px;
+}
+.stream-banner li{
+  list-style-type: circle;
+}
+.main-content{
+  /* border: 1px solid red; */
+  max-width: 60%;
+  margin: 20px auto;
+}
+.main-content h1{
+  text-align: center;
+}
+.video-stream-check{
+  height: 400px; 
+  /* width: 200px; */
+  border: 1px solid #ddd;
+  background-color: #ddd;
+}
+.preview-check{
+  display: flex;
+  flex-direction: column;
+  padding: 20px 0;
+  border-bottom: 1px solid #ddd;
+}
+.sub{
+  display: block;
+  font-weight: 800;
+  margin-bottom: 10px;
+}
+.stream-detail-options{
+  margin: 20px 0;
+}
+.stream-auth-options{
+  /* border: 1px solid red; */
+  margin: 20px 0;
+  display: flex;
+  gap: 20px;
+}
+.stream-auth-options button{
+  width: 50%;
+  padding: 10px;
+  border: 1px solid #ddd;
+  border-radius: 5px;
+}
+.stream-detail-options input{
+  border: 0;
+  width: 100%;
+  height: 25px;
+  border-bottom: 1px solid #ddd;
+  margin-bottom: 20px;
+}
+.stream-notification{
+  /* border: 1px solid red; */
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+}
+.radio-toggle-container{
+  height: 20px;
+  width: 40px;
+  border: 1px solid #ddd;
+  border-radius: 20px;
+  background-color: #ddd;;
+}
+.radio-toggle{
+  height: 20px;
+  width: 20px;
+  background-color: #aaa;
+  border-radius: 50%;
+}
+.stream-detail-options .submit{
+  border: 1px solid #ddd;
+  padding: 10px 20px;
+  border-radius: 20px;
+}
