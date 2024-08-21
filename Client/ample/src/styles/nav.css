@@ -1,0 +1,116 @@
+/* Nav */
+nav{
+    grid-column-start: 1;
+    grid-column-end: 2;
+    grid-row-start: 1;
+    grid-row-end: 12;
+    border-right: 1px solid #262629;
+    padding: 10px;
+  }
+  .logo{
+    /* border: 1px solid red; */
+    color: #97B4FF;
+    text-align: center;
+    padding: 20px;
+    font-size: 30px;
+  }
+  .nav_avi_container{
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    padding: 10px;
+    text-align: center;
+    font-size: 13px;
+    font-weight: bold;
+    color: #aaa;
+  }
+  .nav_avi_container button{
+    padding: 5px;
+    width: 100px;
+    margin: auto;
+    border-radius: 5px;
+    border: 1px solid #C6A168;
+    color: white;
+    background-color: #C6A168;
+  }
+  .nav_avi{
+    height: 50px; 
+    width: 50px;
+    background-color: #aaa;;
+    border-radius: 50%;
+    margin: 10px auto;
+  }
+  
+  .nav_links {
+    margin-bottom: 10px; 
+    padding-bottom: 10px;
+    /* padding: 20px 0; */
+    /* border-bottom: 1px solid rgba(198, 161, 104, .2); */
+    display: flex;
+    flex-direction: column;
+  }
+  .nav_links a{
+    color: #aaa;
+    width: 150px;
+    list-style-type: none;
+    /* border: 1px solid #C6A168; */
+    border: .5px solid rgba(198, 161, 104,.5);
+    color: rgba(198, 161, 104,.8);
+    padding: 10px 5px;
+    margin: 5px 0px;
+    font-size: 13px;
+    text-decoration: none;
+    border-radius: 5px;
+    /* color: #C6A168 */
+  }
+  .nav_links a:hover{
+    border: .5px solid rgba(198, 161, 104,.5);
+    color: white;
+    background-color: rgba(198, 161, 104,.9);
+  }
+  a span{
+    /* border: 1px solid red; */
+    display: block;
+    width: 4rem;
+    margin: auto;
+    display: flex;
+  }
+  a span svg{
+    font-size: 1rem;
+    /* color: red; */
+    margin-right: 5px;
+  }
+  .nav_section_subtitle{
+    display: inline-block;
+    /* padding: 10px 0px; */
+    /* margin: 10px; */
+    color: #aaa;
+  }
+  .nav_section_live_collection{
+    /* border-top: 1px solid #aaa; */
+    padding: 10px 0;
+    display: flex;
+    flex-direction: column;
+    /* justify-content: space-between; */
+  }
+  .nav_section_live_collection span{
+    display: inline-block;
+    font-size: 13px;
+    color: #aaa;
+  }
+  .nav_live_user_{
+    /* width: 100%; */
+    display: flex;
+    align-items: center;
+    border: .5px solid rgba(198, 161, 104,.5);
+    padding: 3px;
+    border-radius: 35px;
+    margin: 5px 0;
+  }
+  .nav_live_user_avi{
+    height: 30px;
+    width: 30px;
+    background-color: #aaa;
+    border-radius: 50%;;
+    margin-right: 20px;
+  }

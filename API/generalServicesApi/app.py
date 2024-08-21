@@ -1,4 +1,4 @@
-from flask import Flask, request, abort, jsonify, session
+from flask import Flask, request, abort, jsonify, session, make_response
 from flask_bcrypt import Bcrypt
 from models import db, User
 from config import ApplicationConfig
@@ -20,14 +20,17 @@ with app.app_context():
 
 @app.route('/whoami', methods=['GET'])
 def getCurrentUser():
-    user_id = session.get('user_id')
+    token = str(request.cookies['xrftoken'])
 
-    print('user_id')
+    # user_id = session.get('user_id')
+    # print(user_id)
+    # print( token)
     
-    if not user_id: 
+    
+    user = User.query.filter_by(id=token).first()
+
+    if not user: 
         return jsonify({'error':'unauthorized'}), 401
-    
-    user = User.query.filter_by(id=user_id).first()
 
     print(user)
 
@@ -70,31 +73,43 @@ def register_user():
     }), 200
 
 
-
 @app.route('/login', methods=['POST'])
 def login_user():
     email = request.json['email']
     password = request.json['password']
+    print( email, password)
 
     user = User.query.filter_by(email=email).first()
-    print("Found User:", user.password)
-
+    
     if user is None:
+        print("user not found")
+        return jsonify({'error': {
+            "message": "Unauthorized",
+            "errorCode": ""
+            }}), 401
+    
+    print("Found User:", user.password)
+    
+    if bcrypt.check_password_hash(user.password, password):
+        print("failed")
         return jsonify({"error": "Unauthorized"}), 401
-    
-    print( bcrypt.check_password_hash(user.password, password)) 
-        # return jsonify({"error": "Unauthorized"}), 401
-    
-    session['user_id'] = user.id
+    else:
+         
+        session['user_id'] = user.id
 
-    return jsonify({
-        "id": user.id,
-        "username": user.username,
-        "email": user.email,
-        "imageURL": user.imageURL,
-        "headerPosterURL": user.headerPosterURL,
-        "type": user.type
-    }), 200
+        result =  jsonify({
+            "id": user.id,
+            "username": user.username,
+            "email": user.email,
+            "imageURL": user.imageURL,
+            "headerPosterURL": user.headerPosterURL,
+            "type": user.type
+        }), 200
+
+        response = make_response(result)
+        response.set_cookie("xrftoken", user.id, samesite='none', httponly=True, secure=True)
+        return response
+   
 
 @app.route('/logout', methods=['POST'])
 def logout():
