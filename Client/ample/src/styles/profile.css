@@ -63,6 +63,8 @@
     /* border: 1px solid red; */
     border-radius: 50%;
     background-color: #ddd;
+    background-position: center;
+    background-size: cover;
 }
 
 /* body */

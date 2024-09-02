@@ -1,0 +1,47 @@
+.image_Upload_section{
+    /* border: 1px solid red; */
+    display: flex;
+    justify-content: space-between;
+    margin: 20px 0;
+}
+
+.custom_upload_buttom, .imageInputPreview{
+    height: 170px; 
+    width: 170px; 
+}
+
+.image_Upload_section input[type='file']{
+    display: none;
+}
+
+.custom_upload_buttom{
+    /* border: 1px solid red; */
+    border-radius: 10px;
+    background-color: #1c1c2575;
+    border: 2px dashed #323232;
+    color: #737373;
+    display: inline-block;
+    padding: 6px 12px;
+    cursor: pointer;
+    text-align: center;
+    align-items: center;
+    display: flex;
+    justify-content: center;
+}
+.custom_upload_buttom i{
+    display: block;
+    align-items: center;
+    font-size: 3rem;
+    border-radius: 50%;
+    
+}
+
+.imageInputPreview img{
+    display: block;
+}
+.imageInputPreview{
+    border: 1px solid #0b0b0d;
+    border-radius: 50%;
+    z-index: 5;
+    object-fit: cover;
+}

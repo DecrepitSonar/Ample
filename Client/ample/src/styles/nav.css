@@ -39,6 +39,9 @@ nav{
     background-color: #aaa;;
     border-radius: 50%;
     margin: 10px auto;
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: cover;
   }
   
   .nav_links {
