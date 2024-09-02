@@ -1,4 +1,6 @@
-from flask import Flask, request, abort, jsonify, session, make_response
+import os
+from flask import Flask, request, abort, jsonify, session, make_response, redirect
+
 from flask_bcrypt import Bcrypt
 from models import db, User
 from config import ApplicationConfig
@@ -20,12 +22,11 @@ with app.app_context():
 
 @app.route('/whoami', methods=['GET'])
 def getCurrentUser():
-    token = str(request.cookies['xrftoken'])
 
-    # user_id = session.get('user_id')
-    # print(user_id)
-    # print( token)
+    if not len(request.cookies): 
+        return jsonify({'error':'unauthorized'}), 401
     
+    token = str(request.cookies['xrftoken'])
     
     user = User.query.filter_by(id=token).first()
 
@@ -33,7 +34,6 @@ def getCurrentUser():
         return jsonify({'error':'unauthorized'}), 401
 
     print(user)
-
 
     return jsonify({
         "id": user.id,
@@ -49,10 +49,13 @@ def register_user():
     email = request.json['email']
     password = request.json['password']
 
-    user_exists = User.query.filter_by(email=email).first() is not None
-
-    if user_exists:
-        return jsonify({"error": "User already exists"})
+    if User.query.filter_by(email=email).first() is not None:
+        response = jsonify({
+            'error': {
+            'message': "User already exists " ,
+            'Code': 'EMAIlLERR'}
+        })
+        return response
 
     hashed_password = bcrypt.generate_password_hash(password).decode('utf-8')
     new_user = User(email=email, password = hashed_password)
@@ -63,15 +66,18 @@ def register_user():
 
     print(new_user)
 
-    return jsonify({
+    result = jsonify({
         "id": new_user.id,
         "username": new_user.username,
         "email": new_user.email,
         "imageURL": new_user.imageURL,
         "headerPosterURL": new_user.headerPosterURL,
         "type": new_user.type
-    }), 200
+    })
 
+    response = make_response(result)
+    response.set_cookie("xrftoken", new_user.id, httponly=True, secure=True, samesite='None')
+    return response 
 
 @app.route('/login', methods=['POST'])
 def login_user():
@@ -89,8 +95,8 @@ def login_user():
             }}), 401
     
     print("Found User:", user.password)
-    
-    if bcrypt.check_password_hash(user.password, password):
+
+    if not bcrypt.check_password_hash(user.password, password):
         print("failed")
         return jsonify({"error": "Unauthorized"}), 401
     else:
@@ -104,12 +110,54 @@ def login_user():
             "imageURL": user.imageURL,
             "headerPosterURL": user.headerPosterURL,
             "type": user.type
-        }), 200
+        })
 
         response = make_response(result)
-        response.set_cookie("xrftoken", user.id, samesite='none', httponly=True, secure=True)
+        response.set_cookie("xrftoken", user.id, httponly=True, secure=True, samesite='None')
         return response
    
+@app.route('/user', methods=['GET'])
+def getUser():
+    userId = request.args['id']
+    print( userId )
+
+    user = User.query.filter_by(id=userId).first()
+    
+    return jsonify({
+        "id": user.id,
+        "username": user.username,
+        "email": user.email,
+        "imageURL": user.imageURL,
+        "headerPosterURL": user.headerPosterURL,
+        "type": user.type
+    }), 200
+
+
+@app.route('/updateSettings', methods=['PUT'])
+def updateUserSettings(): 
+
+    file = request.files['imageURL']
+
+    if( file.filename == ''):
+        return redirect( request.url)
+    else:
+        file.save(os.path.join(app.config['UPLOAD_FOLDER'], file.filename))
+
+    requestObject = {} 
+    for key in request.form.keys():
+        requestObject[key] = request.form[key]
+
+    print( requestObject)
+
+    user = User.query.filter_by(username=requestObject['username']).first()
+
+    if(user):
+        print( user )
+        return jsonify({'error': 'Username not available'}),200
+
+    User.updateUserData( requestObject )
+
+    return jsonify({}), 200
 
 @app.route('/logout', methods=['POST'])
 def logout():

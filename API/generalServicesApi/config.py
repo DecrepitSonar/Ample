@@ -5,6 +5,9 @@ import redis
 load_dotenv()
 
 class ApplicationConfig:
+    UPLOAD_FOLDER = '/Users/robertaubow/Documents/Code/Ample/API/generalServicesApi/static/downloads/'
+    ALLOWED_EXTENSIONS = {'jpg', 'jpeg', 'webp'}
+
     SECRET_KEY=os.environ['SECRET_KEY']
 
     SQLALCHEMY_TRACK_MODIFICATIONS=False
