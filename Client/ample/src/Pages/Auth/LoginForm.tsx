@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useSelector } from "react-redux"
 import { authState, login } from '../../utils/Authslice'
-import { rootState, useAppDispatch } from "../../utils/store"
+import {useAppDispatch } from "../../utils/store"
 import { redirect, useNavigate } from "react-router-dom"
 import { AuthValues } from "../../utils/ObjectFormats";
 import { AuthErrorType, LoginFormType, RegistrationFormType } from "../../utils/ObjectTypes";

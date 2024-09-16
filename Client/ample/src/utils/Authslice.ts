@@ -24,11 +24,18 @@ const handleRegister = createAsyncThunk("auth/register", async (data: object) =>
     .then( response => { return response })
 })
 
+const handleLogout = createAsyncThunk('auth/logout', async (id) => {
+    return await httpclient.post(`http://127.0.0.1:5000/logout?id=${id}`)
+    .then(response => { console.log( response )})
+})
+
 export const authSlice = createSlice({
     name: 'auth',
     initialState,
-    reducers: {},
-    extraReducers: ( builder: any ) => {
+    reducers: {
+
+    },
+    extraReducers: ( builder: any ) => {    
         builder.addCase( handleLogin.pending, (state: any, action: any) => { console.log( 'pending')})
         builder.addCase( handleLogin.fulfilled, (state: any, action: any) => {
             console.log( 'fullfilled')
@@ -77,6 +84,15 @@ export const authSlice = createSlice({
                 state.isLoggedIn = true
             }
         })
+
+        builder.addCase( handleLogout.pending, ( state: any, action: any) => { console.log( 'pending')})
+        builder.addCase( handleLogout.rejected, ( state: any, action: any) => { console.log( 'rejected')})
+        builder.addCase( handleLogout.fulfilled, ( state: stateAuthType, action: any) => { 
+            console.log( 'user logged out')
+            state.user = <userAuthType>({}),
+            state.isLoggedIn = false
+        }
+        )
     }
 })
 
@@ -85,3 +101,4 @@ export const authState = authSlice
 export const login = handleLogin
 export const register = handleRegister
 export const validate = validateUser
+export const logout = handleLogout

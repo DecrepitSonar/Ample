@@ -21,7 +21,7 @@
     border: 2px dashed #323232;
     color: #737373;
     display: inline-block;
-    padding: 6px 12px;
+    /* padding: 6px 12px; */
     cursor: pointer;
     text-align: center;
     align-items: center;
@@ -33,7 +33,6 @@
     align-items: center;
     font-size: 3rem;
     border-radius: 50%;
-    
 }
 
 .imageInputPreview img{

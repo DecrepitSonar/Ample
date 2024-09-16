@@ -6,6 +6,7 @@ import SignUpForm from './Pages/Auth/SignUpForm'
 import LoginForm from './Pages/Auth/LoginForm'
 import PasswordReset from './Pages/Auth/PasswordReset'
 import Home from './Pages/Home'
+import Settings from './Pages/Settings'
 
 import Wrapper from './Pages/Wrapper'
 import Profile from "./Pages/Profile";
@@ -16,18 +17,9 @@ import { validate } from "./utils/Authslice";
 import { useAppDispatch } from "./utils/store";
 import axios from "axios";
 import SignUpEditForm from "./Pages/Auth/SignUpEditForm";
+import Browse from "./Pages/Browse";
+import Listen from "./Pages/Listen";
 
-
-function Listen(){
-  return(
-    <>Listen</>
-  )
-}
-function Browse(){
-  return(
-    <>Browse</>
-  )
-}
 
 function Search(){
   return(
@@ -71,10 +63,8 @@ function App() {
           <Route path='/watch' element={<Watch/>}/>
           <Route path='/listen' element={<Listen/>}/>
           <Route path='/browse' element={<Browse/>}/>
-          <Route path='/profile/:id' 
-
-            element={<Profile/>}
-          />
+          <Route path='/profile/:id' element={<Profile/>}/>
+          <Route path='/settings/:id' element={<Settings/>}/>
           <Route path='/search' element={<Search/>}/>
           <Route path='/video' element={<Video/>}/>
         </Route>

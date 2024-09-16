@@ -5,13 +5,14 @@
     color: #ddd;
 }
 .profile_container header{
-    height: 65vh;
+    height: 30vh;
     position: relative;
     background-image: url("../../public/3400954.jpg");
     background-position: center;
     background-size: cover;
     background-repeat: no-repeat;
     background-attachment: fixed;
+    border-bottom: 1px solid #3D3D3D;
 }
 .profile_header_overlay{
     height: inherit; 
@@ -125,3 +126,262 @@
   .profile_about_sub_section{
 
   }
+
+  /* User profile */
+.user_profile_header_detail_container{
+  /* border: 1px solid red; */
+  position:  absolute;
+  bottom: 75px;
+  left: 20px;
+  display: flex;
+}
+.user_profile_header_detail{
+  margin: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+.label_username{
+  font-size: 5em;  
+}
+.follower_count_container{
+  display: flex;
+  gap: 20px;
+  font-size: small;
+}
+.follow_button, .settings_button{
+  max-width: 100px;
+  border-radius: 20px;
+  padding: 5px 20px ;
+}
+.follow_button{
+  background-color: rgb(198, 161, 104);
+  color: #ddd;
+}
+
+.settings_button{
+  background-color: transparent;
+  border: 1px solid rgb(198, 161, 104);
+  color: rgb(198, 161, 104);
+}
+.settings_button:hover{
+  background-color: rgb(198, 161, 104);
+  color: #fff
+}
+
+/* settings page */
+.settings_page_container{
+  /* border: 1px solid red; */
+  max-width: 80%;
+  margin:20px auto;
+  padding: 20px;
+}
+.settings_header{}
+.settings_nav{
+  /* border: 1px solid red; */
+  padding: 0px;
+  display: flex;
+  justify-content: space-between;
+}
+.settings_nav li{
+  list-style-type: none;
+  justify-content: center;
+  /* border: 1px solid red; */
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+.settings_nav_icon i{}
+.settings_nav_icon{
+
+  /* border: 1px solid red; */
+  color: #212129;
+  background-color: #3E3E3E;
+  font-size: 3rem;
+  height: 50px;
+  width: 50px;
+  border-radius: 50%;;
+  margin-bottom: 10px;
+  padding: 10px;
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+  /* background-color: #ddd; */
+  transition: all .1s ease-in-out;
+}
+
+.settings_content_section{
+  margin: 50px 0;
+}
+.settings_content_section section{
+  margin: 50px 0;
+}
+.section_input_content{
+  margin:  20px 0;
+  /* padding:0 20px; */
+  display: flex;
+  gap: 50px;
+  width: inherit;
+}
+.section_input_content input[type='file']{
+  display: none;
+}
+.settings_banner_preview{
+  width: 50%;
+  height: 170px;
+  object-fit: cover;
+}
+.section_input_content img{
+  border-radius: 10px;;
+}
+.settings_input_container{
+  width: 100%;
+  /* border: 1px solid red; */
+  display: flex;
+  flex-direction: column;
+  padding: 20px;
+}
+.section_inputs input{
+  background-color: inherit;
+  border: 0;
+  text-indent: 0;
+  margin: 0px; 
+  padding: 10px 0;
+  color: #ddd
+}
+.section_inputs{
+  flex-direction: column;
+  gap :20px;
+  background-color: #1c1c2575;
+  border: 1px solid #323232;
+  border-radius: 10px;
+}
+.submit_button_outline,
+.submit_button_solid,
+.submit_button_outline_negative{
+  border: 0;
+  padding: 5px 20px; 
+  border-radius: 5px;
+  background-color: inherit;
+}
+
+.submit_button_solid{
+  background-color: #c6a168;
+  color: #fff;
+}
+
+.submit_button_outline{
+  border: 1px solid #c6a168;
+  color: #c6a168;
+}
+
+.submit_button_outline_negative{
+ border: 1px solid #d6000090;
+ color: #D60000; 
+}
+
+.wallet_settings_content_item_container,
+.settings_content_item_container{
+  border: 1px solid #323232;
+  border-radius: 10px;
+  padding: 20px;
+  background-color: #1c1c2575;
+}
+.settings_content_item{
+  /* border: 1px solid red; */
+  text-align: center;
+  color: #ddd
+
+}
+.settings_content_item h1{
+  font-size: 4rem;
+  margin: 0px;
+}
+.wallet_card_icon_container{
+  width: 100px;
+  /* height: 100px; */
+  /* border: 1px solid red; */
+  text-align: center;
+  
+}
+.wallet_card_icon{
+  display: flex;
+  align-items: center;
+  justify-content: space-around;
+  font-size: 4rem;
+  /* border: 1px solid red; */
+  padding: 0 25px;
+  border-radius: 50%;
+  color: #323232;
+  /* background-color: #323232; */
+}
+.wallet_card_detail_container{
+  /* border: 1px solid red; */
+  width: 100%;
+}
+.wallet_card_data{
+  /* display: flex; */
+  /* justify-content: space-between; */
+}
+.wallet_card_data_input{
+  /* border: 1px solid red; */
+  display: flex;
+  flex-direction: column;
+  padding: 20px;
+  width: 100%;
+  /* margin: 10px; */
+  
+}
+.wallet_card_data_input input{
+  margin-top: 10px;;
+  padding: 10px;
+  /* width: 50%; */
+  background-color: inherit;
+  border: 0;
+}
+.wallet_settings_content_item_container{
+  display: flex;
+  /* grid-template-rows: repeat(2, 1fr); */
+  /* flex-direction: column; */
+}
+.wallet_card_data_security,
+.wallet_card_data_identity{
+  display: flex;
+  justify-content: space-evenly;
+  background-color: #2A2A34;
+  /* border: 1px solid red; */
+  margin: 10px;
+  border-radius: 10px;
+}
+.wallet_add_card{
+  width: 100%;
+  margin: 10px 0;
+  border: 1px dashed #3E3E3E;
+  background-color: inherit;
+  border-radius: 10px;
+  color: #ddd;
+  padding: 10px;
+
+}
+.wallet_settings_purchase_history{
+  /* border: 1px solid red; */
+  width: 100%;
+  border-spacing: 0 5px;
+}
+.wallet_settings_purchase_history tr{
+  /* border: 1px solid red; */
+  /* width: 100%; */
+  /* display: inline-block; */
+  padding: 20px;
+  background-color: #2A2A34;
+  margin: 10px;
+
+}
+.wallet_settings_purchase_history th,
+.wallet_settings_purchase_history td{
+  text-align: left;
+  /* display: flex; */
+  padding: 10px;
+  /* justify-content: space-evenly; */
+  /* margin: auto; */
+}

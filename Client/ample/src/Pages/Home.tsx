@@ -1,70 +1,10 @@
 import React, { useEffect } from "react";
 import { Navigate, useNavigate } from 'react-router-dom'
 import { AudioItemPropType, UserAviPropType, VideoItemPropType } from "../utils/ObjectTypes";
+import AudioItem from "../Components/AudioItem";
+import VideoItem from "../Components/VideoItem";
+import UserAvi from "../Components/UserAvi";
 
-function UserAvi(props:UserAviPropType) {
-
-  const navigate = useNavigate()
-
-  const styles = {
-      backgroundImage: `url(//${props.imageURL})`
-  }
-
-  useEffect(()=> {
-  },[])
-
-  return (
-    <div className="large_user_avi"
-    onClick={() => navigate('/profile', {state: props, preventScrollReset: true})}>
-      <div
-        className="user_avi"
-        style={{'backgroundImage': `url(${props.imageURL})`}}
-      ></div>
-      <span>{props.username}</span>
-    </div>
-  );
-}
-
-function VideoItem(props: VideoItemPropType){
-
-  const navigate = useNavigate()
-
-  return(
-    <div className="video_item_container" onClick={() => navigate('/video')}>
-      <div className="video_item_poster"
-        style={{"backgroundImage": `url(${props.posterURL})`}}
-      />
-      <div className="video_item_info_container">
-        <div className="video_item_author_avi"
-          style={{"backgroundImage":`url(${props.imageURL})`}}
-        />
-        <div className="video_item_info">
-        <span>{props.title}</span>
-        <span>{props.author}</span>
-        <span>{props.views} views</span>
-        </div>
-
-      </div>
-    </div>
-  )
-}
-
-function AudioItem(props: AudioItemPropType){
-  
-  const navigate = useNavigate()
-
-  return(
-    <div className="audio_item_container" onClick={() => navigate("/audio")}>
-      <div className="audio_item_art"
-      style={{"backgroundImage": `url(${props.imageURL})`}}
-      />
-      <div className="audio_item_info">
-        <span>{props.title}</span>
-        <span>{props.author}</span>
-      </div>
-    </div>
-  )
-}
 function Home() {
 
 
@@ -72,27 +12,33 @@ function Home() {
     {
       username: "6lack",
       imageUrl: "6lack2.jpg",
+      type: 'creator'
     },
     {
       username: "Doja Cat",
       imageUrl: "Doja.jpg",
+      type: 'creator'
     },
     {
       username: "The Alchemist",
       imageUrl: "thealchemist.jpg",
+      type: 'creator'
     },
     {
       username: "Anderson .Paak",
       imageUrl: "6lack2.jpg",
+      type: 'creator'
     },
     {
       username: "Tems",
       imageUrl: "6lack2.jpg",
+      type: 'creator'
     },
     {
-        username: "Tems",
-        imageUrl: "6lack2.jpg",
-      }
+      username: "Tems",
+      imageUrl: "6lack2.jpg",
+      type: 'creator'
+    }
   ];
 
   const Videos = [
@@ -204,7 +150,7 @@ function Home() {
         <div className="section_item_container">
             {
                 users.map( user => {
-                    return <UserAvi {...user}/>
+                    return <UserAvi imageURL={""} {...user}/>
                 })
                 
             }

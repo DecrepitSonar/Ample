@@ -30,10 +30,17 @@ def getCurrentUser():
     
     user = User.query.filter_by(id=token).first()
 
-    if not user: 
-        return jsonify({'error':'unauthorized'}), 401
+    userSession = session.get('user_id')
 
-    print(user)
+    print( userSession = session.get('user_id') )
+
+    if not user: 
+        return jsonify({ "error": "unauthorized user "}, 401)
+    
+    if userSession == None: 
+        return jsonify({ "error": "unauthorized user "}, 401)
+
+    # print(user)
 
     return jsonify({
         "id": user.id,
@@ -161,11 +168,20 @@ def updateUserSettings():
 
 @app.route('/logout', methods=['POST'])
 def logout():
-    print( request.json)
+    print( "logging out ")
+    user_id =  request.args['id']
 
-    session.pop('user_id')
+    # user =  session['user_id'] 
+    print( session.get('user_id') )
 
     return jsonify({"status": "success"}), 200
+
+
+
+
+
+
+
 
 # Dashboard 
 @app.route('/dashboard', methods=['GET'])
