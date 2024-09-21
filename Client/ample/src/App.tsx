@@ -19,6 +19,7 @@ import axios from "axios";
 import SignUpEditForm from "./Pages/Auth/SignUpEditForm";
 import Browse from "./Pages/Browse";
 import Listen from "./Pages/Listen";
+import PlaylistDetail from "./Pages/PlaylistDetail";
 
 
 function Search(){
@@ -67,6 +68,7 @@ function App() {
           <Route path='/settings/:id' element={<Settings/>}/>
           <Route path='/search' element={<Search/>}/>
           <Route path='/video' element={<Video/>}/>
+          <Route path='/playlist/:id' element={<PlaylistDetail/>}/>
         </Route>
       </Routes>
     </div>

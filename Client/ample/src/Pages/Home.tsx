@@ -95,9 +95,16 @@ function Home() {
     }
   ]
 
+  // style={{"backgroundImage": 'url(6lack.jpg)'}}
   return (
     <div className="page_container">
-      <header style={{"backgroundImage": 'url(6lack.jpg)'}}>
+      <header>
+        <video 
+          className="video_header" 
+          src="https://prophile.nyc3.cdn.digitaloceanspaces.com/Videos/028b78a391ba8ec29dd3bee1ef9470936b2ea627.mp4" 
+          autoPlay 
+          muted
+        />
         <div className="headerOverlay">
           <span className="header_title">Discover</span>
           {/* Floating video Progressbar */}

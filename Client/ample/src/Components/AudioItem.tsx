@@ -7,7 +7,7 @@ export default function AudioItem(props: AudioItemPropType){
     const navigate = useNavigate()
   
     return(
-      <div className="audio_item_container" onClick={() => navigate("/audio")}>
+      <div className="audio_item_container" onClick={() => navigate("/playlist/0")}>
         <div className="audio_item_art"
         style={{"backgroundImage": `url(${props.imageURL})`}}
         />

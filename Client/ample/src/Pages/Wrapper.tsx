@@ -1,7 +1,7 @@
-import React, { MouseEvent, useState } from "react"
+import React, { MouseEvent, useEffect, useState } from "react"
 import '../styles/sidebar.css'
 // import { FaSearch } from "react-icons/fa"
-import { Outlet } from "react-router-dom"
+import { Outlet, useLocation, useParams } from "react-router-dom"
 import Nav from '../Components/Nav.js'
 import BottomMediaBar from '../Components/BottomMediaBar.js'
 import { 
@@ -129,8 +129,82 @@ function AsideHistory(){
   )
 }
 
-function Aside(){
+function AsideVideoCollection(){
+  return(
+    <div className="video_collection_container">
+      <h3>Recommended</h3>
+      <div className="small_video_item_container">
+        <div className="small_video_item_poster" style={{backgroundImage: 'url(6lack.jpg'}}/>
+        <div className="small_video_item_detail_container">
+          <span>East Atlanta Love letter</span>
+          <span>6lack</span>
+          <span>1231 Views</span>
+        </div>
+      </div>
+
+      <div className="small_video_item_container">
+        <div className="small_video_item_poster" style={{backgroundImage: 'url(6lack.jpg'}}/>
+        <div className="small_video_item_detail_container">
+          <span>East Atlanta Love letter</span>
+          <span>6lack</span>
+          <span>1231 Views</span>
+        </div>
+      </div>
+
+      <div className="small_video_item_container">
+        <div className="small_video_item_poster" style={{backgroundImage: 'url(6lack.jpg'}}/>
+        <div className="small_video_item_detail_container">
+          <span>East Atlanta Love letter</span>
+          <span>6lack</span>
+          <span>1231 Views</span>
+        </div>
+      </div>
+
+      <div className="small_video_item_container">
+        <div className="small_video_item_poster" style={{backgroundImage: 'url(6lack.jpg'}}/>
+        <div className="small_video_item_detail_container">
+          <span>East Atlanta Love letter</span>
+          <span>6lack</span>
+          <span>1231 Views</span>
+        </div>
+      </div>
+
+      <div className="small_video_item_container">
+        <div className="small_video_item_poster" style={{backgroundImage: 'url(6lack.jpg'}}/>
+        <div className="small_video_item_detail_container">
+          <span>East Atlanta Love letter</span>
+          <span>6lack</span>
+          <span>1231 Views</span>
+        </div>
+      </div>
+
+      <div className="small_video_item_container">
+        <div className="small_video_item_poster" style={{backgroundImage: 'url(6lack.jpg'}}/>
+        <div className="small_video_item_detail_container">
+          <span>East Atlanta Love letter</span>
+          <span>6lack</span>
+          <span>1231 Views</span>
+        </div>
+      </div>
+
+
+    </div>
+  )
+}
+
+function LiveComments(){
+  return(
+    <>Live Comments </>
+  )
+}
+
+function Library(){
+
   const [ libstate, setLibstate ] = useState("Queue")
+  function setNav(e: MouseEvent){
+    // setLibstate( e)
+    console.log( e.currentTarget)
+  }
 
   const active = {
     color: "#C6A168",
@@ -141,13 +215,9 @@ function Aside(){
     color: "#ddd"
   }
 
-  function setNav(e: MouseEvent){
-    // setLibstate( e)
-    console.log( e.currentTarget)
-  }
   return(
-  <aside>
-    <div className="aside_header">
+  <>
+  <div className="aside_header">
       <span>Library</span>
       <ul>
         <li style={ libstate == "Queue" ? active : inacitve}
@@ -167,6 +237,36 @@ function Aside(){
         }[libstate]
       }
     </div>
+  </>
+)
+}
+
+function Aside(){
+  
+  const [ asideLocation, setAsideLocation ] = useState('Library')
+
+  const params = useParams()
+  const location = useLocation()
+
+  function setNav(e: MouseEvent){
+    // setLibstate( e)
+    console.log( e.currentTarget)
+  }
+
+  useEffect(() => {
+    console.log( params )
+    const currentLocation = location.pathname.split('/')[1]
+    setAsideLocation(currentLocation)
+  },[location])
+
+  return(
+  <aside>
+    {
+        {
+          "video": <AsideVideoCollection/>,
+          "live":<LiveComments/>,
+        }[asideLocation] || <Library/>
+      }
   </aside>
   )
 }
@@ -176,9 +276,6 @@ function Wrapper(){
         <main>
           <Nav/>
           <div className="content">
-            <div className="floating_search_bar">
-              <input type="text" placeholder="Search"/>
-            </div>
             <Outlet/>
           </div>
           <Aside/>

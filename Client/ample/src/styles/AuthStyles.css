@@ -3,6 +3,7 @@
     display: flex;
     justify-content: space-between;
     margin: 20px 0;
+    gap: 20px;
 }
 
 .custom_upload_buttom, .imageInputPreview{
