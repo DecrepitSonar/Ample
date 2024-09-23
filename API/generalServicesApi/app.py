@@ -7,6 +7,7 @@ from config import ApplicationConfig
 from flask_session import Session 
 from flask_cors import CORS
 from flask import render_template
+import uuid
 
 app = Flask(__name__)
 app.config.from_object(ApplicationConfig)
@@ -30,7 +31,7 @@ def getCurrentUser():
     
     user = User.query.filter_by(id=token).first()
 
-    userSession = session.get('user_id')
+    userSession = session.get(request.id)
 
     print( userSession = session.get('user_id') )
 
@@ -69,9 +70,10 @@ def register_user():
     db.session.add(new_user)
     db.session.commit()
 
-    session['user_id'] = new_user.id
+    sessionId = uuid.uuid4()
+    session[sessionId] = new_user.id
 
-    print(new_user)
+    print(sessionId)
 
     result = jsonify({
         "id": new_user.id,
@@ -80,7 +82,7 @@ def register_user():
         "imageURL": new_user.imageURL,
         "headerPosterURL": new_user.headerPosterURL,
         "type": new_user.type
-    })
+    }),200
 
     response = make_response(result)
     response.set_cookie("xrftoken", new_user.id, httponly=True, secure=True, samesite='None')
@@ -88,11 +90,18 @@ def register_user():
 
 @app.route('/login', methods=['POST'])
 def login_user():
-    email = request.json['email']
-    password = request.json['password']
-    print( email, password)
 
-    user = User.query.filter_by(email=email).first()
+    print(request.json)
+    print( request.headers['User-Agent'] )
+    user = {}
+
+    if( request.headers['User-Agent'] == 'Ample/1 CFNetwork/1568.100.1 Darwin/24.0.0'):
+        user = User.query.filter_by(username=request.json['username']).first()
+    else:
+        user = User.query.filter_by(email=request.json['email']).first()
+
+    print( user )
+    password = request.json['password']
     
     if user is None:
         print("user not found")
@@ -107,8 +116,8 @@ def login_user():
         print("failed")
         return jsonify({"error": "Unauthorized"}), 401
     else:
-         
-        session['user_id'] = user.id
+        sessionId = uuid.uuid4()
+        session[sessionId] = user.id
 
         result =  jsonify({
             "id": user.id,
@@ -122,6 +131,7 @@ def login_user():
         response = make_response(result)
         response.set_cookie("xrftoken", user.id, httponly=True, secure=True, samesite='None')
         return response
+    # return jsonify({}), 200
    
 @app.route('/user', methods=['GET'])
 def getUser():

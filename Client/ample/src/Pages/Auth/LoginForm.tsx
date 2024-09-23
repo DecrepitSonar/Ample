@@ -72,7 +72,7 @@ function LoginForm() {
   }
 
   useEffect(() => {
-    if (auths.isLoggedIN ) navigate('/')
+    if (auths.isLoggedIn ) navigate('/')
   })
 
     return (

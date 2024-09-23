@@ -18,20 +18,39 @@ nav{
     display: flex;
     flex-direction: column;
     justify-content: space-between;
-    padding: 10px;
+    /* padding: 10px; */
     text-align: center;
     font-size: 13px;
     font-weight: bold;
     color: #aaa;
   }
   .nav_avi_container button{
-    padding: 5px;
-    width: 100px;
-    margin: auto;
+    padding: 10px 0;
+
+    /* width: 100%; */
+    margin: 5px;
     border-radius: 5px;
-    border: 1px solid #C6A168;
-    color: white;
-    background-color: #C6A168;
+    
+    /* color: white; */
+    
+    /* background-color: #C6A168; */
+  }
+  .nav_avi_container button:nth-child(1){
+    /* background-color: rgba(198, 161, 104,.5); */
+    background-color: transparent;
+    border: 1px solid rgba(198, 161, 104,.8);
+    color: rgba(198, 161, 104 ,.8);
+    font-weight: bold;
+  }
+  .nav_avi_container button:nth-child(1):hover{
+    background-color: rgba(198, 161, 104,.8);
+    color: #fff
+  }
+  .nav_avi_container button:nth-child(2){
+    /* border: 1px solid #C6A168; */
+    border: 0;
+    color: #C6A168;
+    background-color: transparent;
   }
   .nav_avi{
     height: 50px; 
@@ -54,7 +73,7 @@ nav{
   }
   .nav_links a{
     color: #aaa;
-    width: 150px;
+    /* width: 150px; */
     list-style-type: none;
     /* border: 1px solid #C6A168; */
     border: .5px solid rgba(198, 161, 104,.5);
@@ -97,18 +116,26 @@ nav{
     /* justify-content: space-between; */
   }
   .nav_section_live_collection span{
-    display: inline-block;
+    display: block;
     font-size: 13px;
-    color: #aaa;
+    width: inherit;
+    white-space: no wrap;
+    text-overflow: ellipsis;
+
   }
   .nav_live_user_{
-    /* width: 100%; */
+    /* width: 100px; */
     display: flex;
     align-items: center;
     border: .5px solid rgba(198, 161, 104,.5);
     padding: 3px;
     border-radius: 35px;
     margin: 5px 0;
+    overflow: hidden;
+    
+  }
+  .nav_live_user_ span{
+    text-overflow: ellipsis;
   }
   .nav_live_user_avi{
     height: 30px;
@@ -116,4 +143,5 @@ nav{
     background-color: #aaa;
     border-radius: 50%;;
     margin-right: 20px;
+    border: 1px solid red;
   }

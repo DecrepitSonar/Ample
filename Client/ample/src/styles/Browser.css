@@ -1,6 +1,6 @@
 .browserContainer{
     /* height: 100px;  */
-    width: 75%; 
+     max-width: 85%; 
     margin: 25px auto;
     /* border: 1px solid red; */
     padding: 20px;
@@ -16,9 +16,9 @@
 }
 .browserContainer input{
     /* margin-top: 10px;; */
-    padding: 5px 10px ;
+    padding: 10px 15px ;
     border-radius: 5px;
-    width: calc(100% - 20px);
+    width: calc(100% - 30px);
     border: 1px solid #323232;
     background-color: #1c1c2575 ;
 }
@@ -29,7 +29,7 @@
     margin-top: 20px;
 }
 .catagory_browser_item{
-    height: 125px; 
+    height: 150px; 
     /* width: 100px; */
     /* border: 1px solid red; */
     /* margin: 10px; */

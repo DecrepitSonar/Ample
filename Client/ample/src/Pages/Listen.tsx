@@ -7,7 +7,7 @@ import { AudioItemPropType } from '../utils/ObjectTypes'
 function TrackStrip(props: AudioItemPropType){
     return(
         <div className='small_list_item_container'>
-            <div className='small_list_item_image' style={{backgroundImage: `url(${props.imageURL})`}}/>
+            <img className='small_list_item_image' src={`${props.imageURL}`}/>
             <div className='small_list_item_detail_container'>
                 <span>{props.title}</span>
                 <span>{props.author}</span>
@@ -73,7 +73,7 @@ export default function Listen() {
             </div>
         </div>
 
-    <div className='listen_page_container'>
+    <div className='listen_page_container page_container'>
         
         <section>
             <h1>New For you</h1>

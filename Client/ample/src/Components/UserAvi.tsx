@@ -7,7 +7,7 @@ export default function UserAvi(props:UserAviPropType) {
     const navigate = useNavigate()
   
     const image = {
-        backgroundImage: `url('../../public/${ props.imageURL})`
+        backgroundImage: `url('${ props.imageURL})`
     }
   
     useEffect(()=> {
@@ -16,10 +16,9 @@ export default function UserAvi(props:UserAviPropType) {
     return (
       <div className="large_user_avi"
       onClick={() => navigate('/profile/0', {state: props, preventScrollReset: true})}>
-        <div
+        <img src={props.imageURL}
           className="user_avi"
-          style={image}
-        ></div>
+        />
         <span>{props.username}</span>
       </div>
     );

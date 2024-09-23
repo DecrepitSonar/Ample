@@ -5,3 +5,4 @@ python-dotenv
 flask-session
 redis
 boto3
+flask_cors

@@ -10,34 +10,28 @@ function Home() {
 
   const users = [
     {
-      username: "6lack",
-      imageUrl: "6lack2.jpg",
-      type: 'creator'
+      username: "Childish Major",
+      imageURL: "https://prophile.nyc3.cdn.digitaloceanspaces.com/images/045c4400b983f685285eda35b519a5b249ff94fb.jpg",
     },
     {
       username: "Doja Cat",
-      imageUrl: "Doja.jpg",
-      type: 'creator'
+      imageURL: "doja.jpg",
     },
     {
       username: "The Alchemist",
-      imageUrl: "thealchemist.jpg",
-      type: 'creator'
+      imageURL: "thealchemist.jpg",
     },
     {
       username: "Anderson .Paak",
-      imageUrl: "6lack2.jpg",
-      type: 'creator'
+      imageURL: "andersonpaak.jpg",
     },
     {
-      username: "Tems",
-      imageUrl: "6lack2.jpg",
-      type: 'creator'
+      username: "Knxwledge",
+      imageURL: "knx.jpg",
     },
     {
-      username: "Tems",
-      imageUrl: "6lack2.jpg",
-      type: 'creator'
+      username: "6lack",
+      imageURL: "6lack2.jpg",
     }
   ];
 
@@ -106,17 +100,23 @@ function Home() {
           muted
         />
         <div className="headerOverlay">
-          <span className="header_title">Discover</span>
+          <div className="header_detail_container">
+
+            <span className="header_title">Discover</span>
+
+            {/* Header video description */}
+            <div className="header_video_detail">
+              <button>Watch</button>
+              <span>Switch</span>
+              <span>6lack</span>
+            </div>
+            
+          </div>
+
           {/* Floating video Progressbar */}
           <div className="header_progress_bar_container">
-            <div className="header_progress_bar"></div>
-          </div>
-          {/* Header video description */}
-          <div className="header_video_detail">
-            <button>Watch</button>
-            <span>Switch</span>
-            <span>6lack</span>
-          </div>
+              <div className="header_progress_bar"></div>
+            </div>
 
           {/* Pagination buttons */}
           <div className="pagination_container">
@@ -156,8 +156,8 @@ function Home() {
         <span className="section_subheading">Top Creators</span>
         <div className="section_item_container">
             {
-                users.map( user => {
-                    return <UserAvi imageURL={""} {...user}/>
+                users.map( (user: UserAviPropType)  => {
+                    return <UserAvi {...user}/>
                 })
                 
             }
