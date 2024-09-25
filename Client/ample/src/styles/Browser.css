@@ -9,7 +9,24 @@
     /* border: 1px solid red; */
     /* display: flex; */
 }
-
+.search_filter_container{
+    border-bottom: 1px solid #323232;
+    display: flex;
+    justify-content: space-between;
+    margin: 20px 0;
+}
+.search_filter_container span{
+    padding: 10px;
+}
+.search_filter_container ul{
+    display: flex;
+    align-items: center;
+    margin: 0px;
+}
+.search_filter_container ul li{
+    padding: 10px;
+    list-style-type: none;
+}
 .browserContainer section{
     /* border: 1px solid red; */
     margin: 50px 0;
@@ -21,6 +38,8 @@
     width: calc(100% - 30px);
     border: 1px solid #323232;
     background-color: #1c1c2575 ;
+    outline: none;
+    color: #ffff
 }
 .catagory_browser_container{
     display: grid;
