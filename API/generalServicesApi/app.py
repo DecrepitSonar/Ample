@@ -7,6 +7,8 @@ from config import ApplicationConfig
 from flask_session import Session 
 from flask_cors import CORS
 from flask import render_template
+from contentDb import contentDb
+
 import uuid
 
 app = Flask(__name__)
@@ -21,6 +23,7 @@ db.init_app(app)
 with app.app_context():
     db.create_all()
 
+# Auth
 @app.route('/whoami', methods=['GET'])
 def getCurrentUser():
 
@@ -187,11 +190,30 @@ def logout():
     return jsonify({"status": "success"}), 200
 
 
+# Content
 
+@app.route('/', methods=['GET'])
+def home():
 
+    featuredVideos = contentDb['featuredvideos'].find({'type': 'Featured Video'},{"_id": 0, "id": 1, "title": 1, "artist": 1, 'videoURL':1})
+    features = []
 
+    # print( list(featuredVideos) )
+    for item in list(featuredVideos):
+        features.append(
+            {
+                'id': item['id'],
+                'title': item['title'],
+                'author': item['artist'],
+                'contentURL': item['videoURL']
+            }
+        )
 
+    return jsonify( features)
 
+@app.route('/watch', methods=['GET'])
+@app.route('/listen', methods=['GET'])
+@app.route('/browse', methods=['GET'])
 
 # Dashboard 
 @app.route('/dashboard', methods=['GET'])

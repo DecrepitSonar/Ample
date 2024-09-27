@@ -6,3 +6,4 @@ flask-session
 redis
 boto3
 flask_cors
+pymongo
