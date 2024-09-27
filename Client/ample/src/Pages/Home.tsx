@@ -1,12 +1,19 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { Navigate, useNavigate } from 'react-router-dom'
 import { AudioItemPropType, UserAviPropType, VideoItemPropType } from "../utils/ObjectTypes";
 import AudioItem from "../Components/AudioItem";
 import VideoItem from "../Components/VideoItem";
 import UserAvi from "../Components/UserAvi";
+import axios from "axios";
 
 function Home() {
 
+  const [features, setFeatures] = useState<[VideoItemPropType]>()
+  const [headerIndex, setHeaderIndex ] = useState(0)
+
+  function updateHeaderIndex(index: number){
+    setHeaderIndex(index)
+  }
 
   const users = [
     {
@@ -89,13 +96,20 @@ function Home() {
     }
   ]
 
+  useEffect(() => {
+    axios.get('http://127.0.0.1:5000/')
+    .then( response => {
+      setFeatures(response.data )
+    })
+  },[])
+
   // style={{"backgroundImage": 'url(6lack.jpg)'}}
   return (
     <div className="page_container">
       <header>
         <video 
           className="video_header" 
-          src="https://prophile.nyc3.cdn.digitaloceanspaces.com/Videos/028b78a391ba8ec29dd3bee1ef9470936b2ea627.mp4" 
+          src={`${features ? features[headerIndex].contentURL : '' }`} 
           autoPlay 
           muted
         />
@@ -107,8 +121,8 @@ function Home() {
             {/* Header video description */}
             <div className="header_video_detail">
               <button>Watch</button>
-              <span>Switch</span>
-              <span>6lack</span>
+              <span>{features ? features[headerIndex].title : ''}</span>
+              <span>{features ? features[headerIndex].author : ''}</span>
             </div>
             
           </div>
@@ -121,10 +135,15 @@ function Home() {
           {/* Pagination buttons */}
           <div className="pagination_container">
             <div className="pagination_dots">
-              <div className="pagination_dot"/>
-              <div className="pagination_dot"/>
-              <div className="pagination_dot"/>
-              <div className="pagination_dot"/>
+              {
+                features?.map( (item, index) => {
+                  return <div 
+                  style={headerIndex == index ? { 'backgroundColor': "#C6A168"}: {}}
+                  key={index} 
+                  onClick={(e) => updateHeaderIndex(index)}
+                  className="pagination_dot"/>
+                })
+              }
             </div>
           </div>
         </div>

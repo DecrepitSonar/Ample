@@ -237,14 +237,16 @@ main{
 }
 .page_container header{
   width: inherit;
-  /* height: 75vh; */
+  height: 65vh;
+  
   /* border: 1px solid #ddd; */
-  background-color: #ddd;
+  background-color: #000;
   background-repeat: no-repeat;
   background-size: cover;
   background-position: center;
   margin-bottom: 50px;
   position: relative;
+  transition: all .3 ease-in-out;
 }
 .video_header{
   /* position: absolute; */
@@ -285,6 +287,7 @@ main{
   flex-direction: column;
   gap: 5px;
   color: #ddd;
+  align-items: end;
 }
 .header_video_detail button{
   padding: 5px 20px;
@@ -292,6 +295,7 @@ main{
   border-radius: 10px;
   border: 1px solid #C6A168;
   color: #C6A168;
+  max-width: 100px;
 }
 .header_video_detail span:nth-child(2){
   font-weight: bold;
@@ -321,7 +325,7 @@ main{
   /* width: 100px;  */
   /* border: 1px solid red; */
   position: absolute;
-  right: 0px;
+  right: 20px;
   top: 0px; 
   bottom: 0px;
   display: flex;
@@ -330,7 +334,7 @@ main{
   margin: auto;
 }
 .pagination_dot:nth-child(1){
-  background-color: #C6A168;
+  /* background-color: #C6A168; */
 }
 .pagination_dot{
   height: 10px; 
@@ -350,7 +354,8 @@ main{
   /* border: 1px solid red; */
   display: flex;
   justify-content: space-between;
-  margin-top: 20px;
+  margin: 20px 0;
+  padding: 20px 0;
 }
 .large_user_avi{
   /* width: 100px;  */

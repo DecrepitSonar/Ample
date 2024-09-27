@@ -42,7 +42,6 @@ export default function Browse() {
                 </div>            
                 <h1>Search: <span>{searchQuery}</span></h1>
 
-                
             </>
             :
 

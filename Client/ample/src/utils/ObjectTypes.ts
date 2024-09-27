@@ -32,9 +32,10 @@ export type UserAviPropType = {
 export type VideoItemPropType = {
     title: string,
     author: string, 
-    views: number,
-    posterURL: string,
-    imageURL: string
+    views?: number,
+    posterURL?: string,
+    imageURL?: string,
+    contentURL?: string
 }
 export type AudioItemPropType = {
     title: string, 
