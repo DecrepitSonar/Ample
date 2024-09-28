@@ -6,9 +6,16 @@ import VideoItem from "../Components/VideoItem";
 import UserAvi from "../Components/UserAvi";
 import axios from "axios";
 
+type HomePageDataType = {
+  featured: [VideoItemPropType],
+  podcasts: [VideoItemPropType],
+  music: [AudioItemPropType],
+  artists: [UserAviPropType]
+}
 function Home() {
 
-  const [features, setFeatures] = useState<[VideoItemPropType]>()
+  const [homeData, setHomeData] = useState<HomePageDataType>()
+
   const [headerIndex, setHeaderIndex ] = useState(0)
 
   function updateHeaderIndex(index: number){
@@ -99,7 +106,8 @@ function Home() {
   useEffect(() => {
     axios.get('http://127.0.0.1:5000/')
     .then( response => {
-      setFeatures(response.data )
+      console.log( response.data)
+      setHomeData(response.data )
     })
   },[])
 
@@ -109,7 +117,7 @@ function Home() {
       <header>
         <video 
           className="video_header" 
-          src={`${features ? features[headerIndex].contentURL : '' }`} 
+          src={`${homeData ? homeData.featured[headerIndex].contentURL : '' }`} 
           autoPlay 
           muted
         />
@@ -121,8 +129,8 @@ function Home() {
             {/* Header video description */}
             <div className="header_video_detail">
               <button>Watch</button>
-              <span>{features ? features[headerIndex].title : ''}</span>
-              <span>{features ? features[headerIndex].author : ''}</span>
+              <span>{homeData ? homeData.featured[headerIndex].title : ''}</span>
+              <span>{homeData ? homeData.featured[headerIndex].author : ''}</span>
             </div>
             
           </div>
@@ -135,15 +143,17 @@ function Home() {
           {/* Pagination buttons */}
           <div className="pagination_container">
             <div className="pagination_dots">
-              {
-                features?.map( (item, index) => {
-                  return <div 
-                  style={headerIndex == index ? { 'backgroundColor': "#C6A168"}: {}}
-                  key={index} 
-                  onClick={(e) => updateHeaderIndex(index)}
-                  className="pagination_dot"/>
-                })
-              }
+              { 
+                homeData ? 
+                   homeData.featured?.map( (item, index) => {
+                    return <div 
+                    style={headerIndex == index ? { 'backgroundColor': "#C6A168"}: {}}
+                    key={index} 
+                    onClick={(e) => updateHeaderIndex(index)}
+                    className="pagination_dot"/>
+                  })
+                 : null
+              } 
             </div>
           </div>
         </div>
@@ -153,10 +163,10 @@ function Home() {
         <span className="section_subheading">Podcast</span>
         <div className="section_item_container">
             {
-                Videos.map( video => {
-                    return <VideoItem {...video}/>
-                })
-                
+                homeData ?
+                homeData.podcasts.map( video => {
+                  return <VideoItem key={video.id} {...video}/>
+              }) : null
             }
         </div>
       </section>
@@ -164,9 +174,10 @@ function Home() {
         <span className="section_subheading">Music</span>
         <div className="section_item_container">
         {
-            AudioItems.map( item => {
+        homeData ? 
+            homeData.music.map( item => {
                 return <AudioItem {...item}/>
-            })
+            }) : null
             
         }
         </div>
@@ -175,9 +186,10 @@ function Home() {
         <span className="section_subheading">Top Creators</span>
         <div className="section_item_container">
             {
-                users.map( (user: UserAviPropType)  => {
+              homeData ?
+              homeData.artists.map( (user: UserAviPropType)  => {
                     return <UserAvi {...user}/>
-                })
+                }) : null
                 
             }
         </div>

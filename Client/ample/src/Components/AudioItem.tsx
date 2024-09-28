@@ -9,7 +9,7 @@ export default function AudioItem(props: AudioItemPropType){
     return(
       <div className="audio_item_container" onClick={() => navigate("/playlist/0")}>
         <div className="audio_item_art"
-        style={{"backgroundImage": `url(${props.imageURL})`}}
+        style={{"backgroundImage": `url(https://prophile.nyc3.digitaloceanspaces.com/images/${props.imageURL}.jpg)`}}
         />
         <div className="audio_item_info">
           <span>{props.title}</span>

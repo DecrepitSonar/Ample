@@ -25,11 +25,13 @@ export type MediumUserListItemPropType = {
 }
 
 export type UserAviPropType = {
+    id?: String,
     username: string,
     imageURL: string,
 }
 
 export type VideoItemPropType = {
+    id: string,
     title: string,
     author: string, 
     views?: number,

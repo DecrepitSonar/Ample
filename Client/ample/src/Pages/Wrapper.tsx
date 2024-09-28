@@ -1,7 +1,7 @@
 import React, { MouseEvent, ReactNode, useEffect, useState } from "react"
 import '../styles/sidebar.css'
 // import { FaSearch } from "react-icons/fa"
-import { Path } from "react-router-dom"
+import { Link, Path } from "react-router-dom"
 import { Outlet, useLocation, useParams } from "react-router-dom"
 import Nav from '../Components/Nav.js'
 import BottomMediaBar from '../Components/BottomMediaBar.js'
@@ -13,7 +13,7 @@ import { HiHeart } from "react-icons/hi2"
 import { BsGlobe, BsRadar } from "react-icons/bs"
 import { RiPlayList2Line } from "react-icons/ri"
 import { useSelector } from "react-redux"
-import { RootState } from "@reduxjs/toolkit/query"
+import { RootState } from "../utils/store.js"
 
 function AudioListItem(props:AudioListItemPropType){
   return(
@@ -318,6 +318,7 @@ function Aside(){
 
   const params = useParams()
   const location = useLocation()
+  const auth = useSelector( ( state: RootState) => state.auth)
 
   function setNav(e: MouseEvent){
     // setLibstate( e)
@@ -332,12 +333,17 @@ function Aside(){
 
   return(
   <aside>
-    {
+    { 
+      auth.isLoggedIn ? 
         {
           "video": <AsideVideoCollection/>,
           "live":<LiveComments/>,
         }[asideLocation] || <Library/>
-      }
+        : <div className="unauthorized_Aside_container">
+          <span>Sign in to view libarary</span>
+          <Link to='/login' className="unauthorized_Aside_button">Sign in</Link>
+        </div>
+    }
   </aside>
   )
 }

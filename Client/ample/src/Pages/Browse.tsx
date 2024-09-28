@@ -10,6 +10,7 @@ function Search(){
         </>
     )
 }
+
 export default function Browse() {
 
     const [searchQuery, setSearchQuery ] = useState('')

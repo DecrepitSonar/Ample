@@ -16,7 +16,7 @@ export default function UserAvi(props:UserAviPropType) {
     return (
       <div className="large_user_avi"
       onClick={() => navigate('/profile/0', {state: props, preventScrollReset: true})}>
-        <img src={props.imageURL}
+        <img src={`https://prophile.nyc3.digitaloceanspaces.com/images/${props.imageURL}.jpg`}
           className="user_avi"
         />
         <span>{props.username}</span>
