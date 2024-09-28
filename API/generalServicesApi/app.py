@@ -195,12 +195,24 @@ def logout():
 @app.route('/', methods=['GET'])
 def home():
 
-    featuredVideos = contentDb['featuredvideos'].find({'type': 'Featured Video'},{"_id": 0, "id": 1, "title": 1, "artist": 1, 'videoURL':1})
-    features = []
+    content = {
+        'featured': [],
+        'podcasts': [],
+        'music': [],
+        'artists': []
+    }
 
-    # print( list(featuredVideos) )
+    featuredVideos = contentDb['featuredvideos'].find({'type': 'Featured Video'},
+                                                      {
+                                                          "_id": 0, 
+                                                          "id": 1, 
+                                                          "title": 1, 
+                                                          "artist": 1, 
+                                                          'videoURL':1})
+    
     for item in list(featuredVideos):
-        features.append(
+
+        content['featured'].append(
             {
                 'id': item['id'],
                 'title': item['title'],
@@ -209,7 +221,60 @@ def home():
             }
         )
 
-    return jsonify( features)
+    podcastVideos = contentDb['videos'].find({'type': 'podcast'},
+                                            {
+                                                "_id": 0, 
+                                                "id": 1, 
+                                                "title": 1, 
+                                                'artistImageURL': 1, 
+                                                "posterURL": 1, 
+                                                "artist": 1 })
+    
+    for item in list(podcastVideos):
+
+        print( item, '\n' )
+        content['podcasts'].append({
+            'id': item['id'],
+            'title': item['title'],
+            'author': item['artist'],
+            'imageURL': item['artistImageURL'],
+            'posterURL': item['posterURL']
+        })
+    
+    music = contentDb['albums'].find({},{
+        "_id":0,
+        'title': 1, 
+        'name': 1,
+        'imageURL': 1
+    }).limit(5)
+
+
+    for item in list(music): 
+        print( item)
+
+        content['music'].append({
+            'title': item['title'],
+            'author': item['name'],
+            'imageURL': item['imageURL']
+        })
+
+    artists = contentDb['artists'].find({},{
+        '_id': 0,
+        'id': 1,
+        'name': 1,
+        'imageURL': 1
+    }).limit(6)
+
+    for item in list(artists):
+        content['artists'].append({
+            'id': item['id'],
+            'username': item['name'],
+            'imageURL': item['imageURL']
+        })
+
+    print( list(artists))
+
+    return jsonify( content)
 
 @app.route('/watch', methods=['GET'])
 @app.route('/listen', methods=['GET'])
