@@ -191,7 +191,6 @@ def logout():
 
 
 # Content
-
 @app.route('/', methods=['GET'])
 def home():
 
@@ -243,6 +242,7 @@ def home():
     
     music = contentDb['albums'].find({},{
         "_id":0,
+        'id': 1,
         'title': 1, 
         'name': 1,
         'imageURL': 1
@@ -253,6 +253,7 @@ def home():
         print( item)
 
         content['music'].append({
+            'id': item['id'],
             'title': item['title'],
             'author': item['name'],
             'imageURL': item['imageURL']
@@ -275,6 +276,69 @@ def home():
     print( list(artists))
 
     return jsonify( content)
+
+@app.route('/playlist', methods=['GET'])
+def getPlaylist():
+    playlistId =  request.args['id']
+
+    content = {
+            'head': {
+                'playlist': {},
+                'tracks': [],
+                'author': {}
+            },
+            'features': []
+        }
+
+    playlist = contentDb['albums'].find_one({'id': playlistId},
+                                                {'_id': 0,
+                                                 'id': 1,
+                                                'title': 1,
+                                                'name': 1,
+                                                'imageURL': 1,
+                                                'artistId': 1})
+    
+    author = contentDb['artists'].find_one({'id': playlist['artistId']},
+                                           {
+                                               '_id': 0,
+                                               'id': 1,
+                                               'imageURL': 1,
+                                               'name': 1
+                                           })
+    
+    content['features'].append({
+        'id': author['id'],
+        'username': author['name'],
+        'imageURL': author['imageURL']
+    })
+
+    tracks = contentDb['tracks'].find({'albumId': playlist['id']},
+                                      {
+                                          '_id': 0,
+                                          'title': 1,
+                                          'name': 1,
+                                      }).sort('trackNum')
+
+    content['head']['playlist'] = {
+        'title': playlist['title'],
+        'author': playlist['name'],
+        'imageURL': playlist['imageURL'],
+        'artistId': playlist['artistId']
+    } 
+
+    content['head']['author'] = {
+        'id': author['id'],
+        'imageURL': author['imageURL'],
+        'username': author['name']
+    }
+
+    for item in list(tracks): 
+        print( item)
+        content['head']['tracks'].append(item)
+    
+
+
+    return jsonify(content)
 
 @app.route('/watch', methods=['GET'])
 @app.route('/listen', methods=['GET'])
