@@ -1,6 +1,6 @@
 
 import "./styles/App.css";
-import {  Outlet, Route, Routes } from "react-router-dom";
+import {  Outlet, Route, Routes, ScrollRestoration } from "react-router-dom";
 
 import SignUpForm from './Pages/Auth/SignUpForm'
 import LoginForm from './Pages/Auth/LoginForm'

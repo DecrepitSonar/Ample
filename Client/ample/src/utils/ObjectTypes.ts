@@ -40,6 +40,7 @@ export type VideoItemPropType = {
     contentURL?: string
 }
 export type AudioItemPropType = {
+    id: string,
     title: string, 
     author: string,
     imageURL:string

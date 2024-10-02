@@ -18,14 +18,15 @@ function BottomMediaBar(){
             </div>
           </div>
           <div className="bottom_Mediabar_playercontrols">
-          <span>1:12 / 3:24</span>
             <span><FaRepeat/></span>
             <span><FaBackward/></span>
             <span><FaPlay/></span>
             <span><FaForward/></span>
             <span><FaShuffle/></span>
           </div>
-          <div className="bottom_Mediabar_playerOptions"></div>
+          <div className="bottom_Mediabar_playerOptions">
+            <span>1:12 / 3:24</span>
+          </div>
         </div>
       </>
     )

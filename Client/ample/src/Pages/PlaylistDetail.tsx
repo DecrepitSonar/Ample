@@ -1,13 +1,15 @@
-import React from 'react'
+import React, { useEffect, useState } from 'react'
 import '../styles/playlistStyles.css'
 import { BsHeartFill, BsPlayBtnFill } from 'react-icons/bs'
 import { HiEllipsisHorizontal } from 'react-icons/hi2'
 import { BiHeart } from 'react-icons/bi'
 import { FaPlayCircle } from 'react-icons/fa'
 import UserAvi from '../Components/UserAvi'
-import { UserAviPropType } from '../utils/ObjectTypes'
+import { AudioItemPropType, UserAviPropType, VideoItemPropType } from '../utils/ObjectTypes'
 import VideoItem from '../Components/VideoItem'
 import AudioItem from '../Components/AudioItem'
+import axios from 'axios'
+import { ScrollRestoration, useParams } from 'react-router-dom'
 
 type TrackPropType = {
   trackNum: number,
@@ -32,8 +34,34 @@ function PlaylistItem(props: TrackPropType){
     </div>
   )
 }
+
+type PlaylistPageDataType = {
+  head: {
+    playlist: AudioItemPropType,
+    tracks: [TrackPropType],
+    author: UserAviPropType
+  },
+  features: [UserAviPropType],
+  recommendations: [AudioItemPropType],
+  relatedFetures: [AudioItemPropType],
+  relatedVideos: [VideoItemPropType]
+}
+
 export default function PlaylistDetail() {
 
+  const [playListITem, setPlayyListItem ] = useState<PlaylistPageDataType>()
+  const params = useParams()
+
+  useEffect(() => {
+
+    document.body.scrollTo(0, 0); 
+
+    axios.get(`http://127.0.0.1:5000/playlist?id=${params.id}`)
+    .then( response => {
+      setPlayyListItem(response.data)
+      console.log( response.data.head )
+    })
+  },[])
   const users = [
     {
       username: 'Anderson .Paak',
@@ -147,28 +175,28 @@ export default function PlaylistDetail() {
       "imageURL": "../whylawd.jpg"
     }
   ]
-  return (
+  return ( 
     <div className='page_container'>
-        <header>
+        <div className="playlist_header">
           <div className="playlist_header" 
-               style={{backgroundImage: 'url(../whylawd.webp)'}}>
+               style={{backgroundImage: `url(https://prophile.nyc3.digitaloceanspaces.com/images/${playListITem?.head.playlist.imageURL}.jpg)`}}>
             <div className="playlist_header_overlay">
               <div className="playlist_header_item_container">
-              <div className="header_playlist_image" style={{backgroundImage: 'url(../whylawd.webp'}}/>
+              <div className="header_playlist_image" style={{backgroundImage: `url(https://prophile.nyc3.digitaloceanspaces.com/images/${playListITem?.head.playlist.imageURL}.jpg)`}}/>
                 <div className="header_playlist_track_list">
                   {
-                    tracks.map( (item, count) =>{
-                      return <PlaylistItem trackNum={count}{...item}/>
+                    playListITem?.head.tracks.map( (item, count) =>{
+                      return <PlaylistItem key={count} trackNum={count} {...item}/>
                     } )
                   }
                 </div>
               </div>
               <div className="header_playlist_detail">
               <div className="header_playlist_author_detail_container">
-                <div className="header_playlist_author_image" style={{backgroundImage: 'url(../yeslawd.jpg'}}/>
+                {/* <div className="header_playlist_author_image" style={{backgroundImage: `url(https://prophile.nyc3.digitaloceanspaces.com/images/${playListITem?.head.author.imageURL}.jpg`}}/> */}
                 <div className="header_playlist_author_detail">
-                    <span>Why Lawd</span>
-                    <span>NxWorries</span>
+                    <span>{playListITem?.head.playlist.title}</span>
+                    <span>{playListITem?.head.playlist.author}</span>
                 </div>
               </div>
             <div className="header_playlist_buttons">
@@ -179,54 +207,67 @@ export default function PlaylistDetail() {
           </div>
             </div>
           </div>          
-        </header>
+          </div>
         <div className="playlist_body_container">
-        <section>
-          <span className="section_subheading">Featured</span>
-          <div className="playlist_section_item_container">
-              {
-                  users.map( (user: UserAviPropType)  => {
-                      return <UserAvi {...user}/>
+        
+          {
+            playListITem?.features ?
+            <section>
+              <span className="section_subheading">Featured</span>
+              <div className="playlist_section_item_container">
+                  {
+                      playListITem.features.map( (user: UserAviPropType)  => {
+                          return <UserAvi {...user}/>
+                      })
+                      
+                  }
+              </div>
+            </section> 
+            : <></>
+
+          }
+          {
+            playListITem?.recommendations ? 
+            <section>
+              <span className="section_subheading">You may also like</span>
+              <div className="playlist_section_item_container">
+                {
+                  playListITem.recommendations.map( item => {
+                      return <AudioItem {...item}/>
                   })
-                  
-              }
-          </div>
-          </section>
-
-          <section>
-          <span className="section_subheading">You may also like</span>
-          <div className="playlist_section_item_container">
-            {
-              AudioItems.map( item => {
-                  return <AudioItem {...item}/>
-              })
-            }
-          </div>
-          </section>
-
-          <section>
-          <span className="section_subheading">Fetured in</span>
-          <div className="playlist_section_item_container">
-            {
-              AudioItems.map( item => {
-                  return <AudioItem {...item}/>
-              })
-              
-            }
-          </div>
-          </section>
-
-          <section>
-          <span className="section_subheading">Videos from Anderson. Paak</span>
-          <div className="playlist_section_item_container">
+                }
+              </div>
+            </section> : null
+          }
+          {
+            playListITem?.relatedFetures ? 
+            <section>
+            <span className="section_subheading">Fetured in</span>
+            <div className="playlist_section_item_container">
               {
-                Videos.map( video => {
-                    return <VideoItem {...video}/>
-                })  
+                playListITem.relatedFetures.map( item => {
+                    return <AudioItem {...item}/>
+                })
+                
               }
-          </div>
-          </section>
+            </div>
+            </section> : null
+          }
+          {
+            playListITem?.relatedVideos ? 
 
+            <section>
+            <span className="section_subheading">Videos from {playListITem?.head.author.username}</span>
+            <div className="playlist_section_item_container">
+                {
+                  playListITem.relatedVideos.map( video => {
+                      return <VideoItem {...video}/>
+                  })  
+                }
+            </div>
+            </section> : null
+          }
+              
         </div>
     </div>
   )
