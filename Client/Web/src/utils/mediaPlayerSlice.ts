@@ -10,6 +10,7 @@ const initialState = {
     queue: [],
     player: {
         isPlaying: false,
+        duration: 0,
     }
 
 }
@@ -45,7 +46,7 @@ export const AudioPlayer = createSlice({
             }
             
         }
-        
+
     },
     extraReducers: (builder: any) => {
         builder.addCase(playTrack.fulfilled, (state: any, action: any) => {

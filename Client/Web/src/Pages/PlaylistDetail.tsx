@@ -56,6 +56,7 @@ type PlaylistPageDataType = {
     author: UserAviPropType
   },
   features: [UserAviPropType],
+  albums: [AudioItemPropType],
   recommendations: [AudioItemPropType],
   relatedFetures: [AudioItemPropType],
   relatedVideos: [VideoItemPropType]
@@ -132,13 +133,13 @@ export default function PlaylistDetail() {
 
           }
           {
-            playListITem?.recommendations ? 
+            playListITem?.albums ? 
             <section>
-              <span className="section_subheading">You may also like</span>
+              <span className="section_subheading">Albums from { playListITem.head.playlist.author}</span>
               <div className="playlist_section_item_container">
                 {
-                  playListITem.recommendations.map( item => {
-                      return <AudioItem {...item}/>
+                  playListITem.albums.map( (item, count) => {
+                      return <AudioItem key={count} {...item}/>
                   })
                 }
               </div>

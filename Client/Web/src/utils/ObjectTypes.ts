@@ -16,7 +16,7 @@ export type stateAuthType = {
 export type AudioListItemPropType = {
     id: string,
     title: string, 
-    artist: string, 
+    name: string, 
     imageURL: string,
     audioURL?: string
 }

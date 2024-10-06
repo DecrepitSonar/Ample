@@ -1,4 +1,4 @@
-import React, { useRef } from "react"
+import React, { useEffect, useRef } from "react"
 import { FaBackward, FaPlay, FaForward, FaPause } from "react-icons/fa"
 import { RootState, useAppDispatch } from '../utils/store'
 import { FaRepeat, FaShuffle } from "react-icons/fa6"
@@ -7,10 +7,12 @@ import { togglePlayer } from "../utils/mediaPlayerSlice"
 
 function BottomMediaBar(){
   const audioPlayer = useSelector( (state: RootState) => state.audioPlayer)
-  const audioPlayerRef = useRef<HTMLMediaElement>(null)
+  const audioPlayerRef = useRef<HTMLAudioElement>(null)
   const dispatch = useAppDispatch()
 
-
+  useEffect(() => {
+    console.log('update')
+  }, [audioPlayer.nowPlaying])
     return(
       <>
         <div id="footer">
@@ -22,7 +24,9 @@ function BottomMediaBar(){
             <div className="Mediabar_content_info">
               {
                 audioPlayer.nowPlaying ? 
-                <audio id="audioPlayer" ref={audioPlayerRef} autoPlay  controls preload="auto">
+                <audio 
+                onTimeUpdate={ (e) => console.log( e.currentTarget.duration) }
+                id="audioPlayer" ref={audioPlayerRef} autoPlay  controls preload="auto">
                 <source src={'https://prophile.nyc3.cdn.digitaloceanspaces.com/audio/' + audioPlayer.nowPlaying.audioURL +'.mp3'} type="audio/mp3" />
               </audio> : <></>
               }
@@ -34,15 +38,12 @@ function BottomMediaBar(){
           <div className="bottom_Mediabar_playercontrols">
             <span><FaRepeat/></span>
             <span><FaBackward/></span>
-            <span onClick={() => dispatch(togglePlayer())}>{audioPlayer.player.isPlaying ? <FaPause/> : <FaPlay/>   }</span>
+            <span onClick={() => dispatch(togglePlayer(null))}>{audioPlayer.player.isPlaying ? <FaPause/> : <FaPlay/>   }</span>
             <span><FaForward/></span>
             <span><FaShuffle/></span>
           </div>
           <div className="bottom_Mediabar_playerOptions">
             <span>
-              {
-                // audioPlayerRef.current?.onplaying
-              }
             </span>
           </div>
         </div>
