@@ -336,6 +336,7 @@ def getPlaylist():
                 'tracks': [],
                 'author': {}
             },
+            'albums': [],
             'features': []
         }
 
@@ -390,6 +391,23 @@ def getPlaylist():
 
     for item in list(tracks): 
         content['head']['tracks'].append(item)
+
+    albums = contentDb['albums'].find({'artistId': author['id']},
+                                      {
+                                          '_id': 0,
+                                          'id': 1,
+                                          'title': 1,
+                                          'imageURL': 1,
+                                          'name': 1
+                                      })
+    
+    for item in albums: 
+        content['albums'].append({
+            'id': item['id'],
+            'title': item['title'],
+            'imageURL': item['imageURL'],
+            'author': item['name']
+        })
 
     return jsonify(content)
 
