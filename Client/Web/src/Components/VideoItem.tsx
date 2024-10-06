@@ -7,7 +7,7 @@ export default function VideoItem(props: VideoItemPropType){
     const navigate = useNavigate()
   
     return(
-      <div className="video_item_container" onClick={() => navigate('/video')}>
+      <div className="video_item_container" onClick={() => navigate(`/video/${props.id}`)}>
         <div className="video_item_poster"
           style={{"backgroundImage": `url(https://prophile.nyc3.digitaloceanspaces.com/images/${props.posterURL}.jpg)`}}
         />

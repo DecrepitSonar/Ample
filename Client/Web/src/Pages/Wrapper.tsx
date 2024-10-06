@@ -18,7 +18,7 @@ import { RootState } from "../utils/store.js"
 function AudioListItem(props:AudioListItemPropType){
   return(
   <div className="audio_list_item_container">
-    <img className="audio_list_item_image" src={`${props.imageURL}`}/>
+    <img className="audio_list_item_image" src={`https://prophile.nyc3.cdn.digitaloceanspaces.com/images/'${props.imageURL}.jpg`}/>
     <div className="audio_list_item_info">
       <span>{props.title}</span>
       <span>{props.artist}</span>
@@ -27,13 +27,14 @@ function AudioListItem(props:AudioListItemPropType){
   )
 }
 
-function MediumUserListItem(props:MediumUserListItemPropType){
+function MediumUserListItem(props:AudioListItemPropType){
 
   return(
     <div className="medium_user_list_item_container">
       <div className="medium_user_list_item">
-        <img className="medium_user_list_item_image" src={`${props.imageURL}`}/>
+        <img className="medium_user_list_item_image" src={props.imageURL}/>
         <div className="medium_user_list_item_info">
+          <span>{props.title}</span>
           <span>{props.artist}</span>
         </div>
       </div>
@@ -42,6 +43,8 @@ function MediumUserListItem(props:MediumUserListItemPropType){
 }
 function AsideQueue(){
   
+  const audioPlayer = useSelector( (state: RootState) => state.audioPlayer)
+
   const nowplayin = {
     "title": "86Sentra",
     "artist": "NxWorries, Anderson .Paak",
@@ -89,13 +92,17 @@ function AsideQueue(){
 
   return(
     <>
-    {/* Now Playing */}
-    <section>
+
+    {/* Now Playing */
+      audioPlayer.nowPlaying ? 
+      <section>
       <span className="aside_section_title">Now Playling</span>
       <div className="lib_collection_container">
-        <AudioListItem {...nowplayin}/>
+        <AudioListItem {...audioPlayer.nowPlaying}/>
       </div>
-    </section>
+    </section> : <span>Nothing playing </span>
+    }
+    
 
     {/* Queued  */}
 
@@ -103,8 +110,8 @@ function AsideQueue(){
       <span className="aside_section_title">Up next</span>
       <div className="lib_collection_container">
       {
-        queue.map( (item: AudioListItemPropType) => {
-          return <AudioListItem {...item}/>
+        queue.map( ( item: AudioListItemPropType ) => {
+          return <AudioListItem  {...item}/>
         })
       }
       </div>
@@ -125,16 +132,26 @@ function AsideQueue(){
   )
 }
 function AsideSaved(){
+  const auth = useSelector( ( state: RootState) => state.auth)
   return(
-    <><span className="aside_section_title">Saved</span></>
+    auth.isLoggedIn ? 
+    <span className="aside_section_title">Saved</span>
+    : <UnauthorizedAside/> 
   )
 }
 function AsideHistory(){
+
+  const auth = useSelector( ( state: RootState) => state.auth)
+
   return(
-    <><span className="aside_section_title">History</span></>
+    auth.isLoggedIn ? 
+      <span className="aside_section_title">History</span>
+      : <UnauthorizedAside/>
   )
 }
 function AsideSubscriptions() {
+
+  const auth = useSelector( ( state: RootState) => state.auth)
 
   const Subscriptions = [
     {
@@ -184,7 +201,7 @@ function AsideSubscriptions() {
     },
   ]
   return(
-    <>
+    auth.isLoggedIn ?
     <section>
       <span className="aside_section_title">Subscriptions</span>
       <div className="lib_collection_container">
@@ -194,7 +211,7 @@ function AsideSubscriptions() {
           })
         }
       </div>
-    </section></>
+    </section> : <UnauthorizedAside/>
   )
 }
 function AsideVideoCollection(){
@@ -312,6 +329,14 @@ function Library(){
 )
 }
 
+function UnauthorizedAside(){
+  return(
+        <div className="unauthorized_Aside_container">
+          <Link to='/login' className="unauthorized_Aside_button">Sign in</Link>
+        </div>
+  )
+}
+
 function Aside(){
   
   const [ asideLocation, setAsideLocation ] = useState('Library')
@@ -334,15 +359,10 @@ function Aside(){
   return(
   <aside>
     { 
-      auth.isLoggedIn ? 
         {
           "video": <AsideVideoCollection/>,
           "live":<LiveComments/>,
         }[asideLocation] || <Library/>
-        : <div className="unauthorized_Aside_container">
-          <span>Sign in to view libarary</span>
-          <Link to='/login' className="unauthorized_Aside_button">Sign in</Link>
-        </div>
     }
   </aside>
   )

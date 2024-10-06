@@ -10,15 +10,29 @@ import VideoItem from '../Components/VideoItem'
 import AudioItem from '../Components/AudioItem'
 import axios from 'axios'
 import { ScrollRestoration, useParams } from 'react-router-dom'
+import { useSelector } from 'react-redux'
+import { play } from '../utils/mediaPlayerSlice'
+import { useDispatch } from 'react-redux'
+import { RootState, useAppDispatch } from '../utils/store'
 
 type TrackPropType = {
+  id: string, 
   trackNum: number,
   title: String,
   author: String
 }
 function PlaylistItem(props: TrackPropType){
+
+  const audioPlayer = useSelector( (state: RootState) => state.audioPlayer)
+  const dispatch = useAppDispatch()
+
+  const activeTrackStyle = {
+    backgroundColor: 'rgba(198, 161, 104,.2)',
+  }
   return(
-    <div className="playlist_item_container">
+    <div className="playlist_item_container"
+    style={audioPlayer.nowPlaying.id == props.id ? activeTrackStyle : {}} 
+    onClick={() => {dispatch(play(props))}}>
       
       <div className="track_item_container">
         <span className='track_numner'>{props.trackNum + 1}</span>
@@ -51,10 +65,13 @@ export default function PlaylistDetail() {
 
   const [playListITem, setPlayyListItem ] = useState<PlaylistPageDataType>()
   const params = useParams()
+  const dispatch = useAppDispatch()
+
+  const audioPlayer = useSelector( (state: RootState) => state.audioPlayer)
 
   useEffect(() => {
 
-    document.body.scrollTo(0, 0); 
+    
 
     axios.get(`http://127.0.0.1:5000/playlist?id=${params.id}`)
     .then( response => {
@@ -62,119 +79,7 @@ export default function PlaylistDetail() {
       console.log( response.data.head )
     })
   },[])
-  const users = [
-    {
-      username: 'Anderson .Paak',
-      imageURL: 'andersonpaak.jpg'
-    },
-    {
-      username: 'Anderson .Paak',
-      imageURL: 'andersonpaak.jpg'
-    },
-    {
-      username: 'Anderson .Paak',
-      imageURL: 'andersonpaak.jpg'
-    },
-    {
-      username: 'Anderson .Paak',
-      imageURL: 'andersonpaak.jpg'
-    }
-  ]
-  const tracks = [
-    {
-      title: 'ThankU (feat. Dave Chappelle )',
-      author: 'NxWorries, Anderson . Paak, knxwledge, Dave Chappelle'
-    },
-    {
-      title: "86Senatra",
-      author: 'NxWorries, Anderson . Paak, knxwledge,'
-    },
-    {
-      title: "86Senatra",
-      author: 'NxWorries, Anderson . Paak, knxwledge,'
-    },
-    {
-      title: "86Senatra",
-      author: 'NxWorries, Anderson . Paak, knxwledge,'
-    },
-    {
-      title: "86Senatra",
-      author: 'NxWorries, Anderson . Paak, knxwledge,'
-    },
-    {
-      title: "86Senatra",
-      author: 'NxWorries, Anderson . Paak, knxwledge,'
-    },
-    {
-      title: "86Senatra",
-      author: 'NxWorries, Anderson . Paak, knxwledge,'
-    },
-    {
-      title: "86Senatra",
-      author: 'NxWorries, Anderson . Paak, knxwledge,'
-    },
-    {
-      title: "86Senatra",
-      author: 'NxWorries, Anderson . Paak, knxwledge,'
-    },
-    {
-      title: "86Senatra",
-      author: 'NxWorries, Anderson . Paak, knxwledge,'
-    },
-  ]
 
-  const Videos = [
-    {
-      "title": "Alternate Ending - Episode 606",
-      "author": "The Joe Budden Podcast",
-      "posterURL": "../alternateending.jpg",
-      "imageURL": "../jbp.jpg",
-      "views": 12313
-    },
-    {
-      "title": "Gridtz and Cornbread",
-      "author": "The Brilliant Idiot Podcast",
-      "posterURL": "../gritzandcornbread.jpg",
-      "imageURL": "../brilliantidiots.jpg",
-      "views": 12313
-    }
-    ,
-    {
-      "title": "Day Walker | Episode 10",
-      "author": "Rory & Mal Podcast",
-      "posterURL": "../daywalker.jpg",
-      "imageURL": "../rorynmal.jpg",
-      "views": 12313
-    },
-  ]
-
-  const AudioItems = [
-    {
-      "title": "Dark Times",
-      "author": "Vince Staples",
-      "imageURL": "../darktimes.jpg"
-    },
-    {
-      "title": "Tyla",
-      "author": "Tyla",
-      "imageURL": "../tyla.jpg"
-    },
-    {
-      "title": "Talk Memory",
-      "author": "BADBADNOTGOOD",
-      "imageURL": "../Bbngtalkmemory.jpg"
-    },
-    {
-      "title": "Yes Lawd",
-      "author": "NxWorries",
-      "imageURL": "../yeslawd.jpg"
-    },
-    {
-      "title": "Why Lawd",
-      "author": "Anderson .Paak",
-      "imageURL": "../whylawd.jpg"
-    }
-  ]
   return ( 
     <div className='page_container'>
         <div className="playlist_header">

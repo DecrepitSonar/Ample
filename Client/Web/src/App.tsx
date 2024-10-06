@@ -20,18 +20,14 @@ import SignUpEditForm from "./Pages/Auth/SignUpEditForm";
 import Browse from "./Pages/Browse";
 import Listen from "./Pages/Listen";
 import PlaylistDetail from "./Pages/PlaylistDetail";
-
+import VideoPlayerPage from "./videoPlayerPage";
 
 function Search(){
   return(
     <>Search</>
   )
 }
-function Video(){
-  return(
-    <>Video</>
-  )
-}
+
 function AuthWrapper() {
   return (
     <>Outlet</>
@@ -67,7 +63,7 @@ function App() {
           <Route path='/profile/:id' element={<Profile/>}/>
           <Route path='/settings/:id' element={<Settings/>}/>
           <Route path='/search' element={<Search/>}/>
-          <Route path='/video' element={<Video/>}/>
+          <Route path='/video/:videoId' element={<VideoPlayerPage/>}/>
           <Route path='/playlist/:id' element={<PlaylistDetail/>}/>
         </Route>
       </Routes>

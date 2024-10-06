@@ -1,107 +1,20 @@
 import React, { useEffect, useState } from "react";
 import { Navigate, useNavigate } from 'react-router-dom'
-import { AudioItemPropType, UserAviPropType, VideoItemPropType } from "../utils/ObjectTypes";
+import { AudioItemPropType, HomePageDataType, UserAviPropType, VideoItemPropType } from "../utils/ObjectTypes";
 import AudioItem from "../Components/AudioItem";
 import VideoItem from "../Components/VideoItem";
 import UserAvi from "../Components/UserAvi";
 import axios from "axios";
 
-type HomePageDataType = {
-  featured: [VideoItemPropType],
-  podcasts: [VideoItemPropType],
-  music: [AudioItemPropType],
-  artists: [UserAviPropType]
-}
 function Home() {
 
   const [homeData, setHomeData] = useState<HomePageDataType>()
-
   const [headerIndex, setHeaderIndex ] = useState(0)
+  const navigate = useNavigate()
 
   function updateHeaderIndex(index: number){
     setHeaderIndex(index)
   }
-
-  const users = [
-    {
-      username: "Childish Major",
-      imageURL: "https://prophile.nyc3.cdn.digitaloceanspaces.com/images/045c4400b983f685285eda35b519a5b249ff94fb.jpg",
-    },
-    {
-      username: "Doja Cat",
-      imageURL: "doja.jpg",
-    },
-    {
-      username: "The Alchemist",
-      imageURL: "thealchemist.jpg",
-    },
-    {
-      username: "Anderson .Paak",
-      imageURL: "andersonpaak.jpg",
-    },
-    {
-      username: "Knxwledge",
-      imageURL: "knx.jpg",
-    },
-    {
-      username: "6lack",
-      imageURL: "6lack2.jpg",
-    }
-  ];
-
-  const Videos = [
-    {
-      "title": "Alternate Ending - Episode 606",
-      "author": "The Joe Budden Podcast",
-      "posterURL": "alternateending.jpg",
-      "imageURL": "jbp.jpg",
-      "views": 12313
-    },
-    {
-      "title": "Gritz and Cornbread",
-      "author": "The Brilliant Idiot Podcast",
-      "posterURL": "gritzandcornbread.jpg",
-      "imageURL": "brilliantidiots.jpg",
-      "views": 12313
-    }
-    ,
-    {
-      "title": "Day Walker | Episode 10",
-      "author": "Rory & Mal Podcast",
-      "posterURL": "daywalker.jpg",
-      "imageURL": "rorynmal.jpg",
-      "views": 12313
-    },
-  ]
-
-
-  const AudioItems = [
-    {
-      "title": "Dark Times",
-      "author": "Vince Staples",
-      "imageURL": "darktimes.jpg"
-    },
-    {
-      "title": "Tyla",
-      "author": "Tyla",
-      "imageURL": "tyla.jpg"
-    },
-    {
-      "title": "Talk Memory",
-      "author": "BADBADNOTGOOD",
-      "imageURL": "Bbngtalkmemory.jpg"
-    },
-    {
-      "title": "Yes Lawd",
-      "author": "NxWorries",
-      "imageURL": "yeslawd.jpg"
-    },
-    {
-      "title": "Why Lawd",
-      "author": "Anderson .Paak",
-      "imageURL": "whylawd.jpg"
-    }
-  ]
 
   useEffect(() => {
     axios.get('http://127.0.0.1:5000/')
@@ -128,7 +41,7 @@ function Home() {
 
             {/* Header video description */}
             <div className="header_video_detail">
-              <button>Watch</button>
+              <button onClick={ () => navigate( `video/${homeData?.featured[headerIndex].id}` )}>Watch</button>
               <span>{homeData ? homeData.featured[headerIndex].title : ''}</span>
               <span>{homeData ? homeData.featured[headerIndex].author : ''}</span>
             </div>
@@ -191,6 +104,17 @@ function Home() {
                     return <UserAvi {...user}/>
                 }) : null
                 
+            }
+        </div>
+      </section>
+      <section>
+        <span className="section_subheading">Videos</span>
+        <div className="section_item_container">
+            {
+                homeData ?
+                homeData.videos.map( video => {
+                  return <VideoItem key={video.id} {...video}/>
+              }) : null
             }
         </div>
       </section>

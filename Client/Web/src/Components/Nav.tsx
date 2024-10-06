@@ -1,8 +1,8 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import '../styles/nav.css'
 import { CgMenuGridO } from "react-icons/cg";
 import { FaHome, FaTv, FaRegPlayCircle } from "react-icons/fa";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import MiniLiveComponent from './MiniLiveComponent'
 import { useSelector } from "react-redux";
 import { authState } from "../utils/Authslice";
@@ -47,7 +47,28 @@ function Nav(){
     }
   ]
   
+  const [path, setPath] = useState('')
+
   const navigate = useNavigate()
+  const location = useLocation()
+  const currentLocation = location.pathname.split('/')
+
+  useEffect(() => {
+    setPath( currentLocation[1])
+    console.log(currentLocation[1] == path)
+  }, [currentLocation])
+
+  const activeLink = {
+    border: '.5px solid rgba(198, 161, 104,.5)',
+    color: 'white',
+    backgroundColor: 'rgba(198, 161, 104,.9)' 
+  }
+  
+  const inActiveLink = {
+    border: '.5px solid rgba(198, 161, 104,.5)',
+    color: 'rgba(198, 161, 104,.9)',
+    backgroundColor: 'transparent' 
+  }
 
     return(
       <nav>
@@ -65,10 +86,18 @@ function Nav(){
           }
         </div>
         <div className="nav_links">
-          <Link to={'/'} ><span> <FaHome/> Home</span></Link>
-          <Link to={'/watch'}><span> <FaTv/> Watch</span></Link>
-          <Link to={'/listen'}><span> <FaRegPlayCircle/> Listen</span></Link>
-          <Link to={'/browse'}><span><CgMenuGridO/> Browse</span></Link>
+          <Link to={'/'} 
+          style={currentLocation[1] == '' ? activeLink : inActiveLink}
+          ><span > <FaHome/> Home</span></Link>
+          <Link to={'/watch'}
+          style={currentLocation[1] == 'watch' ? activeLink : inActiveLink}
+          ><span> <FaTv/> Watch</span></Link>
+          <Link to={'/listen'}
+          style={currentLocation[1] == 'listen' ? activeLink : inActiveLink}
+          ><span> <FaRegPlayCircle/> Listen</span></Link>
+          <Link to={'/browse'}
+          style={currentLocation[1] == 'browse' ? activeLink : inActiveLink}
+          ><span><CgMenuGridO/> Browse</span></Link>
         </div>
         <span className="nav_section_subtitle">Live</span>
         <div className="nav_section_live_collection">

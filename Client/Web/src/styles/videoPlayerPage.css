@@ -1,0 +1,80 @@
+.video_page_container{
+    /* border: 1px solid red; */
+    padding: 20px;
+}
+.videoHeaderContainer{
+    /* height: 75vh; */
+    /* border: 1px solid red; */
+    /* margin: 20px; */
+}
+.page_container .section_subheading{
+    font-size: 1.8rem;
+    /* color: #ddd; */
+}
+.video_page_container section{
+    margin: 50px 0 ;
+}
+.video_player{
+    /* height: 600px; */
+    width: 100%;
+    /* border: 1px solid red; */
+    border-radius: 20px;;
+}
+.videoDetailContainer{
+    /* height: 100px;  */
+    /* border: 1px solid red;; */
+    display: flex;
+    justify-content: space-between;
+    padding: 20px 0;
+    gap: 20px;
+    border-bottom: 1px solid rgb(221, 221, 221, .05);
+}
+.videoDetail{
+    display: flex;
+    gap: 20px;
+    flex-direction: column;
+}
+.videoDetail_title{
+    /* color: Red; */
+    font-size: 1.7rem;
+    font-weight: bold;
+}
+.authorDetailContainer{
+    display: flex;
+    gap: 20px;
+    align-items: center;
+}
+.authorAvi{
+    height: 50px;
+    width: 50px; 
+    /* border: 1px solid red; */
+    background-color: #ddd;
+    border-radius: 50%;
+    object-fit: cover;
+}
+.authorDetail{
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+}
+.AuthorName{
+    font-size: 1rem;
+}
+.videoViews{
+    color: #7d7d7d;
+}
+.videoButtons{
+    display: flex;
+}
+.videoButtons button{
+    padding: 10px;
+    height: 50px;
+    font-size: 1.2rem;
+    margin: 0 10px;
+    display: flex;
+    gap: 10px;
+    align-items: center;
+    color: #ddd;
+    background-color: transparent;
+    border: 0;
+}

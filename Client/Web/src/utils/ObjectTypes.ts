@@ -14,9 +14,11 @@ export type stateAuthType = {
 }
 
 export type AudioListItemPropType = {
+    id: string,
     title: string, 
     artist: string, 
-    imageURL: string
+    imageURL: string,
+    audioURL?: string
 }
 
 export type MediumUserListItemPropType = {
@@ -77,3 +79,10 @@ export type userSettingsType = {
 export type storeSettingsType = {
     userSettings: userSettingsType,
 }
+export type HomePageDataType = {
+    featured: [VideoItemPropType],
+    podcasts: [VideoItemPropType],
+    music: [AudioItemPropType],
+    artists: [UserAviPropType],
+    videos: [VideoItemPropType]
+  }
