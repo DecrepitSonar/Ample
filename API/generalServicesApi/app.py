@@ -30,21 +30,19 @@ def getCurrentUser():
     if not len(request.cookies): 
         return jsonify({'error':'unauthorized'}), 401
     
-    token = str(request.cookies['xrftoken'])
-    
-    user = User.query.filter_by(id=token).first()
+    sessionId = request.cookies['xrftoken']
+    id = session[sessionId]
+    print( "User Id: ", id)
 
-    userSession = session.get(request.id)
+    print( id)
 
-    print( userSession = session.get('user_id') )
+    if id == None: 
+        return jsonify({ "error": "unauthorized user "}, 401)
+
+    user = User.query.filter_by(id=id).first()
 
     if not user: 
         return jsonify({ "error": "unauthorized user "}, 401)
-    
-    if userSession == None: 
-        return jsonify({ "error": "unauthorized user "}, 401)
-
-    # print(user)
 
     return jsonify({
         "id": user.id,
@@ -91,50 +89,88 @@ def register_user():
     response.set_cookie("xrftoken", new_user.id, httponly=True, secure=True, samesite='None')
     return response 
 
-@app.route('/login', methods=['POST'])
+@app.route('/login', methods=['POST', 'GET'])
 def login_user():
 
-    print(request.json)
-    print( request.headers['User-Agent'] )
-    user = {}
+    if request.method == 'POST':
+            
+        if( request.headers['User-Agent'] == 'Ample/1 CFNetwork/1568.100.1 Darwin/24.0.0'):
+            user = User.query.filter_by(username=request.json['username']).first()
 
-    if( request.headers['User-Agent'] == 'Ample/1 CFNetwork/1568.100.1 Darwin/24.0.0'):
-        user = User.query.filter_by(username=request.json['username']).first()
-    else:
-        user = User.query.filter_by(email=request.json['email']).first()
+        else:
+            user = User.query.filter_by(email=request.json['email']).first()
 
-    print( user )
-    password = request.json['password']
+        password = request.json['password']
+        print( password )
+        
+        if user is None:
+            print("user not found")
+            return jsonify({'error': {
+                "message": "Unauthorized",
+                "errorCode": ""
+                }}), 401
+        
+        print("Found User:", user.password)
+        print( bcrypt.check_password_hash(user.password, password) )
+
+        if bcrypt.check_password_hash(user.password, password):
+
+            print( "success")
+            sessionId = str(uuid.uuid4())
+            print( "Session Id:", sessionId)
+
+            session['session'] = user.id
+            print("session id stored as:" ,session['session'])
+
+            result = jsonify({
+                "id": user.id,
+                "username": user.username,
+                "email": user.email,
+                "imageURL": user.imageURL,
+                "headerPosterURL": user.headerPosterURL,
+                "type": user.type
+            })
+
+            response = make_response(result)
+            response.set_cookie("xrftoken", sessionId, httponly=True, secure=True, samesite='None')
+            
+        else:
+
+            print("failed")
+            response = jsonify({"error": "Unauthorized"}), 401
     
-    if user is None:
-        print("user not found")
-        return jsonify({'error': {
-            "message": "Unauthorized",
-            "errorCode": ""
-            }}), 401
-    
-    print("Found User:", user.password)
-
-    if not bcrypt.check_password_hash(user.password, password):
-        print("failed")
-        return jsonify({"error": "Unauthorized"}), 401
     else:
-        sessionId = uuid.uuid4()
-        session[sessionId] = user.id
+        print('validating user')
+        if not len(request.cookies): 
+             return  jsonify({'error':'unauthorized'}), 401
+    
+        sessionId = request.cookies['xrftoken']
 
-        result =  jsonify({
-            "id": user.id,
-            "username": user.username,
-            "email": user.email,
-            "imageURL": user.imageURL,
-            "headerPosterURL": user.headerPosterURL,
-            "type": user.type
-        })
+        id = session['session']
+        print( "User Id: ", id)
 
-        response = make_response(result)
-        response.set_cookie("xrftoken", user.id, httponly=True, secure=True, samesite='None')
-        return response
-    # return jsonify({}), 200
+        # print( id)
+
+        # if id == None: 
+            # return jsonify({ "error": "unauthorized user "}, 401)
+
+        # user = User.query.filter_by(id=id).first()
+
+        # if not user: 
+            # return jsonify({ "error": "unauthorized user "}, 401)
+
+        # response = jsonify({
+        #     "id": user.id,
+        #     "username": user.username,
+        #     "email": user.email,
+        #     "imageURL": user.imageURL,
+        #     "headerPosterURL": user.headerPosterURL,
+        #     "type": user.type
+        # }), 200
+        response = 200
+
+    return response 
+      
    
 @app.route('/user', methods=['GET'])
 def getUser():
@@ -198,7 +234,8 @@ def home():
         'featured': [],
         'podcasts': [],
         'music': [],
-        'artists': []
+        'artists': [],
+        'videos': []
     }
 
     featuredVideos = contentDb['featuredvideos'].find({'type': 'Featured Video'},
@@ -230,8 +267,6 @@ def home():
                                                 "artist": 1 })
     
     for item in list(podcastVideos):
-
-        print( item, '\n' )
         content['podcasts'].append({
             'id': item['id'],
             'title': item['title'],
@@ -250,8 +285,6 @@ def home():
 
 
     for item in list(music): 
-        print( item)
-
         content['music'].append({
             'id': item['id'],
             'title': item['title'],
@@ -273,7 +306,23 @@ def home():
             'imageURL': item['imageURL']
         })
 
-    print( list(artists))
+    for item in list(contentDb['videos'].find({'type': 'music'},
+                                              {
+                                                '_id': 0,
+                                                'id': 1,
+                                                'title': 1,
+                                                'artistImageURL': 1,
+                                                'imageURL': 1,
+                                                'views': 1,
+                                                'artist': 1}).limit(3)): 
+        
+        content['videos'].append({
+            'id': item['id'],
+            'title': item['title'],
+            'author': item['artist'],
+            'imageURL': item['artistImageURL'],
+            'posterURL': item['imageURL']
+        })
 
     return jsonify( content)
 
@@ -315,15 +364,22 @@ def getPlaylist():
     tracks = contentDb['tracks'].find({'albumId': playlist['id']},
                                       {
                                           '_id': 0,
+                                          'id': 1,
                                           'title': 1,
                                           'name': 1,
+                                          'audioURL': 1,
+                                          'artistId': 1,
+                                          'imageURL': 1,
                                       }).sort('trackNum')
+    
 
     content['head']['playlist'] = {
+        'id': playlist['id'],
         'title': playlist['title'],
         'author': playlist['name'],
         'imageURL': playlist['imageURL'],
-        'artistId': playlist['artistId']
+        'artistId': playlist['artistId'],
+        # 'audioURL': playlist['audioURL']
     } 
 
     content['head']['author'] = {
@@ -333,16 +389,53 @@ def getPlaylist():
     }
 
     for item in list(tracks): 
-        print( item)
         content['head']['tracks'].append(item)
-    
-
 
     return jsonify(content)
 
 @app.route('/watch', methods=['GET'])
+
+@app.route('/video', methods=['GET'])
+def getVideo():
+    videoId = request.args['videoId']
+    
+    video = contentDb['videos'].find_one({'id': videoId}, {'_id': 0,
+                                                           'id': 1,
+                                                           'title': 1,
+                                                            'artistImageURL': 1,
+                                                            'imageURL': 1,
+                                                            'views': 1,
+                                                            'artist': 1,
+                                                            'videoURL': 1,
+                                                            'artistId': 1})
+    
+    recommendedVideos = list(contentDb['vidoes'].find({'artistId': video['artistId']}))
+
+    pageContent = {
+        'video': {
+            'id': video['id'],
+            'title': video['title'],
+            'author': video['artist'],
+            'contentURL': video['videoURL'],
+            'imageURL': video['artistImageURL'],
+            'views': video['views']
+        }, 
+        'recommendedVideos': recommendedVideos
+    }
+
+    print( pageContent)
+
+    return jsonify(pageContent)
+
 @app.route('/listen', methods=['GET'])
 @app.route('/browse', methods=['GET'])
+
+# audio
+@app.route('/audio', methods=['GET'])
+def getAudioItem():
+    print( request.args['id'])
+
+
 
 # Dashboard 
 @app.route('/dashboard', methods=['GET'])
