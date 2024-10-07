@@ -166,12 +166,12 @@ main{
   top: 0px;
   left: 0px;
   right: 0px;
-  height: 2px;
+  height: 1px;
 }
 .bottom_Mediabar_progressbar{
   height: inherit;
-  width: 25%;
   background-color: #C6A168;;
+  transition: all .5s ease-in-out;
 }
 .bottom_Mediabar_content_info_container{
   display: flex;
@@ -216,16 +216,24 @@ main{
   flex-direction: row;
   justify-content: space-around;
   align-items: center;
-  font-size: 1.5em;
+  
 }
-.bottom_Mediabar_playercontrols span:nth-child(1){
+.bottom_Mediabar_playercontrols button:nth-child(3){
   /* color: red; */
-  font-size: 1rem;
+  font-size: 2rem;
 }
-.bottom_Mediabar_playercontrols span{
-  /* border: 1px solid red; */
+.bottom_Mediabar_playercontrols button{
+  padding: 10px;
   display: flex;
   flex-direction: column;
+  font-size: 1.3em;
+  background-color: transparent;
+  border: 0px;
+  color: #737373;
+
+}
+.bottom_Mediabar_playercontrols button:hover{
+  color: #C6A168;
 }
 .bottom_Mediabar_playerOptions{
   grid-column-start: 9;

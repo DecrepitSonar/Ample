@@ -11,7 +11,7 @@ export default function Library(){
 
     const [ libstate, setLibstate ] = useState<string>("Queue")
   
-    function setNav(value: String){
+    function setNav(value: string){
       setLibstate( value )
     }
   
@@ -27,7 +27,6 @@ export default function Library(){
     return(
     <>
     <div className="aside_header">
-        <span>Library</span>
         <ul>
           <button name="Queue" style={ libstate == "Queue" ? active : inacitve}
           onClick={() => { setNav('Queue')}}><RiPlayList2Line/></button>

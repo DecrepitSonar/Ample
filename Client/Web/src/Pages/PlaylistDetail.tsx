@@ -3,17 +3,18 @@ import '../styles/playlistStyles.css'
 import { BsHeartFill, BsPlayBtnFill } from 'react-icons/bs'
 import { HiEllipsisHorizontal } from 'react-icons/hi2'
 import { BiHeart } from 'react-icons/bi'
-import { FaPlayCircle } from 'react-icons/fa'
+import { FaPause, FaPlayCircle } from 'react-icons/fa'
 import UserAvi from '../Components/UserAvi'
 import { AudioItemPropType, UserAviPropType, VideoItemPropType } from '../utils/ObjectTypes'
 import VideoItem from '../Components/VideoItem'
 import AudioItem from '../Components/AudioItem'
 import axios from 'axios'
-import { ScrollRestoration, useParams } from 'react-router-dom'
+import { ScrollRestoration, useNavigate, useParams } from 'react-router-dom'
 import { useSelector } from 'react-redux'
-import { play } from '../utils/mediaPlayerSlice'
+import { addToQueue, play } from '../utils/mediaPlayerSlice'
 import { useDispatch } from 'react-redux'
 import { RootState, useAppDispatch } from '../utils/store'
+import { RiPlayList2Line } from 'react-icons/ri'
 
 type TrackPropType = {
   id: string, 
@@ -31,10 +32,9 @@ function PlaylistItem(props: TrackPropType){
   }
   return(
     <div className="playlist_item_container"
-    style={audioPlayer.nowPlaying.id == props.id ? activeTrackStyle : {}} 
-    onClick={() => {dispatch(play(props))}}>
+    style={audioPlayer.nowPlaying.id == props.id ? activeTrackStyle : {}}>
       
-      <div className="track_item_container">
+      <div className="track_item_container" onClick={() => {dispatch(play(props))}}>
         <span className='track_numner'>{props.trackNum + 1}</span>
         <div className="track_item_detail">
           <span>{props.title}</span>
@@ -42,8 +42,10 @@ function PlaylistItem(props: TrackPropType){
         </div>
       </div>
       <div className="track_buttons">
+        {audioPlayer.nowPlaying.id == props.id ? <button style={{'color': 'rgba(198, 161, 104,1)' }}><FaPause/></button> :<></> }
         <button><BiHeart/></button>
-        <button><HiEllipsisHorizontal/></button>
+        <button onClick={(e) => { dispatch(addToQueue(props)) }}><RiPlayList2Line/></button>
+        <button className='optionsBtn'><HiEllipsisHorizontal/></button>
       </div>
     </div>
   )
@@ -67,19 +69,18 @@ export default function PlaylistDetail() {
   const [playListITem, setPlayyListItem ] = useState<PlaylistPageDataType>()
   const params = useParams()
   const dispatch = useAppDispatch()
+  const navigate = useNavigate()
 
   const audioPlayer = useSelector( (state: RootState) => state.audioPlayer)
 
   useEffect(() => {
-
-    
-
     axios.get(`http://127.0.0.1:5000/playlist?id=${params.id}`)
     .then( response => {
       setPlayyListItem(response.data)
       console.log( response.data.head )
     })
-  },[])
+
+  },[params])
 
   return ( 
     <div className='page_container'>

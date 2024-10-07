@@ -79,7 +79,16 @@ audio{
 .track_buttons{
     /* border: ddd1px solid red; */
     display: flex;
-    gap: 10px
+    gap: 10px;
+    position: relative;
+    z-index: 10;
+}
+.optionsList{
+    position: absolute;
+    width: 200px;
+    left: -200px;
+    background-color: #aaa;
+    top: px;
 }
 .track_buttons button{
     display: flex;
@@ -163,6 +172,6 @@ div::-webkit-scrollbar{
     margin: auto;
 }
 .playlist_body_container section{
-    /* border: 1px solid red; */
+    border-bottom: 1px solid rgb(221, 221, 221, .05);
     margin: 50px 0;
 }

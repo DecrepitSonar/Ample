@@ -1,6 +1,6 @@
 import React from 'react'
 import { AudioItemPropType } from '../utils/ObjectTypes'
-import { useNavigate } from 'react-router-dom'
+import { replace, useNavigate } from 'react-router-dom'
 
 export default function AudioItem(props: AudioItemPropType){
   

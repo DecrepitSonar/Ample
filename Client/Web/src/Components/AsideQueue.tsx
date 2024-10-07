@@ -9,35 +9,6 @@ export default function AsideQueue(){
   
     const audioPlayer = useSelector( (state: RootState) => state.audioPlayer)
   
-    const nowplayin = {
-      "title": "86Sentra",
-      "artist": "NxWorries, Anderson .Paak",
-      "imageURL": "../whylawd.jpg"
-    }
-  
-    const queue = [
-      {
-        "title": "MoveOn",
-        "artist": "NxWorries, Anderson .Paak",
-        "imageURL": "../whylawd.jpg"
-      },
-      {
-        "title": "KeepHer (feat. Thundercat )",
-        "artist": "NxWorries, Anderson .Paak",
-        "imageURL": "../whylawd.jpg"
-      },
-      {
-        "title": "KeepHer (feat. Thundercat )",
-        "artist": "NxWorries, Anderson .Paak",
-        "imageURL": "../whylawd.jpg"
-      },
-      {
-        "title": "KeepHer (feat. Thundercat )",
-        "artist": "NxWorries, Anderson .Paak",
-        "imageURL": "../whylawd.jpg"
-      }
-    ]
-  
     const features = [
       {
         "artist": "Anderson .Paak",
@@ -54,32 +25,36 @@ export default function AsideQueue(){
       },
     ]
   
+    console.log( audioPlayer.nowPlaying )
     return(
       <>
   
       {/* Now Playing */
-        audioPlayer.nowPlaying ? 
+        audioPlayer.nowPlaying.title != undefined ? 
         <section>
         <span className="aside_section_title">Now Playling</span>
         <div className="lib_collection_container">
           <AudioListItem {...audioPlayer.nowPlaying}/>
         </div>
-      </section> : <span>Nothing playing </span>
+      </section> : <span className="aside_section_title">Nothing Playling</span>
       }
       
   
       {/* Queued  */}
   
-      {/* <section>
+      {
+        audioPlayer.queue.length > 0 ? 
+        <section>
         <span className="aside_section_title">Up next</span>
         <div className="lib_collection_container">
         {
-          queue.map( ( item: AudioListItemPropType ) => {
+          audioPlayer.queue.map( ( item: AudioListItemPropType ) => {
             return <AudioListItem  {...item}/>
           })
         }
         </div>
-      </section> */}
+      </section> : <></>
+      }
       
       {/* Features */}
       <section>

@@ -1,6 +1,6 @@
 .video_page_container{
     /* border: 1px solid red; */
-    padding: 20px;
+    /* padding: 20px; */
 }
 .videoHeaderContainer{
     /* height: 75vh; */
@@ -18,12 +18,14 @@
     /* height: 600px; */
     width: 100%;
     /* border: 1px solid red; */
-    border-radius: 20px;;
+    /* border-radius: 20px;; */
 }
 .videoDetailContainer{
     /* height: 100px;  */
+    /* max-width: 80%; */
+    /* margin: auto; */
     /* border: 1px solid red;; */
-    display: flex;
+    /* display: flex; */
     justify-content: space-between;
     padding: 20px 0;
     gap: 20px;
@@ -43,6 +45,7 @@
     display: flex;
     gap: 20px;
     align-items: center;
+    margin: 20px;
 }
 .authorAvi{
     height: 50px;

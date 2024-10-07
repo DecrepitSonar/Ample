@@ -5,20 +5,28 @@ import { AudioListItemPropType, storeSettingsType, userSettingsType, userUpdateD
 import axios from "axios";
 
 
+type PlayerState = {
+    nowPlaying: AudioListItemPropType,
+    queue: [AudioListItemPropType],
+    player: {
+        isPlaying: boolean
+    }
+}
 const initialState = {
     nowPlaying: <AudioListItemPropType>({}),
     queue: [],
     player: {
-        isPlaying: false,
-        duration: 0,
+        isPlaying: false
     }
 
 }
 
-const playTrack = createAsyncThunk('mediaPlayer/actions', (track: AudioListItemPropType ) => {     
+const playTrack = createAsyncThunk('mediaPlayer/playTrack', (track: AudioListItemPropType ) => {     
     return track 
 })
-
+const playNextTrack = createAsyncThunk('mediaPlayer/playNextTrack', () => {
+    return
+})
 export const AudioPlayer = createSlice({
     name: 'audioPlayer',
     initialState,
@@ -45,11 +53,16 @@ export const AudioPlayer = createSlice({
                 player?.play()
             }
             
-        }
+        },
+        addToQueue: ( state, action ) => {
+            state.queue.push(action.payload)
+        },
+        returnFromQueue: ( state, action ) => {}
+
 
     },
     extraReducers: (builder: any) => {
-        builder.addCase(playTrack.fulfilled, (state: any, action: any) => {
+        builder.addCase(playTrack.fulfilled, (state: PlayerState, action: any) => {
 
             console.log( action.payload )
             const player = document.getElementById('audioPlayer')
@@ -57,14 +70,15 @@ export const AudioPlayer = createSlice({
             player.play()
             state.player.isPlaying = true
 
-            console.log( action.payload)
             state.nowPlaying = action.payload
             // console.log(action.payload )
             // console.log( state.nowPlaying)
-        })
+        }),
+        builder.addCase(playNextTrack.fulfilled, (state: PlayerState, action: any) => {})
     }
 })
 
 export const audioPlayer = AudioPlayer.reducer
 export const play = playTrack
-export const  {togglePlayer } = AudioPlayer.actions
+export const next = playNextTrack
+export const  {togglePlayer, addToQueue, returnFromQueue } = AudioPlayer.actions
