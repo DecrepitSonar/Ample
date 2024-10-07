@@ -446,6 +446,80 @@ def getVideo():
     return jsonify(pageContent)
 
 @app.route('/listen', methods=['GET'])
+def getAudioPageContent():
+    content = {
+        'featured': [],
+        'new': [],
+        'trending': [],
+        'genres': {
+            'alternative': [],
+            'rnb': [],
+            'hiphop': []
+        }
+    }
+
+    features = list(contentDb['features'].find({'type': "Music"},{'_id': 0}))
+    
+    for item in features:
+        content['featured'].append({
+            'id': item['id'],
+            'author': item['artist'],
+            'title': item['title'],
+            'imageURL': item['imageURL'],
+        })
+
+    newMusic = contentDb['albums'].find({},{'_id': 0}).sort('releaseDate').limit(5)
+
+    for item in list(newMusic):
+        content['new'].append({
+            'id': item['id'],
+            'author': item['name'],
+            'title': item['title'],
+            'imageURL': item['imageURL'],
+            
+        })
+
+    trending = contentDb['tracks'].find({},{'_id': 0}).limit(8).sort('playCount')
+    for item in list(trending):
+        content['trending'].append({
+            'id': item['id'],
+            'title': item['title'],
+            'name': item['name'],
+            'imageURL': item['imageURL'],
+            'audioURL': item['audioURL']
+        })
+
+    alternativeGenre = contentDb['albums'].find({'genre': 'Alternative'}).limit(5).sort('releaseDate')
+
+    for item in list(alternativeGenre):
+        content['genres']['alternative'].append({
+            'id': item['id'],
+            'title': item['title'],
+            'author': item['name'],
+            'imageURL': item['imageURL']
+        })
+
+    rnb = contentDb['albums'].find({'genre': 'RnB'}).limit(5).sort('releaseDate')
+    for item in list(rnb):
+        content['genres']['rnb'].append({
+            'id': item['id'],
+            'title': item['title'],
+            'author': item['name'],
+            'imageURL': item['imageURL']
+        })
+
+    hiphop = contentDb['albums'].find({'genre': 'Hip-Hop'}).limit(5).sort('releaseDate')
+    for item in list(hiphop):
+        content['genres']['hiphop'].append({
+            'id': item['id'],
+            'title': item['title'],
+            'author': item['name'],
+            'imageURL': item['imageURL']
+        })
+    return jsonify(content)
+
+
+
 @app.route('/browse', methods=['GET'])
 
 # audio

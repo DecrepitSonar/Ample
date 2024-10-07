@@ -198,11 +198,13 @@ main{
   justify-content: space-around;
   padding: 0px 10px;
   font-size: .9rem;
-}
-.Mediabar_content_info :nth-child(2){
-  font-size: 1.4rem;
   text-wrap: nowrap;
+}
+.Mediabar_content_info span{
   text-overflow: ellipsis;
+}
+.Mediabar_content_info span:nth-child(2){
+  font-size: 1.4rem;
 }
 .bottom_Mediabar_playercontrols{
   /* height: 50px; */
@@ -320,7 +322,6 @@ main{
   border-bottom: 1px solid rgb(221, 221, 221, .05);
   max-width: 95%;
   margin: 50px auto;
-  /* padding: 0px 10px 20px; */
 }
 .header_progress_bar_container{
   height: 1px; 
@@ -464,11 +465,17 @@ main{
   background-position: center;
   background-size: cover;
   background-repeat: no-repeat;
+  overflow: hidden;
+
 }
 .audio_item_info{
   display: flex;
   flex-direction: column;
   margin-top: 10px;
+  max-width: 200px;
+  text-wrap: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 .audio_item_info span:nth-child(1){
 font-weight: bold;
@@ -531,5 +538,4 @@ font-weight: bold;
 .h_list{
   display: flex;
   gap: 20px;
-  justify-content: space-between;
 }

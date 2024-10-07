@@ -59,13 +59,13 @@ function Nav(){
   }, [currentLocation])
 
   const activeLink = {
-    border: '.5px solid rgba(198, 161, 104,.5)',
+    border: '.5px solid rgba(198, 161, 104,.1)',
     color: 'white',
-    backgroundColor: 'rgba(198, 161, 104,.9)' 
+    backgroundColor: 'rgba(198, 161, 104,.5)' 
   }
   
   const inActiveLink = {
-    border: '.5px solid rgba(198, 161, 104,.5)',
+    border: '.5px solid rgba(198, 161, 104,.2)',
     color: 'rgba(198, 161, 104,.9)',
     backgroundColor: 'transparent' 
   }

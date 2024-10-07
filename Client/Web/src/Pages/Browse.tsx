@@ -1,7 +1,8 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import '../styles/Browser.css'
 import AudioItem from '../Components/AudioItem'
 import UserAvi from '../Components/UserAvi'
+import axios from 'axios'
 
 function Search(){
     return(
@@ -11,10 +12,12 @@ function Search(){
     )
 }
 
+
 export default function Browse() {
 
     const [searchQuery, setSearchQuery ] = useState('')
     const [filter, setFilter ] = useState('All')
+
 
   return (
     <div className='page_container browserContainer '>
