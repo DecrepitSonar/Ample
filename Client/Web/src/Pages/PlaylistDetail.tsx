@@ -35,14 +35,14 @@ function PlaylistItem(props: TrackPropType){
     style={audioPlayer.nowPlaying.id == props.id ? activeTrackStyle : {}}>
       
       <div className="track_item_container" onClick={() => {dispatch(play(props))}}>
-        <span className='track_numner'>{props.trackNum + 1}</span>
+      {audioPlayer.nowPlaying.id == props.id ? <button style={{'color': 'rgba(198, 161, 104,1)' }}><FaPause/></button> :
+      <span className='track_numner'>{props.trackNum + 1}</span> }
         <div className="track_item_detail">
           <span>{props.title}</span>
           <span>{props.author}</span>
         </div>
       </div>
       <div className="track_buttons">
-        {audioPlayer.nowPlaying.id == props.id ? <button style={{'color': 'rgba(198, 161, 104,1)' }}><FaPause/></button> :<></> }
         <button><BiHeart/></button>
         <button onClick={(e) => { dispatch(addToQueue(props)) }}><RiPlayList2Line/></button>
         <button className='optionsBtn'><HiEllipsisHorizontal/></button>
@@ -90,13 +90,7 @@ export default function PlaylistDetail() {
             <div className="playlist_header_overlay">
               <div className="playlist_header_item_container">
               <div className="header_playlist_image" style={{backgroundImage: `url(https://prophile.nyc3.digitaloceanspaces.com/images/${playListITem?.head.playlist.imageURL}.jpg)`}}/>
-                <div className="header_playlist_track_list">
-                  {
-                    playListITem?.head.tracks.map( (item, count) =>{
-                      return <PlaylistItem key={count} trackNum={count} {...item}/>
-                    } )
-                  }
-                </div>
+                
               </div>
               <div className="header_playlist_detail">
               <div className="header_playlist_author_detail_container">
@@ -117,6 +111,21 @@ export default function PlaylistDetail() {
           </div>
         <div className="playlist_body_container">
         
+
+                { 
+                  playListITem != undefined  && playListITem.head.tracks.length > 0 ? 
+                    <div className="header_playlist_track_list">
+                      <div className="trackSectionHeader">
+                        <span className="section_subheading">Tracks</span>
+                        <span className="section_subheading">{playListITem.head.tracks.length} Tracks</span>
+                      </div>
+                      {
+                        playListITem?.head.tracks.map( (item, count) =>{
+                          return <PlaylistItem key={count} trackNum={count} {...item}/>
+                        } )
+                      }
+                    </div> : <></>
+                 }
           {
             playListITem?.features ?
             <section>
@@ -161,7 +170,7 @@ export default function PlaylistDetail() {
             </section> : null
           }
           {
-            playListITem?.relatedVideos ? 
+            playListITem?.relatedVideos.length > 0 ? 
 
             <section>
             <span className="section_subheading">Videos from {playListITem?.head.author.username}</span>

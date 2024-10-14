@@ -1,25 +1,30 @@
-import React, { useEffect, useRef, useState } from "react"
+import React, { createRef, useEffect, useRef, useState } from "react"
 import { FaBackward, FaPlay, FaForward, FaPause } from "react-icons/fa"
 import { RootState, useAppDispatch } from '../utils/store'
 import { FaRepeat, FaShuffle } from "react-icons/fa6"
 import { useSelector } from "react-redux"
 import { next, togglePlayer } from "../utils/mediaPlayerSlice"
+import { useNavigate } from "react-router-dom"
+import { BiVolumeFull, BiVolumeLow, BiVolumeMute } from "react-icons/bi"
 
 function BottomMediaBar(){
   const audioPlayer = useSelector( (state: RootState) => state.audioPlayer)
-  const progressbarRef = useRef()
+  const progressbarRef = createRef<HTMLDivElement>()
   const dispatch = useAppDispatch()
+  const navigate = useNavigate()
+
+  const audioPlayerElement = createRef<HTMLAudioElement>()
 
   const [currentPlayerTime, setcurrentPlayerTime] = useState('00:00')
   const [playerDuration, setPlayerDuration] = useState('00:00')
-  
+  const [volume, setVolume ] = useState()
 
   function updatePlayerTime(e){
     setcurrentPlayerTime(`${Math.floor(e.currentTarget.currentTime / 60)  }:${(  Math.floor(e.currentTarget.currentTime % 60)).toFixed(0).padStart(2, 0)}`)
     // update progress bar 
     const progressbar = document.getElementById('progressBar')
     
-    progressbar.style.width =  ((e.currentTarget.currentTime / e.currentTarget.duration) * 100 ) + '%'
+    progressbarRef.current.style.width =  ((e.currentTarget.currentTime / e.currentTarget.duration) * 100 ) + '%'
   
   }
 
@@ -30,6 +35,9 @@ function BottomMediaBar(){
   function returnFromQueue(): any {
     throw new Error("Function not implemented.")
   }
+  useEffect(() => {
+    console.log( audioPlayer.nowPlaying.imageURL != undefined)
+  },[])
 
     return(
       <>
@@ -37,15 +45,20 @@ function BottomMediaBar(){
           <div className="bottom_Mediabar_progressbar_container">
             <div ref={progressbarRef}id='progressBar' className="bottom_Mediabar_progressbar"/>
           </div>
-          <div className="bottom_Mediabar_content_info_container">
-            <img className="Mediabar_content_artwork" src={'https://prophile.nyc3.cdn.digitaloceanspaces.com/images/' + audioPlayer.nowPlaying.imageURL + '.jpg'}/>
+          <div className="bottom_Mediabar_content_info_container" onClick={() => navigate(`/playlist/${audioPlayer.nowPlaying.albumId}`)}>
+            <img className="Mediabar_content_artwork" src={
+              audioPlayer.nowPlaying.imageURL != undefined ? 'https://prophile.nyc3.cdn.digitaloceanspaces.com/images/' + audioPlayer.nowPlaying.imageURL + '.jpg' : '/album.jpg'} />
             <div className="Mediabar_content_info">
               {
                 audioPlayer.nowPlaying ? 
                 <audio 
-                onCanPlay={(e) => updatePlayerDuration(e) }
+                onCanPlay={(e) => {
+                  updatePlayerDuration(e)
+                  setVolume(e.currentTarget.volume)
+                } }
+                ref={audioPlayerElement}
                 onTimeUpdate={ (e) => updatePlayerTime(e) }
-                id="audioPlayer" autoPlay  controls preload="auto">
+                id="audioPlayer" autoPlay controls preload="auto">
                 <source src={
                   audioPlayer.nowPlaying.imageURL != '' ? 
                    'https://prophile.nyc3.cdn.digitaloceanspaces.com/audio/' + audioPlayer.nowPlaying.audioURL +'.mp3': 'album.jpg' } type="audio/mp3"/>
@@ -67,6 +80,30 @@ function BottomMediaBar(){
             <span>
               {currentPlayerTime} / {playerDuration}
             </span>
+            
+            <div className="volume_control_container">
+              <input type="range" 
+                  value={audioPlayerElement.current?.volume} 
+                  onChange={(e) => {
+                    audioPlayerElement.current.volume =  parseInt(e.currentTarget.value) / 100 
+                    setVolume(e.currentTarget.value / 100)
+                  }}
+              />
+              {
+               (() => {
+                const currentVolume =  audioPlayerElement.current?.volume
+                return volume > 0.5 ?  
+                <button><BiVolumeFull/> </button> : 
+                <button>
+                  {
+                    volume > 0 &&  volume <= 0.5 ? 
+                    <BiVolumeLow/>  : <BiVolumeMute/>
+                  }
+                </button>
+               })() 
+              }
+              
+            </div>
           </div>
         </div>
       </>

@@ -18,7 +18,8 @@ export type AudioListItemPropType = {
     title: string, 
     name: string, 
     imageURL: string,
-    audioURL?: string
+    audioURL?: string,
+    albumId?: string
 }
 
 export type MediumUserListItemPropType = {

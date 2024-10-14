@@ -5,7 +5,13 @@ nav{
     grid-row-start: 1;
     grid-row-end: 12;
     border-right: 1px solid #262629;
-    padding: 20px;
+    /* padding: 20px; */
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+  }
+  .nav_main{
+    margin: 20px;
   }
   .logo{
     /* border: 1px solid red; */
@@ -16,45 +22,53 @@ nav{
   }
   .nav_avi_container{
     display: flex;
-    flex-direction: column;
-    justify-content: space-between;
+    /* flex-direction: column; */
+    /* justify-content: space-between; */
     /* padding: 10px; */
     text-align: center;
+    align-items: center;
+    padding: 20px;
     font-size: 13px;
     font-weight: bold;
     color: #aaa;
+    /* border: 1px solid red; */
+    border-top: 1px solid #262629;
   }
-  .nav_avi_container button{
-    padding: 10px 0;
-
-    /* width: 100%; */
+  .nav_avi_container span{
+    /* border: 1px solid red; */
+    font-size: .9rem;
+    padding: 10px;
+  }
+  .nav_auth_button_container{
+    padding: 20px;
+    display: flex;
+    /* justify-content: space-between; */
+  }
+  .nav_auth_button_container button{
+    padding: 5px 20px;
+    text-wrap: nowrap;
     margin: 5px;
     border-radius: 5px;
-    
-    /* color: white; */
-    
-    /* background-color: #C6A168; */
   }
-  .nav_avi_container button:nth-child(1){
-    /* background-color: rgba(198, 161, 104,.5); */
-    background-color: transparent;
+  .nav_auth_button_container button:nth-child(1){
+    background-color: rgba(198, 161, 104,.8);
     border: 1px solid rgba(198, 161, 104,.8);
-    color: rgba(198, 161, 104 ,.8);
-    font-weight: bold;
+    color: #fff;
   }
-  .nav_avi_container button:nth-child(1):hover{
+  .nav_auth_button_container button:nth-child(1):hover,
+  .nav_auth_button_container button:nth-child(2):hover{
     background-color: rgba(198, 161, 104,.8);
     color: #fff
   }
-  .nav_avi_container button:nth-child(2){
-    /* border: 1px solid #C6A168; */
-    border: 0;
+  .nav_auth_button_container button:nth-child(2){
+    border: 1px solid rgba(198, 161, 104,.8);
+    /* border: 0; */
     color: #C6A168;
     background-color: transparent;
   }
   .nav_avi{
-    height: 50px; 
-    width: 50px;
+    height: 30px; 
+    width: 30px;
     background-color: #aaa;;
     border-radius: 50%;
     margin: 10px auto;

@@ -7,6 +7,7 @@ import MiniLiveComponent from './MiniLiveComponent'
 import { useSelector } from "react-redux";
 import { authState } from "../utils/Authslice";
 import { RootState } from "../utils/store";
+import { PiMagnifyingGlass } from "react-icons/pi";
 
 function Nav(){
   // const [ loggedIn, setLogin ] = useState(false)
@@ -72,19 +73,9 @@ function Nav(){
 
     return(
       <nav>
+        <div className="nav_main">
         <div className="logo">Logo</div>
-        <div className="nav_avi_container">
-          {
-            auth.isLoggedIn ? 
-            < div onClick={ (e: React.SyntheticEvent) => navigate(`/profile/${auth.user.id}`) }><div className="nav_avi" 
-            style={{'backgroundImage': `url(${auth.user.imageURL}`}}/>
-            <span className="nav_username">{auth.user.username}</span></div> :
-            <>
-            <button onClick={() => navigate("/login")}>Login</button>
-            <button onClick={() => navigate("/signup")}>Sign up</button>
-            </>
-          }
-        </div>
+
         <div className="nav_links">
           <Link to={'/'} 
           style={currentLocation[1] == '' ? activeLink : inActiveLink}
@@ -97,7 +88,7 @@ function Nav(){
           ><span> <FaRegPlayCircle/> Listen</span></Link>
           <Link to={'/browse'}
           style={currentLocation[1] == 'browse' ? activeLink : inActiveLink}
-          ><span><CgMenuGridO/> Browse</span></Link>
+          ><span><PiMagnifyingGlass/> Search</span></Link>
         </div>
         <span className="nav_section_subtitle">Live</span>
         <div className="nav_section_live_collection">
@@ -109,6 +100,22 @@ function Nav(){
           }
           
         </div>
+
+        </div>
+
+      
+          {
+            auth.isLoggedIn ? 
+            < div onClick={ (e: React.SyntheticEvent) => navigate(`/profile/${auth.user.id}`)} className='nav_avi_container'><div className="nav_avi" 
+            style={{'backgroundImage': `url(${auth.user.imageURL}`}}/>
+            <span className="nav_username">{auth.user.username}</span></div> :
+            <>
+            <div className="nav_auth_button_container">
+              <button onClick={() => navigate("/login")}>Login</button>
+              <button onClick={() => navigate("/signup")}>Sign up</button>
+            </div>
+            </>
+          }
   
       </nav>
     )

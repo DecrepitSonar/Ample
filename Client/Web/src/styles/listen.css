@@ -20,7 +20,9 @@
     height: 400px; 
     background-repeat: no-repeat;
     background-size: cover;
+    background-position: center;
     border-radius: 10px;
+    transition: all .5s ease-in-out;
 }
 .listen_page_header_overlay{
     height: inherit;
@@ -53,7 +55,8 @@
     background-position: center;
     background-size: cover;
     background-repeat: no-repeat;
-    border-radius: 10px;;
+    border-radius: 10px;
+    transition: all .5s ease-idn-out;
 }
 
 .listen_header_track_detail_container{
@@ -68,11 +71,12 @@
     font-size: 4rem;
 }
 .track_cta{
-    width: 100px;
-    margin: 10px 0;
-    border-radius: 10px;
+    width: 125px;
+    margin: 20px 0;
+    padding: 5px 20px;
+    border-radius: 20px;
     font-weight: bold;
-    background-color: #c6a168;
+    background-color: rgba(198, 161, 104,.5);
     border: 0;
     color: #fff;
 }
@@ -85,6 +89,33 @@
     /* grid-template-columns: auto; */
     gap: 5px;
     padding: 5px
+}
+
+/* pagination */
+.paginationButtonContainer{
+    /* height: 10px; */
+    position: absolute;
+    bottom:  0px;
+    right: 0px;
+    left: 0px;
+    display: flex;
+    justify-content: space-around;
+}
+.paginationBtns{
+    /* border:1px solid red; */
+    display: flex;
+    gap: 10px;
+    padding: 10px;
+}
+.paginationBtn{
+    height: 10px; 
+    width: 10px; 
+    border: 1px solid rgba(198, 161, 104,1);;
+    border-radius: 50%;
+    transition: all .3 ease-in-out;
+}
+.paginationBtn:hover{
+    background-color:  rgba(198, 161, 104,1);
 }
 
 .small_list_item_container{

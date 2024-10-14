@@ -106,7 +106,7 @@ main{
 
 .content::-webkit-scrollbar{
   /* display: none; */
-  /* color: #C6A168 */
+  color: #C6A168
 }
 .page_body{
   margin: 20px;
@@ -167,6 +167,11 @@ main{
   left: 0px;
   right: 0px;
   height: 1px;
+  transition: all .5s;
+}
+.bottom_Mediabar_progressbar_container:hover{
+  height: 20px;
+  top: -20px;
 }
 .bottom_Mediabar_progressbar{
   height: inherit;
@@ -246,9 +251,50 @@ main{
   display: flex;
   align-items: center;
   justify-content: right;
-  padding: 20px;
+  /* padding: 20px; */
+  gap: 50px;
+  /* justify-content: space-between; */
 }
-
+.bottom_Mediabar_playerOptions button{
+  padding: 5px;
+  display: flex;
+  align-items: center;
+  font-size: 1.4rem;
+  background-color: transparent;
+  border: 0;
+  color: #737373
+}
+.volume_control_container{
+  display: flex;
+  gap: 20px;;
+  /* position: absolute; */
+  /* top: -60px; */
+  /* right: 20px; */
+  background-color: #0b0b0d;
+  padding: 10px;
+  align-items: center;
+}
+.volume_control_container input[type='range']{
+  /* -webkit-appearance: none; */
+  /* background-color: red; */
+  outline: none;
+  height: 10px; 
+}
+.volume_control_container input[type='range']::-webkit-slider-thumb{
+  /* -webkit-appearance: none;; */
+  /* background-color: red;; */
+  /* height: 20px;  */
+  /* width: 20px; */
+}
+.volume_control_container input[type='range']::-moz-range-thumb{
+  /* -webkit-appearance: none; */
+  /* height: 10px;  */
+  /* width: 200px;  */
+  /* background-color: red; */
+}
+.volume_control_container input[type='range']::-webkit-slider-runnable-track{
+  /* background-color: orange; */
+}
 /* /Home */
 .page_container{
   /* border: 1px solid red; */

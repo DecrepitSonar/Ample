@@ -22,7 +22,7 @@ audio{
     margin: auto;
     display: flex;
     align-items: center;
-    justify-content: space-between;
+    justify-content:space-between;
     padding: 50px;
 }
 .header_playlist_image{
@@ -35,11 +35,25 @@ audio{
 }
 .header_playlist_track_list{
     /* border: 1px solid red; */
-    width: 60%;
-    max-height: 400px;
+    /* width:8%; */
+    /* max-height: 400px; */
     overflow-y: scroll;
+    gap: 20px
 }
-
+.trackSectionHeader{
+    display: flex;
+    flex-direction: column;
+}
+.trackSectionHeader span{
+    margin: 5px 0;
+}
+.trackSectionHeader span:nth-child(1){
+    font-weight: bold;
+}
+.trackSectionHeader span:nth-child(2){
+    color: #6a6a6a;
+    font-size: .9rem;
+}
 .playlist_item_container{
     display: flex;
     gap: 10px;
@@ -52,13 +66,15 @@ audio{
 }
 .playlist_item_container:hover{
     background-color: rgba(198, 161, 104,.8);
+    /* border: 1px solid red; */
 }
 .track_numner{
-    padding: 20px;
+    padding: 10px;
     color: #c6a168;
 }
 .track_item_container{
     /* border: 1px solid red; */
+    width: 100%;
     display: flex;
     align-items: center;;
 }
@@ -90,7 +106,8 @@ audio{
     background-color: #aaa;
     top: px;
 }
-.track_buttons button{
+.track_buttons button,
+.track_item_container button{
     display: flex;
     align-items: center;
     padding: 10px;
@@ -98,6 +115,9 @@ audio{
     background-color: transparent;
     color: #fff;
     font-size: 1.4rem;
+}
+.track_buttons button:hover{
+    color: #c6a168;
 }
 .header_playlist_detail{
     height: 100px; 
@@ -156,12 +176,13 @@ audio{
 .header_playlist_buttons button:first-child{
     font-size: 4rem;
     color: #c6a168;
+    /* border: 1px solid red; */
 }
 .playlist_section_item_container{
     display: flex;
     gap: 50px;
     padding: 20px 0;
-    overflow:scroll
+    overflow: scroll;
     
 }
 div::-webkit-scrollbar{
