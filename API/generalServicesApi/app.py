@@ -337,7 +337,8 @@ def getPlaylist():
                 'author': {}
             },
             'albums': [],
-            'features': []
+            'features': [],
+            'relatedVideos': []
         }
 
     playlist = contentDb['albums'].find_one({'id': playlistId},
@@ -371,8 +372,9 @@ def getPlaylist():
                                           'audioURL': 1,
                                           'artistId': 1,
                                           'imageURL': 1,
+                                          'albumId':1,
                                       }).sort('trackNum')
-    
+
 
     content['head']['playlist'] = {
         'id': playlist['id'],
@@ -380,7 +382,6 @@ def getPlaylist():
         'author': playlist['name'],
         'imageURL': playlist['imageURL'],
         'artistId': playlist['artistId'],
-        # 'audioURL': playlist['audioURL']
     } 
 
     content['head']['author'] = {
@@ -401,13 +402,36 @@ def getPlaylist():
                                           'name': 1
                                       })
     
-    for item in albums: 
+    for item in list(albums): 
         content['albums'].append({
             'id': item['id'],
             'title': item['title'],
             'imageURL': item['imageURL'],
             'author': item['name']
         })
+
+    related = contentDb['videos'].find({'artistId': author['id']},{'_id': 0,
+                                                                            'id': 1,
+                                                                            'title': 1,
+                                                                            'artistImageURL': 1,
+                                                                            'imageURL': 1,
+                                                                            'views': 1,
+                                                                            'artist': 1,
+                                                                            'videoURL': 1,
+                                                                            'artistId': 1})
+    
+    for item in list(related): 
+        # print( item, '\n' )
+        content['relatedVideos'].append({
+            'id': item['id'],
+            'title': item['title'],
+            'author': item['artist'],
+            'contentURL': item['videoURL'],
+            'imageURL': item['artistImageURL'],
+            # 'views': video['views']
+        })
+
+    # print( content)
 
     return jsonify(content)
 
@@ -455,7 +479,8 @@ def getAudioPageContent():
             'alternative': [],
             'rnb': [],
             'hiphop': []
-        }
+        },
+        'playlists': []
     }
 
     features = list(contentDb['features'].find({'type': "Music"},{'_id': 0}))
@@ -468,7 +493,7 @@ def getAudioPageContent():
             'imageURL': item['imageURL'],
         })
 
-    newMusic = contentDb['albums'].find({},{'_id': 0}).sort('releaseDate').limit(5)
+    newMusic = contentDb['albums'].find({'type': 'Album'},{'_id': 0}).sort('releaseDate').limit(5)
 
     for item in list(newMusic):
         content['new'].append({
@@ -486,10 +511,11 @@ def getAudioPageContent():
             'title': item['title'],
             'name': item['name'],
             'imageURL': item['imageURL'],
-            'audioURL': item['audioURL']
+            'audioURL': item['audioURL'],
+            'albumId': item['albumId']
         })
 
-    alternativeGenre = contentDb['albums'].find({'genre': 'Alternative'}).limit(5).sort('releaseDate')
+    alternativeGenre = contentDb['albums'].find({'genre': 'Alternative','type':'Album'}).limit(5).sort('releaseDate')
 
     for item in list(alternativeGenre):
         content['genres']['alternative'].append({
@@ -499,7 +525,7 @@ def getAudioPageContent():
             'imageURL': item['imageURL']
         })
 
-    rnb = contentDb['albums'].find({'genre': 'RnB'}).limit(5).sort('releaseDate')
+    rnb = contentDb['albums'].find({'genre': 'RnB','type':'Album'}).limit(5).sort('releaseDate')
     for item in list(rnb):
         content['genres']['rnb'].append({
             'id': item['id'],
@@ -508,7 +534,7 @@ def getAudioPageContent():
             'imageURL': item['imageURL']
         })
 
-    hiphop = contentDb['albums'].find({'genre': 'Hip-Hop'}).limit(5).sort('releaseDate')
+    hiphop = contentDb['albums'].find({'genre': 'Hip-Hop', 'type':'Album'}).limit(5).sort('releaseDate')
     for item in list(hiphop):
         content['genres']['hiphop'].append({
             'id': item['id'],
@@ -516,7 +542,98 @@ def getAudioPageContent():
             'author': item['name'],
             'imageURL': item['imageURL']
         })
+    
+    playlists = contentDb['albums'].find({'type':'playlist'},{'_id': 0}).limit(5).sort('datePosted')
+    for item in list(playlists):
+        content['playlists'].append({
+            'id': item['id'],
+            'title': item['title'],
+            'imageURL': item['imageURL']
+        })
+
     return jsonify(content)
+
+@app.route('/search', methods=['GET'])
+def handleSearchQuery():
+    print( list(request.args))
+
+    filterQuery = request.args['filter']
+    searchQuery = request.args['query']
+    searchResult = []
+
+    def queryAll(): 
+        if searchQuery != '': 
+            collections = contentDb.list_collection_names()
+            results = []
+
+            collectionQueries = {
+                'albums': queryAlbums,
+                'tracks': queryTrack,
+                'artists': queryUsers,
+                'videos' : queryVideos
+            }   
+
+            for colletion in collections:
+
+                if( colletion == 'featuredvideos'):
+                    continue
+                
+                for item in collectionQueries[colletion]():
+                    print( item )
+
+                    results.append(item)
+                    
+                print( results  )
+
+            
+            return results 
+
+        return 
+
+    def queryUsers():
+        if searchQuery != '': 
+            return list(contentDb['artists'].find({'name': {'$regex': f'^{ searchQuery }','$options': 'i'}}, {'_id': 0}))
+        return
+    
+    def queryVideos():
+        if searchQuery != '': 
+            return list(contentDb['videos'].find({'title': {'$regex': f'^{ searchQuery }','$options': 'i'}}, {'_id': 0}))
+        return
+    
+    def queryAlbums():
+        if searchQuery != '': 
+            return list(contentDb['albums'].find({'title': {'$regex': f'^{ searchQuery }','$options': 'i'},'type': 'Album'}, {'_id': 0}))
+        return []
+    
+    def queryPodcasts(): 
+        if searchQuery != '': 
+            return list(contentDb['podcasts'].find({'name': {'$regex': f'^{ searchQuery }','$options': 'i'}}, {'_id': 0}))
+        return []
+    
+    def queryPlaylists():
+        if searchQuery != '': 
+            return list(contentDb['albums'].find({'title': {'$regex': f'^{ searchQuery }','$options': 'i'},'type': 'playlist'}, {'_id': 0}))
+        return []
+    
+    def queryTrack():
+        if searchQuery != '': 
+            return list(contentDb['tracks'].find({'title': {'$regex': f'^{ searchQuery }','$options': 'i'},'type': 'playlist'}, {'_id': 0}))
+        return []
+    
+    filter = {
+        'All': queryAll,
+        'User': queryUsers,
+        'Video': queryVideos,
+        'Album': queryAlbums,
+        'Podcast': queryPodcasts,
+        'Playlist': queryPlaylists,
+        'track': queryTrack
+    }
+
+    
+    print( searchResult )
+
+    return jsonify(filter[filterQuery]())
 
 
 
