@@ -1,9 +1,9 @@
 import React, { useEffect, useState } from "react";
 import { Navigate, useNavigate } from 'react-router-dom'
-import { AudioItemPropType, HomePageDataType, UserAviPropType, VideoItemPropType } from "../utils/ObjectTypes";
-import AudioItem from "../Components/AudioItem";
-import VideoItem from "../Components/VideoItem";
-import UserAvi from "../Components/UserAvi";
+import { AudioItemPropType, HomePageDataType, UserAviPropType, VideoItemPropType } from "../../utils/ObjectTypes";
+import AudioItem from "../../Components/AudioItem";
+import VideoItem from "../../Components/VideoItem";
+import UserAvi from "../../Components/UserAvi";
 import axios from "axios";
 
 function Home() {

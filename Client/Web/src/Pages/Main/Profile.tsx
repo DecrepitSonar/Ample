@@ -1,13 +1,12 @@
 import React, { useEffect, useState } from 'react'
-import '../styles/profile.css'
 import { Link, Navigate, replace, useNavigate, useParams } from 'react-router-dom'
-import { activeNavButtonStyle, inActiveButtonStyle } from '../utils/computedSyles'
+import { activeNavButtonStyle, inActiveButtonStyle } from '../../utils/computedSyles'
 import axios from 'axios'
-import { userAuthType } from '../utils/ObjectTypes'
+import { userAuthType } from '../../utils/ObjectTypes'
 import { useSelector } from 'react-redux'
 import { RootState } from '@reduxjs/toolkit/query'
-import AudioItem from '../Components/AudioItem'
-import VideoItem from '../Components/VideoItem'
+import AudioItem from '../../Components/AudioItem'
+import VideoItem from '../../Components/VideoItem'
 
 
 

@@ -1,0 +1,14 @@
+.dashboard{
+    border: 1px solid red;
+    width: 100vw;
+    height: 100vh;
+    display: grid;
+    /* background-color: rgb(33, 33, 41); */
+    grid-template-columns: repeat(12, 1fr);
+    grid-template-rows: repeat(12, 1fr);
+    overflow: hidden;
+}
+
+.dashboard_main{
+    
+}

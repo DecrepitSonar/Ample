@@ -62,7 +62,7 @@ button:focus-visible {}
 @media screen and ( min-width: 1440px){
   .content{
     grid-column-start: 2;
-    grid-column-end: 11;
+    grid-column-end: 13;
     grid-row-start: 1;
     grid-row-end: 12;
     overflow: scroll;

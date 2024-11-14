@@ -6,14 +6,19 @@ import { useSelector } from "react-redux"
 import { next, togglePlayer } from "../utils/mediaPlayerSlice"
 import { useNavigate } from "react-router-dom"
 import { BiVolumeFull, BiVolumeLow, BiVolumeMute } from "react-icons/bi"
+import { LuListMinus } from "react-icons/lu"
+import Aside from "./Aside"
 
-function BottomMediaBar(){
+function BottomMediaBar(props){
+  const [ toggldState, setToggleState ] = useState<boolean>(false)
+  
   const audioPlayer = useSelector( (state: RootState) => state.audioPlayer)
   const progressbarRef = createRef<HTMLDivElement>()
   const dispatch = useAppDispatch()
   const navigate = useNavigate()
 
   const audioPlayerElement = createRef<HTMLAudioElement>()
+  const asideRef = createRef<HTMLElement>()
 
   const [currentPlayerTime, setcurrentPlayerTime] = useState('00:00')
   const [playerDuration, setPlayerDuration] = useState('00:00')
@@ -102,9 +107,10 @@ function BottomMediaBar(){
                 </button>
                })() 
               }
-              
+              <button onClick={() => setToggleState(!toggldState)}><LuListMinus/> </button>
             </div>
           </div>
+          <Aside toggldState={toggldState}/>
         </div>
       </>
     )

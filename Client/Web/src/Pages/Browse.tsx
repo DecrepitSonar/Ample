@@ -9,14 +9,17 @@ import { useNavigate } from 'react-router-dom'
 
 
 const UserSearchResultSection = (props: UserAviPropType) => {
+    const navigate = useNavigate()
     return(
-        <div className="search_section">
+        <div className="search_section" onClick={() => navigate(`/profile/${props.id}`)}>
             <img className="section_avi" src={`https://prophile.nyc3.digitaloceanspaces.com/images/${props.imageURL}.jpg`}/>
             <div className="section_detail">
-                <span>User</span>
-                <span>{props.name}</span>
-            </div>
-            <button><HiEllipsisHorizontal/></button>
+                <div className="detail">    
+                    <span>User</span>
+                    <span>{props.name}</span>
+                </div>
+                <button><HiEllipsisHorizontal/></button>
+                </div>
         </div>
     )
 }
@@ -29,11 +32,14 @@ const AlbumSearchResultSection = (props: VideoItemPropType) => {
         <div className="search_section" onClick={() => navigate(`/playlist/${props.id}`)}>
             <img className="section_album_cover" src={`https://prophile.nyc3.digitaloceanspaces.com/images/${props.imageURL}.jpg`}/>
             <div className="section_detail">
-            <span>{props.type}</span>
-                <span>{props.title}</span>
-                <span>{props.name}</span>
+                <div className="detail">
+                    <span>{props.type}</span>
+                    <span>{props.title}</span>
+                    <span>{props.name}</span>
+                </div>
+                <button><HiEllipsisHorizontal/></button>
             </div>
-            <button><HiEllipsisHorizontal/></button>
+            
         </div>
     )
 }
@@ -41,13 +47,16 @@ const AlbumSearchResultSection = (props: VideoItemPropType) => {
 const VideoSearchResultSection = (props: VideoItemPropType) => {
     const navigate = useNavigate()
     return(
-        <div className="search_section" onClick={() => navigate(`/playlist/${props.id}`)}>
+        <div className="search_section" onClick={() => navigate(`/video/${props.id}`)}>
             <img className="section_video_cover" src={`https://prophile.nyc3.digitaloceanspaces.com/images/${props.imageURL}.jpg`}/>
-            <div className="section_video_detail">
-                <span>{props.title}</span>
-                <span>{props.channel != undefined ? props.channel : props.artist}</span>
+            <div className="section_detail">
+                <div className="detail">
+                    <span>{props.type}</span>
+                    <span>{props.title}</span>
+                    <span>{props.channel != undefined ? props.channel : props.artist}</span>
+                </div>
+                <button><HiEllipsisHorizontal/></button>
             </div>
-            <button><HiEllipsisHorizontal/></button>
         </div>
     )
 }
@@ -137,17 +146,50 @@ export default function Browse() {
             <>            
                 <h1>Results for: <span>{searchQuery}</span></h1>
 
-                {searchResults ? 
-                    <div className="resultsContainer">
-                    {
-                        searchResults.map( (item: any) => {
-                            return handleResultComponent(item)
-                        })
-                    }
-                    </div> :
-                    <span> Searching...</span>
-                }
+                {
+                    searchResults ?
+                        searchResults.length > 0 ? 
+                            <>
+                                <div className="resultsContainer">
+                                    {
+                                        searchResults.map( (item: any) => {
+                                            return handleResultComponent(item)
+                                        })
+                                    }
+                                </div> 
+                            </> : 
+                            <>
+                            <section>
+                                <h1>Recent</h1>
 
+                                <div className='search_history_container h_list'>
+                                    <AudioItem {... 
+                                        {title: "DarkTimes",
+                                        author: "Vince Stales",
+                                        imageURL: "../darktimes.jpg"}}/>
+
+                                    <UserAvi {...{
+                                        username: '6lack',
+                                        imageURL: "/6lack2.jpg"}}/>
+
+                                    <UserAvi {...{
+                                        username: "Tems",
+                                        imageURL: "/6lack2.jpg"}}/>
+
+                                    <AudioItem {...{   
+                                        title: "Tyla",
+                                        author: "Tyla",
+                                        imageURL: "tyla.jpg"}}/>
+                                    <AudioItem {...{    
+                                        title: "Yes Lawd",
+                                        author: "NxWorries",
+                                        imageURL: "yeslawd.jpg"}}/>
+
+                                </div>
+                            </section>
+                                <span> No result for "{ searchQuery}"</span>
+                            </>
+                : <span> Searching...</span> } 
             </>
             :
 

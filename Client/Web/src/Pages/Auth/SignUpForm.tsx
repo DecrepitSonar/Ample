@@ -9,7 +9,7 @@ import { invalidFormStyle } from "../../utils/computedSyles";
 
 function SignUpForm() {
 
-  const [ errorState, setErrorState ] = useState<AuthErrorType>()
+  const [ errorState, setErrorState ] = useState('')
   const [ inputError, setInputError ] = useState<boolean>(false)
 
   const dispatch = useAppDispatch()
@@ -29,29 +29,40 @@ function SignUpForm() {
 
     try{
       await validateInput(target)
-      setErrorState({
-        message: "",
-        Code: ""
-      })
+      setErrorState('')
 
       dispatch(
         register({
           email: target.email.value,
           password: target.password.value
       })).then( (response ) => {
-        const error = response.payload.data.error
-        if( error ){
-          console.log( error )
-          setErrorState( error)
-          return 
+        
+        console.log(response )
+
+        if( response.error ){
+          console.log( response.error.message )
+
+          switch( response.error.code){
+            case 'ERR_BAD_REQUEST':
+              setErrorState("User already exists")
+              return
+
+            default:
+              return
+          }
         } 
-        setErrorState( error)
+
+        // console.log( response.payload.data.id)
+          window.localStorage.setItem('id', response.payload.data.id)
+
+        console.log( 'success')
+        setErrorState('')
         navigate('/userdetailedits')
       })
       
     }catch( error ){
       console.log( 'error')
-      setErrorState(error as AuthErrorType)
+      // setErrorState(error)
     }
 
   }
@@ -98,9 +109,9 @@ function SignUpForm() {
     return ( 
       <div className="auth">
         <form action="" method="post" onSubmit={(e: React.SyntheticEvent) => handleSubmit(e)}>
-          <h1>MediaFS</h1>
+          <h1>Moda</h1>
           <span className="auth_form_title">Sign up</span>
-          <span className="auth_error_label">{errorState?.message}</span>
+          <span className="auth_error_label">{errorState}</span>
           <label className="auth_form_username_label">Email</label>
           <input
             className="auth_form_username_input"
@@ -115,7 +126,7 @@ function SignUpForm() {
             type="password"
             name="password"
             placeholder={"***********"}
-            style={errorState?.Code == AuthValues.PWError || errorState?.Code == AuthValues.VoidInputError ? invalidFormStyle : {} }
+            style={errorState?.Coded == AuthValues.PWError || errorState?.Code == AuthValues.VoidInputError ? invalidFormStyle : {} }
           />
           <label className="form_password_label">Confirm Password</label>
           <input

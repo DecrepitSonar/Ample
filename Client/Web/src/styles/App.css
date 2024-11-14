@@ -92,7 +92,7 @@ form a {
 }
 
 /* Main */
-main{
+.main{
   /* border: 1px solid red; */
   height: 100vh;
   width: 100vw;
@@ -125,8 +125,8 @@ main{
   border-radius: 5px;
   background-color: rgb(33, 33, 41);
   color: #C6A168;
-
 }
+
 .floating_search_bar input{
   width: 300px;
   padding: 5px;
@@ -454,8 +454,8 @@ main{
 
 }
 .video_item_poster{
-  height: 225px;
-  width: 375px;
+  height: 250px;
+  width: 475px;
   /* border: 1px solid red; */
   border-radius: 10px;
   background-position: center;
@@ -583,5 +583,6 @@ font-weight: bold;
 }
 .h_list{
   display: flex;
-  gap: 20px;
+  justify-content: start;
+  gap: 25px;/
 }

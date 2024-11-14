@@ -1,38 +1,36 @@
 
 import "./styles/App.css";
-import {  Outlet, Route, Routes, ScrollRestoration } from "react-router-dom";
+import { Route, Routes } from "react-router-dom";
 
 import SignUpForm from './Pages/Auth/SignUpForm'
 import LoginForm from './Pages/Auth/LoginForm'
 import PasswordReset from './Pages/Auth/PasswordReset'
-import Home from './Pages/Home'
-import Settings from './Pages/Settings'
+import Home from './Pages/Main/Home'
+import Settings from './Pages/Main/Settings'
 
-import Wrapper from './Pages/Wrapper'
-import Profile from "./Pages/Profile";
-import Watch from "./Pages/Watch";
+import Wrapper from './Pages/Main/Wrapper'
+import Profile from "./Pages/Main/Profile";
+import Watch from "./Pages/Main/Watch";
 import { useEffect } from "react";
 import { useDispatch } from "react-redux";
-import { validate } from "./utils/Authslice";
+import { auth, validate } from "./utils/Authslice";
 import { useAppDispatch } from "./utils/store";
 import axios from "axios";
 import SignUpEditForm from "./Pages/Auth/SignUpEditForm";
 import Browse from "./Pages/Browse";
-import Listen from "./Pages/Listen";
-import PlaylistDetail from "./Pages/PlaylistDetail";
+import Listen from "./Pages/Main/Listen";
+import PlaylistDetail from "./Pages/Main/PlaylistDetail";
 import VideoPlayerPage from "./videoPlayerPage";
+import DashboardWrapper from "./Pages/Dashboard/DashboardWrapper";
 
-function Search(){
-  return(
-    <>Search</>
-  )
-}
 
-function AuthWrapper() {
+function Dash(){
   return (
-    <>Outlet</>
+    <>
+    <h1>Home</h1></>
   )
 }
+
 
 function App() {
   const dispatch = useAppDispatch()
@@ -40,7 +38,10 @@ function App() {
   useEffect( () => {
     ( async () => {
       try{
-        dispatch(validate())
+        await dispatch(validate())
+        .then( response => {
+          console.log( response )
+        })
       }
       catch( err ){
         console.log( err )
@@ -62,7 +63,6 @@ function App() {
           <Route path='/browse' element={<Browse/>}/>
           <Route path='/profile/:id' element={<Profile/>}/>
           <Route path='/settings/:id' element={<Settings/>}/>
-          <Route path='/search' element={<Search/>}/>
           <Route path='/video/:videoId' element={<VideoPlayerPage/>}/>
           <Route path='/playlist/:id' element={<PlaylistDetail/>}/>
         </Route>

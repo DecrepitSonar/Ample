@@ -1,13 +1,13 @@
 import React, { useState } from 'react'
 import { useSelector } from 'react-redux'
-import { RootState, useAppDispatch } from '../utils/store'
+import { RootState, useAppDispatch } from '../../utils/store'
 import { IoCardSharp, IoPerson } from 'react-icons/io5'
 import { BiLockAlt, BiShield } from 'react-icons/bi'
 import { BsCreditCard2BackFill } from 'react-icons/bs'
 import { PiBellRingingFill } from 'react-icons/pi'
 import { CgEyeAlt } from 'react-icons/cg'
 import { RiImageCircleFill } from 'react-icons/ri'
-import { logout } from '../utils/Authslice'
+import { logout } from '../../utils/Authslice'
 import { useNavigate } from 'react-router-dom'
 
 function AccountSettings(){

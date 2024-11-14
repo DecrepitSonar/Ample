@@ -57,7 +57,7 @@ export default function AsideQueue(){
       }
       
       {/* Features */}
-      <section>
+      {/* <section>
         <span className="aside_section_title">Track Features</span>
         <div className="lib_collection_container">
           {
@@ -66,7 +66,7 @@ export default function AsideQueue(){
             })
           }
         </div>
-      </section>
+      </section> */}
       </>
     )
   }

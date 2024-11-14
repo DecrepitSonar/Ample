@@ -4,8 +4,9 @@ import { useParams, useLocation } from "react-router-dom";
 import { RootState } from "../utils/store";
 import AsideVideoCollection from "./AsideVideoCollection";
 import Library from "./Library";
+import { PiX } from "react-icons/pi";
 
-export default function Aside(){
+export default function Aside(props){
   
     const [ asideLocation, setAsideLocation ] = useState('Library')
   
@@ -18,6 +19,14 @@ export default function Aside(){
       console.log( e.currentTarget)
     }
   
+    const open = {
+        right: '0px'
+    }
+
+    const closed = {
+        right: '-300px'
+    } 
+
     useEffect(() => {
       console.log( params )
       const currentLocation = location.pathname.split('/')[1]
@@ -25,21 +34,12 @@ export default function Aside(){
     },[location])
   
     return(
-    <aside>
+    <aside style={ props.toggldState ? open : closed}>
       { 
           {
             "video": <AsideVideoCollection/>,
-            "live":<LiveComments/>,
           }[asideLocation] || <Library/>
       }
     </aside>
     )
   }
-
-
-  function LiveComments(){
-    return(
-      <>Live Comments </>
-    )
-  }
-  

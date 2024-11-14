@@ -1,12 +1,12 @@
 import React, { useEffect, useState } from 'react'
-import '../styles/listen.css'
-import AudioItem from '../Components/AudioItem'
+
+import AudioItem from '../../Components/AudioItem'
 import { HiEllipsisHorizontal } from 'react-icons/hi2'
-import { AudioItemPropType, AudioListItemPropType } from '../utils/ObjectTypes'
+import { AudioItemPropType, AudioListItemPropType } from '../../utils/ObjectTypes'
 import axios from 'axios'
 import { useNavigate } from 'react-router-dom'
-import { useAppDispatch } from '../utils/store'
-import { play } from '../utils/mediaPlayerSlice'
+import { useAppDispatch } from '../../utils/store'
+import { play } from '../../utils/mediaPlayerSlice'
 
 function TrackStrip(props: AudioListItemPropType){
     const dispatch = useAppDispatch()

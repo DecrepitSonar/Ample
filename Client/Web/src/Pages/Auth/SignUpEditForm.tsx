@@ -43,10 +43,10 @@ function SignUpEditForm() {
         image: {value: string}
     }
 
-    console.log( target.username.value)
+    const userId = window.localStorage.getItem('userId')
 
     const formdata = new FormData()
-    formdata.append('id', auth.user.id)
+    formdata.set ('id', window.localStorage.getItem('userId'))
     formdata.append( 'username', target.username.value)
     formdata.append('imageURL', file)
 
@@ -61,12 +61,10 @@ function SignUpEditForm() {
                 setErrorState(error)
                 return
             }
-            setErrorState({})
+            // setErrorState({})
             setusernameAvailable(true)
+            navigate('/login')
         })
-
-        await dispatch( validate())
-        .then( () => { navigate('/') }) 
     }   
     catch( error ){
         console.log( error )

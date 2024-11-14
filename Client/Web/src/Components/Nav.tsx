@@ -80,9 +80,9 @@ function Nav(){
           <Link to={'/'} 
           style={currentLocation[1] == '' ? activeLink : inActiveLink}
           ><span > <FaHome/> Home</span></Link>
-          <Link to={'/watch'}
+          {/* <Link to={'/watch'}
           style={currentLocation[1] == 'watch' ? activeLink : inActiveLink}
-          ><span> <FaTv/> Watch</span></Link>
+          ><span> <FaTv/> Watch</span></Link> */}
           <Link to={'/listen'}
           style={currentLocation[1] == 'listen' ? activeLink : inActiveLink}
           ><span> <FaRegPlayCircle/> Listen</span></Link>
@@ -90,7 +90,17 @@ function Nav(){
           style={currentLocation[1] == 'browse' ? activeLink : inActiveLink}
           ><span><PiMagnifyingGlass/> Search</span></Link>
         </div>
-        <span className="nav_section_subtitle">Live</span>
+
+        {/* {
+          auth.isLoggedIn && (
+            <div className="nav_links">
+            <Link to={'http://localhost:5174/'} 
+            style={inActiveLink}
+            ><span > <FaHome/> Dashboard</span></Link>
+          </div>
+          )
+      } */}
+        {/* <span className="nav_section_subtitle">Live</span>
         <div className="nav_section_live_collection">
 
           {
@@ -99,7 +109,7 @@ function Nav(){
             })
           }
           
-        </div>
+        </div> */}
 
         </div>
 
@@ -108,7 +118,7 @@ function Nav(){
             auth.isLoggedIn ? 
             < div onClick={ (e: React.SyntheticEvent) => navigate(`/profile/${auth.user.id}`)} className='nav_avi_container'><div className="nav_avi" 
             style={{'backgroundImage': `url(${auth.user.imageURL}`}}/>
-            <span className="nav_username">{auth.user.username}</span></div> :
+            <span className="nav_usedrname">{auth.user.username}</span></div> :
             <>
             <div className="nav_auth_button_container">
               <button onClick={() => navigate("/login")}>Login</button>

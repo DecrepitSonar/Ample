@@ -2,12 +2,13 @@ import os
 from flask import Flask, request, abort, jsonify, session, make_response, redirect
 
 from flask_bcrypt import Bcrypt
-from models import db, User
+# from models import db, User
 from config import ApplicationConfig
 from flask_session import Session 
 from flask_cors import CORS
 from flask import render_template
 from contentDb import contentDb
+from models import Database as db
 
 import uuid
 
@@ -18,10 +19,13 @@ CORS(app, supports_credentials=True)
 
 server_session = Session(app)
 bcrypt = Bcrypt(app)
-db.init_app(app)
+# db.init_app(app)
 
 with app.app_context():
-    db.create_all()
+    # db.create_all()
+    databse = db()
+    databse.create_tables()
+
 
 # Auth
 @app.route('/whoami', methods=['GET'])
@@ -30,16 +34,14 @@ def getCurrentUser():
     if not len(request.cookies): 
         return jsonify({'error':'unauthorized'}), 401
     
-    sessionId = request.cookies['xrftoken']
-    id = session[sessionId]
-    print( "User Id: ", id)
+    token = request.cookies['xrftoken']
 
-    print( id)
+    print( 'token', token  )
 
-    if id == None: 
+    if token == None: 
         return jsonify({ "error": "unauthorized user "}, 401)
 
-    user = User.query.filter_by(id=id).first()
+    user = User.getUserByToken(token)
 
     if not user: 
         return jsonify({ "error": "unauthorized user "}, 401)
@@ -53,83 +55,77 @@ def getCurrentUser():
         "type": user.type
     }), 200
 
+
 @app.route('/register', methods=['POST'])
 def register_user():
+
     email = request.json['email']
     password = request.json['password']
 
-    if User.query.filter_by(email=email).first() is not None:
-        response = jsonify({
-            'error': {
-            'message': "User already exists " ,
-            'Code': 'EMAIlLERR'}
-        })
-        return response
-
     hashed_password = bcrypt.generate_password_hash(password).decode('utf-8')
-    new_user = User(email=email, password = hashed_password)
-    db.session.add(new_user)
-    db.session.commit()
 
-    sessionId = uuid.uuid4()
-    session[sessionId] = new_user.id
-
-    print(sessionId)
-
-    result = jsonify({
-        "id": new_user.id,
-        "username": new_user.username,
-        "email": new_user.email,
-        "imageURL": new_user.imageURL,
-        "headerPosterURL": new_user.headerPosterURL,
-        "type": new_user.type
-    }),200
-
-    response = make_response(result)
-    response.set_cookie("xrftoken", new_user.id, httponly=True, secure=True, samesite='None')
-    return response 
+    try: 
+        result = databse.create_user(email, hashed_password)
+        print( "result", result ) 
+        return result
+    
+    finally:
+        if result is None: 
+            return jsonify({}),400
+        
+        return jsonify({'id': result }),200
 
 @app.route('/login', methods=['POST', 'GET'])
 def login_user():
 
+    print('Authenticating user')
+    print( request.headers['User-Agent'] )
+    print( request.method)
     if request.method == 'POST':
             
         if( request.headers['User-Agent'] == 'Ample/1 CFNetwork/1568.100.1 Darwin/24.0.0'):
-            user = User.query.filter_by(username=request.json['username']).first()
+            user = databse.getUserByUsername(request.json['username'])
 
-        else:
-            user = User.query.filter_by(email=request.json['email']).first()
+        data = databse.getUserByEmail(request.json['email'])
 
-        password = request.json['password']
-        print( password )
-        
-        if user is None:
+        if data is None:
             print("user not found")
-            return jsonify({'error': {
-                "message": "Unauthorized",
-                "errorCode": ""
-                }}), 401
+            return jsonify(
+                {
+                    'error': {
+                        "message": "Unauthorized",
+                        "errorCode": ""
+                    }
+                }
+            ), 401
         
-        print("Found User:", user.password)
-        print( bcrypt.check_password_hash(user.password, password) )
+        print( data )
+        
+        user = data['user']
+        password = data['password']
 
-        if bcrypt.check_password_hash(user.password, password):
 
-            print( "success")
-            sessionId = str(uuid.uuid4())
-            print( "Session Id:", sessionId)
+        print('Authenticating web client')
 
-            session['session'] = user.id
-            print("session id stored as:" ,session['session'])
+        request_password = request.json['password']
+        
+        print("Found User:", password)
+        print( bcrypt.check_password_hash(password, request_password) )
+    
 
-            result = jsonify({
-                "id": user.id,
-                "username": user.username,
-                "email": user.email,
-                "imageURL": user.imageURL,
-                "headerPosterURL": user.headerPosterURL,
-                "type": user.type
+        if bcrypt.check_password_hash(password, request_password):
+
+            # Create and save sessionId
+            sessionId = databse.CreateUserSession({
+                'id': user['id'],
+                'sessionId': str(uuid.uuid4())
             })
+            
+            print( sessionId)
+            
+            # print("user cached as:" ,session[user.id])
+
+            result = jsonify(user)
 
             response = make_response(result)
             response.set_cookie("xrftoken", sessionId, httponly=True, secure=True, samesite='None')
@@ -142,32 +138,28 @@ def login_user():
     else:
         print('validating user')
         if not len(request.cookies): 
-             return  jsonify({'error':'unauthorized'}), 401
+             return  jsonify({}), 401
     
-        sessionId = request.cookies['xrftoken']
+        token = request.cookies['xrftoken']
 
-        id = session['session']
-        print( "User Id: ", id)
+        if token == None: 
+            return jsonify({}, 401)
 
-        # print( id)
+        user = User.getUserByToken(token)
 
-        # if id == None: 
-            # return jsonify({ "error": "unauthorized user "}, 401)
+        print( user )
 
-        # user = User.query.filter_by(id=id).first()
+        if not user: 
+            return jsonify({}, 401)
 
-        # if not user: 
-            # return jsonify({ "error": "unauthorized user "}, 401)
-
-        # response = jsonify({
-        #     "id": user.id,
-        #     "username": user.username,
-        #     "email": user.email,
-        #     "imageURL": user.imageURL,
-        #     "headerPosterURL": user.headerPosterURL,
-        #     "type": user.type
-        # }), 200
-        response = 200
+        response = jsonify({
+            "id": user.id,
+            "username": user.username,
+            "email": user.email,
+            "imageURL": user.imageURL,
+            "headerPosterURL": user.headerPosterURL,
+            "type": user.type
+        }), 200
 
     return response 
       
@@ -179,39 +171,42 @@ def getUser():
 
     user = User.query.filter_by(id=userId).first()
     
-    return jsonify({
-        "id": user.id,
-        "username": user.username,
-        "email": user.email,
-        "imageURL": user.imageURL,
-        "headerPosterURL": user.headerPosterURL,
-        "type": user.type
-    }), 200
+    if user != None:
 
+        return jsonify({
+            "id": user.id,
+            "username": user.username,
+            "email": user.email,
+            "imageURL": user.imageURL,
+            "headerPosterURL": user.headerPosterURL,
+            "type": user.type
+        }), 200
+    
+    print( contentDb['artists'].find_one({'id': userId})) 
+
+    return jsonify({})
 
 @app.route('/updateSettings', methods=['PUT'])
 def updateUserSettings(): 
 
+    print( 'updateing user with request',request )
     file = request.files['imageURL']
 
+    # Check if filename is empty
+    # if empty theres no uploaded file
     if( file.filename == ''):
         return redirect( request.url)
     else:
+        # Save file to fs or CDN
         file.save(os.path.join(app.config['UPLOAD_FOLDER'], file.filename))
 
-    requestObject = {} 
-    for key in request.form.keys():
-        requestObject[key] = request.form[key]
+    user = databse.getUserByUsername(request.form['username'])
 
-    print( requestObject)
-
-    user = User.query.filter_by(username=requestObject['username']).first()
-
-    if(user):
-        print( user )
+    if(user is not None):
         return jsonify({'error': 'Username not available'}),200
-
-    User.updateUserData( requestObject )
+    
+    user = databse.UpdateUsername(request.form)
+    
 
     return jsonify({}), 200
 
@@ -281,7 +276,7 @@ def home():
         'title': 1, 
         'name': 1,
         'imageURL': 1
-    }).limit(5)
+    }).limit(6)
 
 
     for item in list(music): 
@@ -483,7 +478,7 @@ def getAudioPageContent():
         'playlists': []
     }
 
-    features = list(contentDb['features'].find({'type': "Music"},{'_id': 0}))
+    features = list(contentDb['features'].find({'type': "Audio"},{'_id': 0}))
     
     for item in features:
         content['featured'].append({
@@ -493,7 +488,7 @@ def getAudioPageContent():
             'imageURL': item['imageURL'],
         })
 
-    newMusic = contentDb['albums'].find({'type': 'Album'},{'_id': 0}).sort('releaseDate').limit(5)
+    newMusic = contentDb['albums'].find({'type': 'Album'},{'_id': 0}).sort('releaseDate').limit(6)
 
     for item in list(newMusic):
         content['new'].append({
@@ -504,7 +499,7 @@ def getAudioPageContent():
             
         })
 
-    trending = contentDb['tracks'].find({},{'_id': 0}).limit(8).sort('playCount')
+    trending = contentDb['tracks'].find({},{'_id': 0}).limit(12).sort('playCount')
     for item in list(trending):
         content['trending'].append({
             'id': item['id'],
@@ -515,7 +510,7 @@ def getAudioPageContent():
             'albumId': item['albumId']
         })
 
-    alternativeGenre = contentDb['albums'].find({'genre': 'Alternative','type':'Album'}).limit(5).sort('releaseDate')
+    alternativeGenre = contentDb['albums'].find({'genre': 'Alternative','type':'Album'}).limit(6).sort('releaseDate')
 
     for item in list(alternativeGenre):
         content['genres']['alternative'].append({
@@ -525,7 +520,7 @@ def getAudioPageContent():
             'imageURL': item['imageURL']
         })
 
-    rnb = contentDb['albums'].find({'genre': 'RnB','type':'Album'}).limit(5).sort('releaseDate')
+    rnb = contentDb['albums'].find({'genre': 'RnB','type':'Album'}).limit(6).sort('releaseDate')
     for item in list(rnb):
         content['genres']['rnb'].append({
             'id': item['id'],
@@ -534,7 +529,7 @@ def getAudioPageContent():
             'imageURL': item['imageURL']
         })
 
-    hiphop = contentDb['albums'].find({'genre': 'Hip-Hop', 'type':'Album'}).limit(5).sort('releaseDate')
+    hiphop = contentDb['albums'].find({'genre': 'Hip-Hop', 'type':'Album'}).limit(6).sort('releaseDate')
     for item in list(hiphop):
         content['genres']['hiphop'].append({
             'id': item['id'],
@@ -543,7 +538,7 @@ def getAudioPageContent():
             'imageURL': item['imageURL']
         })
     
-    playlists = contentDb['albums'].find({'type':'playlist'},{'_id': 0}).limit(5).sort('datePosted')
+    playlists = contentDb['albums'].find({'type':'playlist'},{'_id': 0}).limit(6).sort('datePosted')
     for item in list(playlists):
         content['playlists'].append({
             'id': item['id'],
@@ -551,6 +546,7 @@ def getAudioPageContent():
             'imageURL': item['imageURL']
         })
 
+    print( content['featured'])
     return jsonify(content)
 
 @app.route('/search', methods=['GET'])
@@ -635,8 +631,6 @@ def handleSearchQuery():
 
     return jsonify(filter[filterQuery]())
 
-
-
 @app.route('/browse', methods=['GET'])
 
 # audio
@@ -644,29 +638,6 @@ def handleSearchQuery():
 def getAudioItem():
     print( request.args['id'])
 
-
-
-# Dashboard 
-@app.route('/dashboard', methods=['GET'])
-def dash():
-    return render_template('home.html')
-
-@app.route('/dashboard/login', methods=['GET'])
-def dashLogin():
-    return render_template('login.html')
-
-@app.route('/dashboard/signup', methods=['GET', 'POST'])
-def dashSignUp():
-    # user = jsonify({
-    #     'username': request.json['username'],
-    #     'email': request.json['email'],
-    #     'password': request.json['password'],
-    #     'city': request.json['city'],
-    #     'type': request.json['type']
-    # })
-    # print( user)
-    print(request.headers)
-    return render_template('signup.html')
-
 if __name__ == "__main__":
     app.run(debug=True)
+    

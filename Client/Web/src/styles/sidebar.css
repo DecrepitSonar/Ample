@@ -1,5 +1,9 @@
 aside{
   overflow: scroll;
+  position: absolute;
+  right: -10px;
+  bottom: 100px;
+  height: 700px;
 }
   .aside_header span{
     font-size: 2rem;

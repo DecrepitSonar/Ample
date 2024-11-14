@@ -104,6 +104,9 @@
     flex-direction: column;
     gap: 20px;
 }
+.search_history_container{
+    justify-content: space-around;
+}
 .search_section{
     border-bottom: 1px solid #28282a;
     display: flex;
@@ -131,9 +134,12 @@
 .section_detail,
 .section_video_detail{
     display: flex;
+    width: 50%;
+    justify-content: space-between;
+}
+.detail{
+    display: flex;
     flex-direction: column;
-    width: 30%;
-
 }
 .section_album_cover{
     height: 150px; 
@@ -151,8 +157,8 @@
     font-size: .9rem;
 }
 .section_video_cover{
-    height: 200px; 
-    width: 375px;
+    height: 150px; 
+    width: 275px;
     border-radius: 10px;
     object-fit: cover;
 }

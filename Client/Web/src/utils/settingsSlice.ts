@@ -9,6 +9,7 @@ const initialState: storeSettingsType = {
 
 
 const updateSettings = createAsyncThunk("settting/update", async (data: FormData) => {
+
     return await httpclient.put("http://127.0.0.1:5000/updateSettings", data)
     .then( response => { return response })
 })

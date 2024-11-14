@@ -4,14 +4,23 @@ import { AuthValues } from "./ObjectFormats";
 import { LoginFormType, stateAuthType, userAuthType } from "./ObjectTypes";
 
 const initialState: stateAuthType = {
-    isLoggedIn: false, 
-    user: <userAuthType>({}),
+    isLoggedIn: window.localStorage.getItem('user') ? true : false  , 
+    user:  <userAuthType>({}),
     error: ''
 }
 
 const validateUser = createAsyncThunk('auth/validateUser', async () => {
+    const user = window.localStorage.getItem('user')
+    if( user ) return await new Promise( (resolve, reject ) => {
+        console.log( 'resolveing ')
+        resolve(user)
+    })  
+    
     return await httpclient.get('http://127.0.0.1:5000/login')
-    .then( response => { return response })
+    .then( response => {
+        window.localStorage.setItem('user', JSON.stringify(response.data)) 
+        return response 
+    })
 })
 
 const handleLogin = createAsyncThunk("auth/handleLogin", async (data: LoginFormType) => {
@@ -41,6 +50,8 @@ export const authSlice = createSlice({
             console.log( 'fullfilled')
             state.isLoggedIn = true 
             state.user = action.payload.data
+
+            // window.localStorage.setItem('user', action.payload.data)
         })
         builder.addCase( handleLogin.rejected, (state: any, action: any) => {
             console.log( "rejected" )
@@ -52,37 +63,51 @@ export const authSlice = createSlice({
             // console.log( action.payload)
         })
         builder.addCase( handleRegister.pending, (state: any, action: any) => { console.log("pending")})
-        builder.addCase( handleRegister.rejected, (state: any, action: any) => { console.log("rejected")})
+        builder.addCase( handleRegister.rejected, (state: any, action: any) => { 
+            switch( action.error.code ){
+                case 'ERR_BAD_REQUEST':
+                    return {
+                        "message": "User already exists " ,
+                        'Code': 'EMAIlLERR'}
+                    break
+                default:
+                    return
+            }
+        })
         builder.addCase( handleRegister.fulfilled, (state: any, action: any ) => { 
             console.log(" handleRegister ")
-            const responseData = action.payload
-            console.log( responseData.data)
-            state.user = responseData.data
-            state.isLoggedIn = true
+            state.error = ""
+            const responseData = action.payload.data
+            console.log( responseData )
             
             if( responseData.error){
-                switch(responseData.error){
+                switch(responseData.error.Code){
                 case AuthValues.EMailError:
-                    state.error = "Account with email already exists"
                     break;
                 default:
                     state.error = 'internal error, try again'
+                }
+                return
             }
-
-            }
-            // state.user = action.payload
+            
+            window.localStorage.setItem('userId', responseData.id) 
         })
         builder.addCase(validateUser.pending, ( state: any, action: any ) => { console.log( 'pending')})
         builder.addCase(validateUser.rejected, ( state: any, action: any) => { console.log( 'rejected')})
         builder.addCase(validateUser.fulfilled, ( state: any, action: any ) => {
-            const error = action.payload.data.error
-            if( action.payload.data.error){
-                console.log( error)
-            }else{
-                console.log( action.payload.data)
-                state.user = action.payload.data
+            // console.log( action.payload)
+
+            const storedUser = window.localStorage.getItem('user')
+            
+            // if( action.payload.data.error != undefined){
+                // const error = action.payload.data.error
+                // console.log( error)
+            // }else{
+                // console.log( window.localStorage.getItem('user'))
+                // console.log( action.payload)
+                state.user = storedUser ? JSON.parse(storedUser) : action.payload.data
                 state.isLoggedIn = true
-            }
+            // }
         })
 
         builder.addCase( handleLogout.pending, ( state: any, action: any) => { console.log( 'pending')})
