@@ -1,64 +1,19 @@
 import React from "react"
+import { VideoItemPropType } from "../utils/ObjectTypes"
 
-export default function AsideVideoCollection(){
+export default function AsideVideoCollection(props: VideoItemPropType){
     return(
+      
       <div className="video_collection_container">
-        <h3>Recommended</h3>
         <div className="small_video_item_container">
-          <div className="small_video_item_poster" style={{backgroundImage: 'url(6lack.jpg'}}/>
+          <img className="small_video_item_poster" src={`https://prophile.nyc3.digitaloceanspaces.com/images/${props.imageURL}.jpg`}/>
           <div className="small_video_item_detail_container">
-            <span>East Atlanta Love letter</span>
-            <span>6lack</span>
-            <span>1231 Views</span>
+            <span>{props.title}</span>
+            <span>{props.author}</span>
+            <span>{props.views} Views</span>
           </div>
         </div>
-  
-        <div className="small_video_item_container">
-          <div className="small_video_item_poster" style={{backgroundImage: 'url(6lack.jpg'}}/>
-          <div className="small_video_item_detail_container">
-            <span>East Atlanta Love letter</span>
-            <span>6lack</span>
-            <span>1231 Views</span>
-          </div>
-        </div>
-  
-        <div className="small_video_item_container">
-          <div className="small_video_item_poster" style={{backgroundImage: 'url(6lack.jpg'}}/>
-          <div className="small_video_item_detail_container">
-            <span>East Atlanta Love letter</span>
-            <span>6lack</span>
-            <span>1231 Views</span>
-          </div>
-        </div>
-  
-        <div className="small_video_item_container">
-          <div className="small_video_item_poster" style={{backgroundImage: 'url(6lack.jpg'}}/>
-          <div className="small_video_item_detail_container">
-            <span>East Atlanta Love letter</span>
-            <span>6lack</span>
-            <span>1231 Views</span>
-          </div>
-        </div>
-  
-        <div className="small_video_item_container">
-          <div className="small_video_item_poster" style={{backgroundImage: 'url(6lack.jpg'}}/>
-          <div className="small_video_item_detail_container">
-            <span>East Atlanta Love letter</span>
-            <span>6lack</span>
-            <span>1231 Views</span>
-          </div>
-        </div>
-  
-        <div className="small_video_item_container">
-          <div className="small_video_item_poster" style={{backgroundImage: 'url(6lack.jpg'}}/>
-          <div className="small_video_item_detail_container">
-            <span>East Atlanta Love letter</span>
-            <span>6lack</span>
-            <span>1231 Views</span>
-          </div>
-        </div>
-  
-  
+
       </div>
     )
   }

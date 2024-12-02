@@ -171,34 +171,35 @@ function UserProfile(props: userAuthType) {
     })
     return (
       <div>
-        <header>
-            <div className="profile_header_overlay"/>
-            <div className='user_profile_header_detail_container'>
-                <div className='profile_avi' style={{'backgroundImage': `url(${props.imageURL})`}}/>
-                <div className='user_profile_header_detail'>
-                    <span className='label_username'>{props.username}</span>
-                    <div className='follower_count_container'> 
-                        <span>Following 2342 </span>
-                        <span>Followers 2342</span>
-                    </div>
-                    { auth.user.id != props.id ? 
-                    <button className='follow_button'>Follow</button> :
-                    <button onClick={() => navigate(`/settings/${auth.user.id}` )} className='settings_button'>Settings</button>
-                    }
-                </div>
-            </div>    
-            <div className='profile_header_nav'>
-                <ul>
-                    <li 
-                    style={navState == "Home" ? activeNavButtonStyle : inActiveButtonStyle}
-                    onClick={(e: React.SyntheticEvent) => setNavState(e.currentTarget.innerHTML)}>Home</li>
-                    <li 
-                    style={navState == "Video" ? activeNavButtonStyle : inActiveButtonStyle}
-                    onClick={(e: React.SyntheticEvent) => setNavState(e.currentTarget.innerHTML) }>Video</li>
-                    <li 
-                    style={navState == "Tracks" ? activeNavButtonStyle : inActiveButtonStyle}
-                    onClick={(e: React.SyntheticEvent) => setNavState(e.currentTarget.innerHTML)}>Tracks</li>
-                </ul>
+        <header className='profile_header' style={{'backgroundImage': `url(${props.headerPosterURL})`}}>
+            <div className="profile_header_overlay">
+              <div className='user_profile_header_detail_container'>
+                  <div className='profile_avi' style={{'backgroundImage': `url(${props.imageURL})`}}/>
+                  <div className='user_profile_header_detail'>
+                      <span className='label_username'>{props.username}</span>
+                      <div className='follower_count_container'> 
+                          <span>Following 2342 </span>
+                          <span>Followers 2342</span>
+                      </div>
+                      {/* { auth.user.id != props.id ?  */}
+                      <button className='follow_button'>Follow</button> 
+                      {/* // <button className='following_button'>Following</button> */}
+                      {/* } */}
+                  </div>
+              </div>    
+              <div className='profile_header_nav'>
+                  <ul>
+                      <li 
+                      style={navState == "Home" ? activeNavButtonStyle : inActiveButtonStyle}
+                      onClick={(e: React.SyntheticEvent) => setNavState(e.currentTarget.innerHTML)}>Home</li>
+                      <li 
+                      style={navState == "Video" ? activeNavButtonStyle : inActiveButtonStyle}
+                      onClick={(e: React.SyntheticEvent) => setNavState(e.currentTarget.innerHTML) }>Video</li>
+                      <li 
+                      style={navState == "Tracks" ? activeNavButtonStyle : inActiveButtonStyle}
+                      onClick={(e: React.SyntheticEvent) => setNavState(e.currentTarget.innerHTML)}>Tracks</li>
+                  </ul>
+              </div>
             </div>
         </header>
         <div className="page_body">
@@ -245,9 +246,9 @@ export default function Profile() {
     },[])
 
   return (
-    <div className='profile_container'>
+    <div className='page_container'>
         {profileData ? 
-            profileData.type  == 'user' ? <UserProfile {...profileData}/> : <CreatorProfile {...profileData}/>
+            profileData.type  == 'User' ? <UserProfile {...profileData}/> : <CreatorProfile {...profileData}/>
         : <>User Not Found </> }
     </div>
   )

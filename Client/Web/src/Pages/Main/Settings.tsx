@@ -7,14 +7,15 @@ import { BsCreditCard2BackFill } from 'react-icons/bs'
 import { PiBellRingingFill } from 'react-icons/pi'
 import { CgEyeAlt } from 'react-icons/cg'
 import { RiImageCircleFill } from 'react-icons/ri'
-import { logout } from '../../utils/Authslice'
-import { useNavigate } from 'react-router-dom'
+import { logout, validate } from '../../utils/Authslice'
+import { Navigate, useNavigate } from 'react-router-dom'
 
 function AccountSettings(){
   const user = useSelector( (state: RootState) => state.auth.user)
   return(
     <>
     <div className='settings_content_section'>
+      <h1>Account</h1>
       <section>
         <span>EDIT AVI IMAGE</span>
         <div className='section_input_content'>
@@ -93,6 +94,7 @@ function SecuritySettings(){
   return(
     <>
     <div className='settings_content_section'>
+    <h1>Security</h1>
     <section>
         <div className='section_input_content section_inputs'>
           <div className="settings_input_container">
@@ -125,6 +127,7 @@ function SecuritySettings(){
 function PaymentSettings(){
   return(
     <div className='settings_content_section'>
+      <h1>Payments</h1>
       <section>
         <h1>Balance</h1>
         <div className='settings_content_item_container' >
@@ -238,13 +241,17 @@ function PaymentSettings(){
 
 function NotificationSettings(){
   return(
-    <></>
+    <div className='settings_content_section'>
+    <h1>Notifications</h1>
+    </div>
   )
 }
 
 function PrivacySettings(){
   return(
-    <></>
+    <div className='settings_content_section'>
+    <h1>Privacy</h1>
+    </div>
   )
 }
 function SettingsPageWrapper(){
@@ -261,31 +268,29 @@ function SettingsPageWrapper(){
       backgroundColor: 'inherit'} : {}
   }
 
-  const logoutUser = () => {
-    dispatch(logout(useId))
-    .then( () => {
-        navigator('/')
+  const logoutUser = () => { 
+    dispatch(logout())
+    .then(() => {
+      navigator('/')
     })
-  }
+   }
 
   return(
     <div className='settings_page_container'>
       
-      <div className='settings_header'>
-      <ul className='settings_nav'>
-        <li style={activeStyle("Account")} onClick={((e) => setNavLocation('Account') )}>
-          <div style={activeStyle("Account")} className='settings_nav_icon'><IoPerson/>
-          </div>Account</li>
-        <li style={activeStyle("Security")} onClick={((e) => setNavLocation('Security') )}>
-          <div style={activeStyle("Security")} className='settings_nav_icon'><BiShield/></div>Security</li>
-        <li style={activeStyle("Payments")} onClick={((e) => setNavLocation('Payments') )}>
-          <div style={activeStyle("Payments")} className='settings_nav_icon'><BsCreditCard2BackFill/></div>Payments</li>
-        <li style={activeStyle("Notifications")} onClick={((e) => setNavLocation('Notifications') )}>
-          <div style={activeStyle("Notifications")} className='settings_nav_icon'><PiBellRingingFill/></div>Notifications</li>
-        <li style={activeStyle("Privacy")} onClick={((e) => setNavLocation('Privacy') )}>
-          <div style={activeStyle("Privacy")} className='settings_nav_icon'><CgEyeAlt/></div>Privacy</li>
-        <li onClick={() => logoutUser()}> <div style={{color: "#d6000090", backgroundColor: 'inherit'}} className='settings_nav_icon'><BiLockAlt/></div>Sign out</li>
-      </ul>
+      <div className='settings_nav'>
+        <button style={activeStyle("Account")} onClick={((e) => setNavLocation('Account') )}>
+          <span style={activeStyle("Account")} className='settings_nav_icon'><IoPerson/>
+          </span>Account</button>
+        <button style={activeStyle("Security")} onClick={((e) => setNavLocation('Security') )}>
+          <span style={activeStyle("Security")} className='settings_nav_icon'><BiShield/></span>Security</button>
+        <button style={activeStyle("Payments")} onClick={((e) => setNavLocation('Payments') )}>
+          <span style={activeStyle("Payments")} className='settings_nav_icon'><BsCreditCard2BackFill/></span>Payments</button>
+        <button style={activeStyle("Notifications")} onClick={((e) => setNavLocation('Notifications') )}>
+          <span style={activeStyle("Notifications")} className='settings_nav_icon'><PiBellRingingFill/></span>Notifications</button>
+        <button style={activeStyle("Privacy")} onClick={((e) => setNavLocation('Privacy') )}>
+          <span style={activeStyle("Privacy")} className='settings_nav_icon'><CgEyeAlt/></span>Privacy</button>
+        <button onClick={() => logoutUser()}> <span style={{color: "#d6000090", backgroundColor: 'inherit'}} className='settings_nav_icon'><BiLockAlt/></span>Sign out</button>
       </div>
       <>
       {
@@ -309,7 +314,7 @@ export default function Settings() {
 
   return (
     <>
-    { auth.isLoggedIn ? <SettingsPageWrapper/> : <>Please Log in</>}
+    { auth.isLoggedIn ? <SettingsPageWrapper/> : <div className='page_container'>Please Log in</div>}
     </>
   )
 }

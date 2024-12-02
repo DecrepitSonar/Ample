@@ -18,7 +18,7 @@ export default function Library(){
     const active = {
       color: "#C6A168",
       fontWeight: "bold",
-      borderBottom: "1px solid rgba(198, 161, 104, 1)"
+      // borderBottom: "1px solid rgba(198, 161, 104, 1)"
     }
     const inacitve = {
       color: "#ddd"
@@ -27,7 +27,6 @@ export default function Library(){
     return(
     <>
     <div className="aside_header">
-        <ul>
           <button name="Queue" style={ libstate == "Queue" ? active : inacitve}
           onClick={() => { setNav('Queue')}}><RiPlayList2Line/></button>
           <button name="Saved" style={ libstate == "Saved" ? active : inacitve}
@@ -36,7 +35,6 @@ export default function Library(){
           onClick={() => { setNav('History')}}><BsGlobe/></button>
           <button value="Subscriptions" style={ libstate == "Subscriptions" ? active : inacitve}
           onClick={() => { setNav('Subscriptions')}}><BsRadar/></button>
-        </ul>
       </div>
       <div className="aside_body">
         {

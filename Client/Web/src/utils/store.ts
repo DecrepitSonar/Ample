@@ -8,7 +8,8 @@ export const store = configureStore({
     reducer: { 
         auth, 
         settings,
-        audioPlayer }
+        audioPlayer 
+    }
 })
 
 export type RootState = ReturnType<typeof store.getState>

@@ -20,7 +20,8 @@
     border-radius: 10px;
     background-color: #1c1c2575;
     border: 2px dashed #323232;
-    color: #737373;
+    color: #73737309;
+    font-size: 10rem;
     display: inline-block;
     /* padding: 6px 12px; */
     cursor: pointer;
@@ -30,14 +31,16 @@
     justify-content: center;
 }
 .custom_upload_buttom i{
-    display: block;
-    align-items: center;
-    font-size: 3rem;
-    border-radius: 50%;
+    /* display: block; */
+    /* align-items: center; */
+    /* font-size: 3rem; */
+    /* border-radius: 50%; */
+    /* color: red; */
 }
 
 .imageInputPreview img{
-    display: block;
+    display: block
+    /* font-size: 3rem; */
 }
 .imageInputPreview{
     border: 1px solid #0b0b0d;

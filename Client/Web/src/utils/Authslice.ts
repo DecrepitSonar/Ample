@@ -12,12 +12,15 @@ const initialState: stateAuthType = {
 const validateUser = createAsyncThunk('auth/validateUser', async () => {
     const user = window.localStorage.getItem('user')
     if( user ) return await new Promise( (resolve, reject ) => {
+        console.log( 'user stored')
         console.log( 'resolveing ')
         resolve(user)
     })  
     
-    return await httpclient.get('http://127.0.0.1:5000/login')
+    console.log( 'resolving user')
+    return await httpclient.get('http://127.0.0.1:5000/validate')
     .then( response => {
+        console.log( response )
         window.localStorage.setItem('user', JSON.stringify(response.data)) 
         return response 
     })
@@ -34,7 +37,7 @@ const handleRegister = createAsyncThunk("auth/register", async (data: object) =>
 })
 
 const handleLogout = createAsyncThunk('auth/logout', async (id) => {
-    return await httpclient.post(`http://127.0.0.1:5000/logout?id=${id}`)
+    return await httpclient.delete(`http://127.0.0.1:5000/logout`)
     .then(response => { console.log( response )})
 })
 
@@ -93,7 +96,14 @@ export const authSlice = createSlice({
             window.localStorage.setItem('userId', responseData.id) 
         })
         builder.addCase(validateUser.pending, ( state: any, action: any ) => { console.log( 'pending')})
-        builder.addCase(validateUser.rejected, ( state: any, action: any) => { console.log( 'rejected')})
+        builder.addCase(validateUser.rejected, ( state: any, action: any) => { 
+            console.log( 'rejected')
+            if (window.localStorage.getItem('userId') ) {
+                window.localStorage.removeItem('userId') 
+                window.localStorage.removeItem('user')
+            }
+
+        })
         builder.addCase(validateUser.fulfilled, ( state: any, action: any ) => {
             // console.log( action.payload)
 
@@ -114,8 +124,11 @@ export const authSlice = createSlice({
         builder.addCase( handleLogout.rejected, ( state: any, action: any) => { console.log( 'rejected')})
         builder.addCase( handleLogout.fulfilled, ( state: stateAuthType, action: any) => { 
             console.log( 'user logged out')
-            state.user = <userAuthType>({}),
+            state.user = <userAuthType>({})
             state.isLoggedIn = false
+
+            window.localStorage.removeItem('userId') 
+            window.localStorage.removeItem('user')
         }
         )
     }

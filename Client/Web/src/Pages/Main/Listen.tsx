@@ -60,7 +60,7 @@ export default function Listen() {
     },[featureIndex])
 
   return (
-    <>
+    <div className="page_container">
         <div className='listen_page_header' style={{backgroundImage: `url(https://prophile.nyc3.cdn.digitaloceanspaces.com/images/${pageData?.featured[featureIndex].imageURL}.jpg`}}>
             <div className="listen_page_header_overlay">
                     <div className='header_feature'>
@@ -88,7 +88,7 @@ export default function Listen() {
             </div>
         </div>
 
-    <div className='listen_page_container page_container'>
+    <div className='listen_page_container'>
         
         <section>
             <h1>New For you</h1>
@@ -177,6 +177,7 @@ export default function Listen() {
             </div>
         </section>
     </div>
-    </>
+    </div>
+
   )
 }

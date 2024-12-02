@@ -14,11 +14,6 @@ export default function Aside(props){
     const location = useLocation()
     const auth = useSelector( ( state: RootState) => state.auth)
   
-    function setNav(e: MouseEvent){
-      // setLibstate( e)
-      console.log( e.currentTarget)
-    }
-  
     const open = {
         right: '0px'
     }
@@ -34,11 +29,9 @@ export default function Aside(props){
     },[location])
   
     return(
-    <aside style={ props.toggldState ? open : closed}>
+    <aside style={ props.navState ? open : closed}>
       { 
-          {
-            "video": <AsideVideoCollection/>,
-          }[asideLocation] || <Library/>
+          {}[asideLocation] || <Library/>
       }
     </aside>
     )

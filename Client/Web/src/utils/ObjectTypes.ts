@@ -41,7 +41,8 @@ export type VideoItemPropType = {
     views?: number,
     posterURL?: string,
     imageURL?: string,
-    contentURL?: string
+    contentURL?: string,
+
 }
 export type AudioItemPropType = {
     id: string,

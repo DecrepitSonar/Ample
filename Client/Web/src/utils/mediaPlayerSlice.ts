@@ -25,6 +25,7 @@ const playTrack = createAsyncThunk('mediaPlayer/playTrack', (track: AudioListIte
     return track 
 })
 const playNextTrack = createAsyncThunk('mediaPlayer/playNextTrack', () => {
+    console.log( 'PLAYING NEXT TRACK')
     return
 })
 export const AudioPlayer = createSlice({
@@ -57,7 +58,15 @@ export const AudioPlayer = createSlice({
         addToQueue: ( state, action ) => {
             state.queue.push(action.payload)
         },
-        returnFromQueue: ( state, action ) => {}
+        playNext: ( state, action ) => {
+            const player = document.getElementById('audioPlayer')
+
+            if ( state.queue.length > 0){
+                state.nowPlaying = state.queue.pop()
+                player.src = 'https://prophile.nyc3.cdn.digitaloceanspaces.com/audio/' + state.nowPlaying.audioURL + '.mp3'
+            }
+            return
+        }
 
 
     },
@@ -71,14 +80,15 @@ export const AudioPlayer = createSlice({
             state.player.isPlaying = true
 
             state.nowPlaying = action.payload
-            // console.log(action.payload )
-            // console.log( state.nowPlaying)
+
         }),
-        builder.addCase(playNextTrack.fulfilled, (state: PlayerState, action: any) => {})
+        builder.addCase(playNextTrack.fulfilled, (state: PlayerState, action: any) => {
+            
+        })
     }
 })
 
 export const audioPlayer = AudioPlayer.reducer
 export const play = playTrack
 export const next = playNextTrack
-export const  {togglePlayer, addToQueue, returnFromQueue } = AudioPlayer.actions
+export const  {togglePlayer, addToQueue, playNext } = AudioPlayer.actions

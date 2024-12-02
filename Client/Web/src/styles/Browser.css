@@ -48,7 +48,7 @@
     margin-top: 20px;
 }
 .catagory_browser_item{
-    height: 150px; 
+    height: 200px; 
     /* width: 100px; */
     /* border: 1px solid red; */
     /* margin: 10px; */
@@ -105,7 +105,11 @@
     gap: 20px;
 }
 .search_history_container{
-    justify-content: space-around;
+    /* justify-content: space-around; */
+    overflow-x: scroll;
+}
+.recent_search_section button{
+    color: #aaa
 }
 .search_section{
     border-bottom: 1px solid #28282a;

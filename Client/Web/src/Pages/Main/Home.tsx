@@ -27,7 +27,7 @@ function Home() {
   // style={{"backgroundImage": 'url(6lack.jpg)'}}
   return (
     <div className="page_container">
-      <header>
+      <header className="main_header">
         <video 
           className="video_header" 
           src={`${homeData ? homeData.featured[headerIndex].contentURL : '' }`} 
@@ -49,9 +49,9 @@ function Home() {
           </div>
 
           {/* Floating video Progressbar */}
-          <div className="header_progress_bar_container">
+          {/* <div className="header_progress_bar_container">
               <div className="header_progress_bar"></div>
-            </div>
+            </div> */}
 
           {/* Pagination buttons */}
           <div className="pagination_container">
@@ -108,7 +108,7 @@ function Home() {
         </div>
       </section>
       <section>
-        <span className="section_subheading">Videos</span>
+        <span className="section_subheading">Music pVideos</span>
         <div className="section_item_container">
             {
                 homeData ?

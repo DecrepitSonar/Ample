@@ -3,11 +3,12 @@ import { FaBackward, FaPlay, FaForward, FaPause } from "react-icons/fa"
 import { RootState, useAppDispatch } from '../utils/store'
 import { FaRepeat, FaShuffle } from "react-icons/fa6"
 import { useSelector } from "react-redux"
-import { next, togglePlayer } from "../utils/mediaPlayerSlice"
+import { playNext, togglePlayer } from "../utils/mediaPlayerSlice"
 import { useNavigate } from "react-router-dom"
 import { BiVolumeFull, BiVolumeLow, BiVolumeMute } from "react-icons/bi"
 import { LuListMinus } from "react-icons/lu"
 import Aside from "./Aside"
+import { CgClose } from "react-icons/cg"
 
 function BottomMediaBar(props){
   const [ toggldState, setToggleState ] = useState<boolean>(false)
@@ -61,6 +62,7 @@ function BottomMediaBar(props){
                   updatePlayerDuration(e)
                   setVolume(e.currentTarget.volume)
                 } }
+                onEnded={() => dispatch(playNext(null))}
                 ref={audioPlayerElement}
                 onTimeUpdate={ (e) => updatePlayerTime(e) }
                 id="audioPlayer" autoPlay controls preload="auto">
@@ -78,7 +80,7 @@ function BottomMediaBar(props){
             <button><FaRepeat/></button>
             <button><FaBackward/></button>
             <button onClick={() => dispatch(togglePlayer(null))}>{audioPlayer.player.isPlaying ? <FaPause/> : <FaPlay/>   }</button>
-            <button><FaForward/></button>
+            <button onClick={() => dispatch(playNext(null))}><FaForward/></button>
             <button><FaShuffle/></button>
           </div>
           <div className="bottom_Mediabar_playerOptions">
@@ -107,10 +109,14 @@ function BottomMediaBar(props){
                 </button>
                })() 
               }
-              <button onClick={() => setToggleState(!toggldState)}><LuListMinus/> </button>
+              <button onClick={() => props.setNavState(!props.navState)}>
+                {props.navState ? 
+                <CgClose/> : 
+                <LuListMinus/>
+              }
+              </button>
             </div>
           </div>
-          <Aside toggldState={toggldState}/>
         </div>
       </>
     )

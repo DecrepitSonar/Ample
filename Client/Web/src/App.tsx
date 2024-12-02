@@ -17,10 +17,10 @@ import { auth, validate } from "./utils/Authslice";
 import { useAppDispatch } from "./utils/store";
 import axios from "axios";
 import SignUpEditForm from "./Pages/Auth/SignUpEditForm";
-import Browse from "./Pages/Browse";
+import Browse from "./Pages/Main/Browse";
 import Listen from "./Pages/Main/Listen";
 import PlaylistDetail from "./Pages/Main/PlaylistDetail";
-import VideoPlayerPage from "./videoPlayerPage";
+import VideoPlayerPage from "./Pages/Main/videoPlayerPage";
 import DashboardWrapper from "./Pages/Dashboard/DashboardWrapper";
 
 
@@ -38,10 +38,8 @@ function App() {
   useEffect( () => {
     ( async () => {
       try{
+        console.log( 'validating user ')
         await dispatch(validate())
-        .then( response => {
-          console.log( response )
-        })
       }
       catch( err ){
         console.log( err )

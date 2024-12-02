@@ -1,22 +1,73 @@
 import React, { useEffect, useState } from 'react'
-import '../styles/Browser.css'
-import AudioItem from '../Components/AudioItem'
-import UserAvi from '../Components/UserAvi'
+import '../../styles/Browser.css'
+import AudioItem from '../../Components/AudioItem'
+import UserAvi from '../../Components/UserAvi'
 import axios from 'axios'
 import { HiEllipsisHorizontal } from 'react-icons/hi2'
-import { UserAviPropType, VideoItemPropType } from '../utils/ObjectTypes'
+import { AudioItemPropType, UserAviPropType, VideoItemPropType } from '../../utils/ObjectTypes'
 import { useNavigate } from 'react-router-dom'
+import VideoItem from '../../Components/VideoItem'
+import { CgClose } from 'react-icons/cg'
 
+function handleSearchHistory(propitem: any){
 
-const UserSearchResultSection = (props: UserAviPropType) => {
+    var searchHistory = JSON.parse(localStorage.getItem('searchHistory'))
+
+    if( searchHistory == null ){
+        searchHistory = []
+        searchHistory.push(propitem)
+
+        localStorage.setItem('searchHistory', JSON.stringify(searchHistory))
+        
+        return [searchHistory]
+    }
+
+    console.log( searchHistory )
+
+    const itemIndex = (searchHistory.findIndex((item) => item.id == propitem.id ))
+    console.log( itemIndex )
+
+    if( itemIndex >= 0  ){
+        const removedItem = searchHistory.slice(itemIndex, itemIndex+1)
+        searchHistory = searchHistory.toSpliced(itemIndex, 1)
+        
+        console.log( searchHistory)
+
+        searchHistory.unshift(removedItem[0]) 
+
+        localStorage.setItem('searchHistory', JSON.stringify(searchHistory))
+
+    }
+    else{
+        searchHistory.unshift(propitem)
+        localStorage.setItem('searchHistory', JSON.stringify(searchHistory))
+    }
+
+    return searchHistory
+
+}
+
+type searchResultProps = {
+    searchItem: any,
+    historyFunc: Function
+}
+const UserSearchResultSection = (props: searchResultProps) => {
     const navigate = useNavigate()
+
+    const item = props.searchItem as UserAviPropType
+    const updateSearchHistory = props.historyFunc
+
+    const handleSearchSelection = () => {   
+        updateSearchHistory(handleSearchHistory(item))
+    }
+
     return(
-        <div className="search_section" onClick={() => navigate(`/profile/${props.id}`)}>
-            <img className="section_avi" src={`https://prophile.nyc3.digitaloceanspaces.com/images/${props.imageURL}.jpg`}/>
+        <div className="search_section" onClick={(e) => handleSearchSelection() }>
+            <img className="section_avi" src={`https://prophile.nyc3.digitaloceanspaces.com/images/${item.imageURL}.jpg`}/>
             <div className="section_detail">
                 <div className="detail">    
                     <span>User</span>
-                    <span>{props.name}</span>
+                    <span>{item.name}</span>
                 </div>
                 <button><HiEllipsisHorizontal/></button>
                 </div>
@@ -24,18 +75,26 @@ const UserSearchResultSection = (props: UserAviPropType) => {
     )
 }
 
-const AlbumSearchResultSection = (props: VideoItemPropType) => {
-
+const AlbumSearchResultSection = (props: searchResultProps) => {
     const navigate = useNavigate() 
 
+    const item = props.searchItem as AudioItemPropType
+    const searchHistory = props.historyFunc
+
+    function handleSelection(){
+        navigate(`/playlist/${item.id}`)
+        console.log( item )
+        searchHistory(handleSearchHistory(item))
+    }
+
     return(
-        <div className="search_section" onClick={() => navigate(`/playlist/${props.id}`)}>
-            <img className="section_album_cover" src={`https://prophile.nyc3.digitaloceanspaces.com/images/${props.imageURL}.jpg`}/>
+        <div className="search_section" onClick={() => handleSelection()}>
+            <img className="section_album_cover" src={`https://prophile.nyc3.digitaloceanspaces.com/images/${item.imageURL}.jpg`}/>
             <div className="section_detail">
                 <div className="detail">
-                    <span>{props.type}</span>
-                    <span>{props.title}</span>
-                    <span>{props.name}</span>
+                    <span>{item.type}</span>
+                    <span>{item.title}</span>
+                    <span>{item.name}</span>
                 </div>
                 <button><HiEllipsisHorizontal/></button>
             </div>
@@ -43,7 +102,6 @@ const AlbumSearchResultSection = (props: VideoItemPropType) => {
         </div>
     )
 }
-
 const VideoSearchResultSection = (props: VideoItemPropType) => {
     const navigate = useNavigate()
     return(
@@ -95,29 +153,46 @@ export default function Browse() {
     }
 
     const handleResultComponent = (item) => {
+
+        const props: searchResultProps = {
+            historyFunc: setsearchHistory,
+            searchItem: item
+        }
+
         switch( item.type){
             case 'Artist': 
-                return <UserSearchResultSection {...item}/>
+                return <UserSearchResultSection {...props}/>
             break
             case 'Album': 
-                return <AlbumSearchResultSection {...item}/>
+                return <AlbumSearchResultSection {...props}/>
             break
             case "Single":
-                return <AlbumSearchResultSection {...item}/>
+                return <AlbumSearchResultSection {...props}/>
             case 'playlist': 
-                return <AlbumSearchResultSection {...item}/>
+                return <AlbumSearchResultSection {...props}/>
 
             case 'music':
-                return <VideoSearchResultSection {...item}/>
+                return <VideoSearchResultSection {...props}/>
 
             case 'podcast':
-                return <VideoSearchResultSection {...item}/>
+                return <VideoSearchResultSection {...props}/>
             break
             default: 
                 return 'All'
         }
 
     }
+
+    const clearSearchHistory = () => {
+        localStorage.removeItem('searchHistory')
+        setsearchHistory([])
+    }
+    useEffect(()=> {
+        if (localStorage.getItem('searchHistory') != null) {
+            setsearchHistory(JSON.parse(localStorage.getItem('searchHistory')))
+        }
+    },[localStorage.length])
+
   return (
     <div className='page_container browserContainer '>
         <h1>Search</h1>
@@ -160,32 +235,24 @@ export default function Browse() {
                             </> : 
                             <>
                             <section>
-                                <h1>Recent</h1>
-
-                                <div className='search_history_container h_list'>
-                                    <AudioItem {... 
-                                        {title: "DarkTimes",
-                                        author: "Vince Stales",
-                                        imageURL: "../darktimes.jpg"}}/>
-
-                                    <UserAvi {...{
-                                        username: '6lack',
-                                        imageURL: "/6lack2.jpg"}}/>
-
-                                    <UserAvi {...{
-                                        username: "Tems",
-                                        imageURL: "/6lack2.jpg"}}/>
-
-                                    <AudioItem {...{   
-                                        title: "Tyla",
-                                        author: "Tyla",
-                                        imageURL: "tyla.jpg"}}/>
-                                    <AudioItem {...{    
-                                        title: "Yes Lawd",
-                                        author: "NxWorries",
-                                        imageURL: "yeslawd.jpg"}}/>
-
+                                <div className="section_header recent_search_section">
+                                    <h1>Recent</h1>
+                                    <button onClick={() => clearSearchHistory() }><CgClose/></button>
                                 </div>
+                                <div className='search_history_container h_list'>
+                                {
+                                    searchHistory.length > 1 ?
+                                    searchHistory.map( item => { 
+                                        return {
+                                            'Artist' : <UserAvi {...item as UserAviPropType} />,
+                                            'Album' : <AudioItem {...item as AudioItemPropType} />,
+                                            'Video' : <VideoItem {...item as VideoItemPropType} />,
+                                        }[item.type]}
+                                    )
+                                    : <><span>No Recent Searches</span></>
+                                }
+                                </div>
+
                             </section>
                                 <span> No result for "{ searchQuery}"</span>
                             </>
@@ -195,32 +262,30 @@ export default function Browse() {
 
             <>
                 <section>
-                    <h1>Recent</h1>
+                    <div className="section_header recent_search_section">
+                        <h1>Recent</h1>
+                        <button onClick={() => clearSearchHistory() }><CgClose/></button>
+                    </div>
 
                     <div className='search_history_container h_list'>
-                        <AudioItem {... 
-                            {title: "DarkTimes",
-                            author: "Vince Stales",
-                            imageURL: "../darktimes.jpg"}}/>
 
-                        <UserAvi {...{
-                            username: '6lack',
-                            imageURL: "6lack2.jpg"}}/>
+                        {
+                            searchHistory.length > 1 ?
+                            searchHistory.map( item => {
 
-                        <UserAvi {...{
-                            username: "Tems",
-                            imageURL: "6lack2.jpg"}}/>
-
-                        <AudioItem {...{   
-                            title: "Tyla",
-                            author: "Tyla",
-                            imageURL: "tyla.jpg"}}/>
-                        <AudioItem {...{    
-                            title: "Yes Lawd",
-                            author: "NxWorries",
-                            imageURL: "yeslawd.jpg"}}/>
-
-                    </div>
+                                const props: searchResultProps = {
+                                    historyFunc: setsearchHistory,
+                                    searchItem: item
+                                }
+                                return {
+                                    'Artist' : <UserAvi {...item as UserAviPropType} />,
+                                    'Album' : <AudioItem {...item as AudioItemPropType} />,
+                                    'Video' : <VideoItem {...item as VideoItemPropType} />,
+                                }[item.type]}
+                            )
+                            : <><span>No Recent Searches</span></>
+                        }
+                        </div>
                 </section>
 
                 <h1>Catagories</h1>
@@ -254,38 +319,6 @@ export default function Browse() {
                         <div className='catagory_browser_item_overlay'>News</div>
                     </div>
                 </div>
-
-                <section>
-                    <h1>Creators</h1>
-                    <div className='h_list'>
-                        <UserAvi {...{
-                            username: '6lack',
-                            imageURL: "6lack2.jpg"}}/>
-
-                        <UserAvi {...{
-                            username: '6lack',
-                            imageURL: "6lack2.jpg"}}/>
-
-
-                        <UserAvi {...{
-                            username: '6lack',
-                            imageURL: "6lack2.jpg"}}/>
-
-
-                        <UserAvi {...{
-                            username: '6lack',
-                            imageURL: "6lack2.jpg"}}/>
-
-
-                        <UserAvi {...{
-                            username: '6lack',
-                            imageURL: "6lack2.jpg"}}/>
-
-                        <UserAvi {...{
-                            username: '6lack',
-                            imageURL: "6lack2.jpg"}}/>
-                    </div>
-                </section>
 
             </>
         }

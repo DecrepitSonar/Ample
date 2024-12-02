@@ -34,9 +34,20 @@ export default function AsideQueue(){
         <section>
         <span className="aside_section_title">Now Playling</span>
         <div className="lib_collection_container">
-          <AudioListItem {...audioPlayer.nowPlaying}/>
+          <div className="large_Track_item_container">
+            <img  src={`https://prophile.nyc3.digitaloceanspaces.com/images/${audioPlayer.nowPlaying.imageURL}.jpg`} className="large_Track_item_cover"/>
+            <span className="large_Track_item_title">{audioPlayer.nowPlaying.title}</span>
+            <span className="large_Track_item_author">{audioPlayer.nowPlaying.name}</span>
+          </div>
         </div>
-      </section> : <span className="aside_section_title">Nothing Playling</span>
+      </section> : 
+      <section>
+        <div className="large_Track_item_container">
+          <img  src={'/album.jpg'} className="large_Track_item_cover"/>
+          <span className="aside_section_title">Nothing Playling</span>
+        </div>
+      </section>
+      
       }
       
   

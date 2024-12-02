@@ -8,6 +8,7 @@ import { useSelector } from "react-redux";
 import { authState } from "../utils/Authslice";
 import { RootState } from "../utils/store";
 import { PiMagnifyingGlass } from "react-icons/pi";
+import { BiBell, BiCog } from "react-icons/bi";
 
 function Nav(){
   // const [ loggedIn, setLogin ] = useState(false)
@@ -56,7 +57,7 @@ function Nav(){
 
   useEffect(() => {
     setPath( currentLocation[1])
-    console.log(currentLocation[1] == path)
+    // console.log(currentLocation[1] == path)
   }, [currentLocation])
 
   const activeLink = {
@@ -71,24 +72,23 @@ function Nav(){
     backgroundColor: 'transparent' 
   }
 
+
     return(
       <nav>
         <div className="nav_main">
-        <div className="logo">Logo</div>
+        <div className="logo">Alto</div>
 
         <div className="nav_links">
           <Link to={'/'} 
           style={currentLocation[1] == '' ? activeLink : inActiveLink}
-          ><span > <FaHome/> Home</span></Link>
-          {/* <Link to={'/watch'}
+          > <FaHome/></Link>
+          <Link to={'/watch'} 
           style={currentLocation[1] == 'watch' ? activeLink : inActiveLink}
-          ><span> <FaTv/> Watch</span></Link> */}
-          <Link to={'/listen'}
-          style={currentLocation[1] == 'listen' ? activeLink : inActiveLink}
-          ><span> <FaRegPlayCircle/> Listen</span></Link>
+          ><FaTv/></Link>
+          <Link to={'/listen'} style={currentLocation[1] == 'listen' ? activeLink : inActiveLink}
+          > <FaRegPlayCircle/></Link>
           <Link to={'/browse'}
-          style={currentLocation[1] == 'browse' ? activeLink : inActiveLink}
-          ><span><PiMagnifyingGlass/> Search</span></Link>
+          style={currentLocation[1] == 'browse' ? activeLink : inActiveLink}><PiMagnifyingGlass/></Link>
         </div>
 
         {/* {
@@ -116,9 +116,12 @@ function Nav(){
       
           {
             auth.isLoggedIn ? 
-            < div onClick={ (e: React.SyntheticEvent) => navigate(`/profile/${auth.user.id}`)} className='nav_avi_container'><div className="nav_avi" 
-            style={{'backgroundImage': `url(${auth.user.imageURL}`}}/>
-            <span className="nav_usedrname">{auth.user.username}</span></div> :
+            < div className='nav_avi_container'>
+              <Link to={'/notifications'} style={currentLocation[1] == 'notifications' ? activeLink : inActiveLink}>  <BiBell/></Link>
+              <Link to={`/settings/${auth.user.id}}`} style={currentLocation[1] == 'settings' ? activeLink : inActiveLink}> <BiCog/></Link>
+              <span onClick={ (e: React.SyntheticEvent) => navigate(`/profile/${auth.user.id}`)} className="nav_usedrname">{auth.user.username}</span>
+              <div onClick={ (e: React.SyntheticEvent) => navigate(`/profile/${auth.user.id}`)} className="nav_avi" style={{'backgroundImage': `url(${auth.user.imageURL}`}}/>
+            </div> :
             <>
             <div className="nav_auth_button_container">
               <button onClick={() => navigate("/login")}>Login</button>
