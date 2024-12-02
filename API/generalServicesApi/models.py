@@ -85,7 +85,6 @@ class Database:
         except (psycopg2.DatabaseError, Exception) as error: 
             print( error)
             return   
-
     def create_tables(self):
         
         if self.conn.closed:
@@ -118,6 +117,7 @@ class Database:
             with self.conn.cursor() as cursor:
                 for command in commands: 
                     cursor.execute(command)
+            self.conn.commit()
 
             print( "Tables created successfully")
             self.conn.close()
@@ -127,10 +127,12 @@ class Database:
             self.conn.close()
             return error
     
+    # CREATE 
     def create_user(self, email, password):
 
             
         """ Check if user exists """        
+        print( """ Check if user exists """ )
 
         if self.getUserByEmail(email) is not None:
             return {
@@ -140,6 +142,7 @@ class Database:
             }
 
         """ Creating New user"""
+        print( """ Creating New user""" )
 
         sql = """ 
             INSERT INTO users(id, username, email, password, imageURL, headerPosterURL, type)
@@ -184,32 +187,62 @@ class Database:
                 self.conn.commit()
                 self.conn.close()
                 return userId
+    def createUserSession(self, data):
+        
+        print( data )
+        if self.conn.closed:
+            self.__init__()
 
+        sql = '''
+            INSERT INTO sessions(
+            sessionid, id)
+            VALUES (%s, %s)
+        ''' 
+
+        try: 
+            with self.conn.cursor() as cursor:
+                cursor.execute(sql, (data['sessionId'], data['id']))
+                self.conn.commit()
+
+        except( Exception, self.conn.DatabaseError) as error:
+            print( error )
+
+        finally: 
+            self.conn.close
+            return
+    # GET 
     def getUserById(self, id):
 
+        print( self.conn.closed )
+
+        if self.conn.closed:
+            self.__init__()
+
         sql = """
-            SELECT FROM user WHERE user_id = (%s)
-        """
+            SELECT * 
+            FROM users 
+            WHERE id = '%s'
+        """ %id
 
         try: 
             with self.conn.cursor() as cursor: 
-                cursor.execute(sql, (id))
+                cursor.execute(sql)
+                
+                print( cursor.statusmessage )
                 
                 result = cursor.fetchone()
-
-                if result is not None: 
-                    result = result[0]
-                    return result
+                print( 'result', result )
                 
-                return result
+                if result is not None: 
+                    print( result[0])
+                    return result
 
         except (self.conn.DatabaseError, Exception) as error: 
             print( error )
-            return 
+            # return 
         
         finally: 
             return result
-        
     def getUserByEmail(self, email):
 
         if self.conn.closed: 
@@ -221,15 +254,18 @@ class Database:
         FROM users 
         WHERE email LIKE '%s'  """ % email
         password = ''
+
         try: 
             with self.conn.cursor() as cursor: 
                 cursor.execute(sql)
                 
-                results = cursor.fetchall()
+                results = cursor.fetchone()
+                print( results )
 
                 if results is not None: 
-                    results =  results[0]
-                    print(  )
+                    # results =  results[0]
+                    print( results  )
+
                     # print( 'results', list(results))
                     (id, username, imageURL, password, email, headerPosterURL, type) = results
                     # print( list(map(list, zip(*results)))  )
@@ -241,7 +277,7 @@ class Database:
                         
                     # ( id) = results
                     print( email, password)
-                    data = {
+                    results = {
                         "user" : {
                             "id": id,
                             "username": username,
@@ -259,8 +295,7 @@ class Database:
         
         finally: 
             self.conn.close()
-            return data
-    
+            return results 
     def getUserByUsername(self, username):
 
         if self.conn.closed: 
@@ -278,7 +313,7 @@ class Database:
             with self.conn.cursor() as cursor: 
                 cursor.execute(sql)
                 
-                results = cursor.fetchone() 
+                results = cursor.fetchall() 
 
                 if results is not None: 
                     results = results[0]
@@ -290,8 +325,37 @@ class Database:
         finally: 
             self.conn.close()
             return results
+    def getUserBySession(self, sessionId):
+        if self.conn.close:
+            self.__init__()
 
-    def UpdateUsername(self, data):
+        sql = '''
+            with rows as (
+                SELECT * 
+                FROM sessions
+                WHERE sessionid = '%s'
+            )
+            SELECT id 
+            FROM rows
+        ''' %sessionId
+
+        try: 
+            with self.conn.cursor() as cursor:
+                cursor.execute(sql)
+                result = cursor.fetchall()
+
+                ( id ) = result[0]
+
+                user = self.getUserById(id)
+
+        except( self.conn.DatabaseError, Exception) as error :
+            print( )
+
+        finally:
+            return user       
+    
+    # UPDATE 
+    def updateUsername(self, data):
 
         if self.conn.closed:
             self.__init__()
@@ -318,28 +382,8 @@ class Database:
 
         finally:
             return updated_rows
-    def CreateUserSession(self, data):
-        
-        print( data )
-        if self.conn.closed:
-            self.__init__()
-
-        sql = '''
-            INSERT INTO public.sessions (sessionId, id)
-            VALUES  (%s, %s );
-        ''' 
-
-        try: 
-            with self.conn.cursor() as cursor:
-                id = cursor.execute(sql, (data['sessionId'], data['id']))
-                print( 'id', id )
-        except( Exception, self.conn.DatabaseError) as error:
-            print( error )
-
-        finally: 
-            self.conn.close
-            return id
-
+    
+    # UPDATE
     def updateUserSession(self, session):
 
         if self.conn.closed:
@@ -348,10 +392,36 @@ class Database:
         sql = '''
             insert sessions,
             SET id = '%s', sessionId = '%s'
-        '''
+        '''   
+    def deleteUserSession(self, sessionId):
+        
+        if self.conn.closed:
+            self.__init__()
+        
+        print('removiing user session ' )
+        
+        sql = '''
+            DELETE FROM sessions
+            WHERE sessionid = '%s'
+        ''' %sessionId
+        
+        print( sessionId )
 
-    # def getUserSession(self, sessionId)
-    # def deleteUserSession(self, sessionId)
+        try: 
+            with self.conn.cursor() as cursor: 
+                cursor.execute( sql )
+                result = cursor.statusmessage
+                self.conn.commit()
+
+                # print( result )
+
+        except( self.conn.DatabaseError, Exception) as error:
+            print(  )
+
+        finally:
+            self.conn.close() 
+            return result
+
 
         
 

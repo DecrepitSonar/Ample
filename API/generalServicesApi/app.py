@@ -75,12 +75,46 @@ def register_user():
         
         return jsonify({'id': result }),200
 
+@app.route('/validate', methods=['GET'])
+def validate():
+    print('validating user')
+    if not len(request.cookies): 
+            return  jsonify({}), 401
+
+    token = request.cookies['xrftoken']
+
+    if token == None: 
+        return jsonify({}, 401)
+
+    user = databse.getUserBySession(token)
+
+
+    if not user: 
+        return jsonify({}, 401)
+
+    print( 'user result ', user )
+    (id, username, email, password, imageURL, headerPosterURL, type) = user
+    # print( id, username, email, imageURL, headerPosterURL, type)
+
+    response = jsonify({
+        "id": id,
+        "username": username,
+        "email": email,
+        "imageURL": imageURL,
+        "headerPosterURL": headerPosterURL,
+        "type": type
+    })
+
+    # print( response )
+    return response
+
 @app.route('/login', methods=['POST', 'GET'])
 def login_user():
 
     print('Authenticating user')
     print( request.headers['User-Agent'] )
     print( request.method)
+
     if request.method == 'POST':
             
         if( request.headers['User-Agent'] == 'Ample/1 CFNetwork/1568.100.1 Darwin/24.0.0'):
@@ -116,17 +150,14 @@ def login_user():
         if bcrypt.check_password_hash(password, request_password):
 
             # Create and save sessionId
-            sessionId = databse.CreateUserSession({
+            sessionId = str(uuid.uuid4())
+
+            databse.createUserSession({
                 'id': user['id'],
-                'sessionId': str(uuid.uuid4())
+                'sessionId': sessionId
             })
-            
-            print( sessionId)
-            
-            # print("user cached as:" ,session[user.id])
 
             result = jsonify(user)
-
             response = make_response(result)
             response.set_cookie("xrftoken", sessionId, httponly=True, secure=True, samesite='None')
             
@@ -135,54 +166,29 @@ def login_user():
             print("failed")
             response = jsonify({"error": "Unauthorized"}), 401
     
-    else:
-        print('validating user')
-        if not len(request.cookies): 
-             return  jsonify({}), 401
-    
-        token = request.cookies['xrftoken']
-
-        if token == None: 
-            return jsonify({}, 401)
-
-        user = User.getUserByToken(token)
-
-        print( user )
-
-        if not user: 
-            return jsonify({}, 401)
-
-        response = jsonify({
-            "id": user.id,
-            "username": user.username,
-            "email": user.email,
-            "imageURL": user.imageURL,
-            "headerPosterURL": user.headerPosterURL,
-            "type": user.type
-        }), 200
-
     return response 
       
-   
+  
 @app.route('/user', methods=['GET'])
 def getUser():
     userId = request.args['id']
-    print( userId )
+    # print( userId )
 
-    user = User.query.filter_by(id=userId).first()
-    
+    user = databse.getUserById(userId)
+    (id, username, email, password, imageURL, headerPosterURL, type) = user
+
     if user != None:
 
         return jsonify({
-            "id": user.id,
-            "username": user.username,
-            "email": user.email,
-            "imageURL": user.imageURL,
-            "headerPosterURL": user.headerPosterURL,
-            "type": user.type
+            "id": id,
+            "username": username,
+            "email": email,
+            "imageURL": imageURL,
+            "headerPosterURL": headerPosterURL,
+            "type": type
         }), 200
     
-    print( contentDb['artists'].find_one({'id': userId})) 
+    # print( contentDb['artists'].find_one({'id': userId})) 
 
     return jsonify({})
 
@@ -205,18 +211,22 @@ def updateUserSettings():
     if(user is not None):
         return jsonify({'error': 'Username not available'}),200
     
-    user = databse.UpdateUsername(request.form)
+    user = databse.updateUsername(request.form)
     
 
     return jsonify({}), 200
 
-@app.route('/logout', methods=['POST'])
+@app.route('/logout', methods=['DELETE'])
 def logout():
     print( "logging out ")
-    user_id =  request.args['id']
 
-    # user =  session['user_id'] 
-    print( session.get('user_id') )
+    session = request.cookies['xrftoken']
+    print( session )
+
+    result = databse.deleteUserSession(session)
+    
+    if result == 0: 
+        jsonify({"status": "failed"}), 404
 
     return jsonify({"status": "success"}), 200
 
@@ -276,7 +286,7 @@ def home():
         'title': 1, 
         'name': 1,
         'imageURL': 1
-    }).limit(6)
+    }).limit(7)
 
 
     for item in list(music): 
@@ -292,7 +302,7 @@ def home():
         'id': 1,
         'name': 1,
         'imageURL': 1
-    }).limit(6)
+    }).limit(7)
 
     for item in list(artists):
         content['artists'].append({
@@ -309,7 +319,7 @@ def home():
                                                 'artistImageURL': 1,
                                                 'imageURL': 1,
                                                 'views': 1,
-                                                'artist': 1}).limit(3)): 
+                                                'artist': 1}).limit(4)): 
         
         content['videos'].append({
             'id': item['id'],
@@ -446,8 +456,16 @@ def getVideo():
                                                             'videoURL': 1,
                                                             'artistId': 1})
     
-    recommendedVideos = list(contentDb['vidoes'].find({'artistId': video['artistId']}))
-
+    recommendedVideos = list(contentDb['videos'].find({}, {'_id': 0,
+                                                           'id': 1,
+                                                           'title': 1,
+                                                            'artistImageURL': 1,
+                                                            'imageURL': 1,
+                                                            'views': 1,
+                                                            'artist': 1,
+                                                            'videoURL': 1,
+                                                            'artistId': 1}))
+    print('Recommended ', recommendedVideos)
     pageContent = {
         'video': {
             'id': video['id'],
@@ -488,7 +506,7 @@ def getAudioPageContent():
             'imageURL': item['imageURL'],
         })
 
-    newMusic = contentDb['albums'].find({'type': 'Album'},{'_id': 0}).sort('releaseDate').limit(6)
+    newMusic = contentDb['albums'].find({'type': 'Album'},{'_id': 0}).sort('releaseDate').limit(7)
 
     for item in list(newMusic):
         content['new'].append({
@@ -510,7 +528,7 @@ def getAudioPageContent():
             'albumId': item['albumId']
         })
 
-    alternativeGenre = contentDb['albums'].find({'genre': 'Alternative','type':'Album'}).limit(6).sort('releaseDate')
+    alternativeGenre = contentDb['albums'].find({'genre': 'Alternative','type':'Album'}).limit(7).sort('releaseDate')
 
     for item in list(alternativeGenre):
         content['genres']['alternative'].append({
@@ -520,7 +538,7 @@ def getAudioPageContent():
             'imageURL': item['imageURL']
         })
 
-    rnb = contentDb['albums'].find({'genre': 'RnB','type':'Album'}).limit(6).sort('releaseDate')
+    rnb = contentDb['albums'].find({'genre': 'RnB','type':'Album'}).limit(7).sort('releaseDate')
     for item in list(rnb):
         content['genres']['rnb'].append({
             'id': item['id'],
@@ -529,7 +547,7 @@ def getAudioPageContent():
             'imageURL': item['imageURL']
         })
 
-    hiphop = contentDb['albums'].find({'genre': 'Hip-Hop', 'type':'Album'}).limit(6).sort('releaseDate')
+    hiphop = contentDb['albums'].find({'genre': 'Hip-Hop', 'type':'Album'}).limit(7).sort('releaseDate')
     for item in list(hiphop):
         content['genres']['hiphop'].append({
             'id': item['id'],
@@ -538,7 +556,7 @@ def getAudioPageContent():
             'imageURL': item['imageURL']
         })
     
-    playlists = contentDb['albums'].find({'type':'playlist'},{'_id': 0}).limit(6).sort('datePosted')
+    playlists = contentDb['albums'].find({'type':'playlist'},{'_id': 0}).limit(7).sort('datePosted')
     for item in list(playlists):
         content['playlists'].append({
             'id': item['id'],
