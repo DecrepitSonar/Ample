@@ -24,13 +24,7 @@ def get_uuid():
 #     email = db.Column(db.String(345), unique=True)
 #     password = db.Column(db.Text, nullable=False)
 #     imageURL = db.Column(db.Text, default='https://prophile.nyc3.cdn.digitaloceanspaces.com/images/1222ac938383d8c2708b08ee85c1b3d491797171.jpg')
-#     headerPosterURL = db.Column(db.Text, default='https://prophile.nyc3.cdn.digitaloceanspaces.com/images/5172658.jpg')
-#     type = db.Column(db.Text, default='user')
-#     # sessionId = db.Table.
-
-#     def updateUserData(data):
-#         print('data', data)
-#         columns = list(data.keys())
+#     headerPosterURL = db.Column(db.Text, default='https://prophile.nyc3.cdn.digit 
 #         print( columns )
 
 #         user = User.getUserById(data['id'])
@@ -423,6 +417,51 @@ class Database:
             return result
 
 
-        
+    def postAudioTrack(self, item):
+
+        if self.conn.closed: 
+            self.__init__()
+
+        sql = ''' 
+        INSERT INTO audio ( 
+        id,
+        tracknum, 
+        genre, 
+        title, 
+        author, 
+        imageurl, 
+        audiourl, 
+        albumid,
+        playcount,
+        authorid )
+
+        VALUES ( %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
+        '''
+
+        try: 
+            with self.conn.cursor() as cursor: 
+                print( item )
+                cursor.execute(sql, (
+                    item['id'],
+                    item['tracknum'],
+                    item['genre'],
+                    item['title'],
+                    item['author'],
+                    item['imageurl'],
+                    item['audiourl'],
+                    item['albumid'],
+                    item['playcount'],
+                    item['authorid']
+                    ))
+                
+                self.conn.commit()
+
+        except ( self.conn.DatabaseError, Exception) as error:
+            print( error )
+            self.conn.close()
+            return
+        finally: 
+            self.conn.close()
+            return
 
         

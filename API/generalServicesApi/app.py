@@ -187,10 +187,25 @@ def getUser():
             "headerPosterURL": headerPosterURL,
             "type": type
         }), 200
-    
-    # print( contentDb['artists'].find_one({'id': userId})) 
 
     return jsonify({})
+
+@app.route('/user-profile', methods=['GET'])
+def getUserProfile():  
+    userId = request.args['id']
+
+    user = databse.getUserById(userId)
+    (id, username, email, password, imageURL, headerPosterURL, type) = user
+    
+    print( user )
+    return jsonify({
+            "id": id,
+            "username": username,
+            "email": email,
+            "imageURL": imageURL,
+            "headerPosterURL": headerPosterURL,
+            "type": type
+        }), 200
 
 @app.route('/updateSettings', methods=['PUT'])
 def updateUserSettings(): 
@@ -230,6 +245,29 @@ def logout():
 
     return jsonify({"status": "success"}), 200
 
+# migrating mondo db object into psl db 
+@app.route('/migrate', methods=['GET'])
+# def migrateTrack():
+#     tracks = contentDb['tracks'].find().limit(1)
+#     for item in list(tracks ):
+#         track = {
+#             'id': item['id'],
+#             'tracknum':item['trackNum'], 
+#             'genre': item['genre'], 
+#             'title': item['title'], 
+#             'author': item['name'], 
+#             'imageurl': item['imageURL'], 
+#             'audiourl': item['audioURL'], 
+#             'albumid': item['albumId'],
+#             'playcount': item['playCount'],
+#             'authorid': item['artistId']
+#         }
+#         databse.postAudioTrack(track)
+#     return jsonify({})
+
+def migrateUsers():
+    users = contentDb['artists'].find({})
+    print( list(users) )
 
 # Content
 @app.route('/', methods=['GET'])
