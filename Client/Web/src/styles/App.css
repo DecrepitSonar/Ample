@@ -311,7 +311,7 @@ form a {
 .page_container{
   /* border: 1px solid red; */
   /* height: 100%; */
-  /* overflow: scroll; */
+  overflow: scroll;
   width: 100vw;
 }
 .main_header{

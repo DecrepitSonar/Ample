@@ -1,255 +1,307 @@
-import React, { useEffect, useState } from 'react'
-import { Link, Navigate, replace, useNavigate, useParams } from 'react-router-dom'
-import { activeNavButtonStyle, inActiveButtonStyle } from '../../utils/computedSyles'
-import axios from 'axios'
-import { userAuthType } from '../../utils/ObjectTypes'
+import React, { useState } from 'react'
 import { useSelector } from 'react-redux'
-import { RootState } from '@reduxjs/toolkit/query'
-import AudioItem from '../../Components/AudioItem'
-import VideoItem from '../../Components/VideoItem'
+import { RootState, useAppDispatch } from '../../utils/store'
+import { IoCardSharp, IoHome, IoPerson } from 'react-icons/io5'
+import { BiLockAlt, BiShield } from 'react-icons/bi'
+import { BsCreditCard2BackFill } from 'react-icons/bs'
+import { PiBellRingingFill } from 'react-icons/pi'
+import { CgEyeAlt } from 'react-icons/cg'
+import { RiImageCircleFill } from 'react-icons/ri'
+import { logout, validate } from '../../utils/Authslice'
+import { Navigate, useNavigate } from 'react-router-dom'
+import ProfileHome from './ProfileHome'
 
-
-
-function Home() {
-
-  return (
+function AccountSettings(){
+  const user = useSelector( (state: RootState) => state.auth.user)
+  return(
     <>
-    <section>
-        <span className='profile_section_title'>Featured</span>
-        <div className='featured_section'>
-            <div className='h_video_item_container'>
-                <div className='h_video_item_poster'></div>
-                <div className='h_video_item_info'>
-                    <span>title</span>
-                    <span>Artist</span>
-                    <span>213123 views</span>
-                </div>
-            </div>
-            
-            <div className='profile_about_sub_section'>
-                <span>About</span>
-                <p>Lorem, ipsum dolor sit amet consectetur adipisicing elit. Illo magni reiciendis quasi possimus aspernatur. Reiciendis reprehenderit repudiandae alias eos ad optio! Consequuntur quo quod vel distinctio eius qui? Iusto, omnis.</p>
-            </div>  
+    <div className='settings_content_section'>
+      <h1>Account</h1>
+      <section>
+        <span>EDIT AVI IMAGE</span>
+        <div className='section_input_content'>
+
+          <label className='custom_upload_buttom'>
+            <RiImageCircleFill/>
+            <input type="file" className='settings'/>
+          </label>
+
+          <img className='imageInputPreview' 
+          src={user.imageURL}/>
+
         </div>
-    </section>
-    <section>
+      </section>
+      <section>
+        <span>EDIT BANNER IMAGE</span>
+        <div className='section_input_content'>
 
-    </section>
-    </>
-  )
-}
+          <label className='custom_upload_buttom'>
+            <RiImageCircleFill/>
+            <input type="file" className='settings'/>
+          </label>
 
-
-function Video() {
-  return (
-    <>
-    <section>
-        <span className='profile_section_title'>Videos</span>
-    </section>
-    </>
-  )
-}
-
-function Audio() {
-return (
-    <>
-        <section>
-            <span className='profile_section_title'>Tracks</span>
-        </section>
-    </>
-)
-}
-
-function CreatorProfile(props: userAuthType) {
-
-    const [ navState, setNavState ] = useState("Home")
-
-  return (
-    <div>
-        <header style={{'backgroundImage': `url(${props.headerPosterURL})`}}>
-            <div className="profile_header_overlay"/>
-            <div className='profile_header_nav'>
-                <ul>
-                    <li 
-                    style={navState == "Home" ? activeNavButtonStyle : inActiveButtonStyle}
-                    onClick={(e: React.SyntheticEvent) => setNavState(e.currentTarget.innerHTML)}>Home</li>
-                    <li 
-                    style={navState == "Video" ? activeNavButtonStyle : inActiveButtonStyle}
-                    onClick={(e: React.SyntheticEvent) => setNavState(e.currentTarget.innerHTML) }>Video</li>
-                    <li 
-                    style={navState == "Tracks" ? activeNavButtonStyle : inActiveButtonStyle}
-                    onClick={(e: React.SyntheticEvent) => setNavState(e.currentTarget.innerHTML)}>Tracks</li>
-                </ul>
-            </div>
-            <div className='profile_header_info_container'>
-                <div className='profile_header_info'>
-                    <span>{props.username}</span>
-                    <span>{props.type}</span>
-                    <span>Subscribers 1312</span>
-                </div>
-                <div className='profile_avi'
-                style={{'backgroundImage': `url(${props.imageURL})`}}
-                />
-            </div>
-        </header>
-        <div className='profile_body'>
-            {
-                {
-                    "Home": <Home/>,
-                    "Video": <Video/>,
-                    "Tracks": <Audio/>
-                }[navState]
-            }
+          <img className='settings_banner_preview' 
+          src={user.headerPosterURL}/>
+          
         </div>
+      </section>
+      <section>
+        <div className='section_input_content section_inputs'>
+          <div className="settings_input_container">
+            <label className="form_password_label">USERNAME</label>
+            <input
+            className="auth_form_password_input"
+            type="text"
+            name="username"
+            placeholder={user.username}/>
+          </div>
+          </div>
+
+        <div className='section_input_content section_inputs'>
+          <div className="settings_input_container">
+            <label className="form_password_label">EMAIL</label>
+            <input
+            className="auth_form_password_input"
+            type="text"
+            name="email"
+            placeholder={"email212@email.com"}/>
+          </div>
+        </div>
+        <button className='submit_button_solid'>Update</button>
+      </section>
+
+      <h1>Security</h1>
+    <section>
+        <div className='section_input_content section_inputs'>
+          <div className="settings_input_container">
+            <label className="form_password_label">CURRENT PASSWORD</label>
+            <input
+            className="auth_form_password_input"
+            type="text"
+            name="username"
+            autoComplete='username'
+            placeholder={'***************'}/>
+          </div>
+          </div>
+
+        <div className='section_input_content section_inputs'>
+          <div className="settings_input_container">
+            <label className="form_password_label">NEW PASSWORD</label>
+            <input
+            className="auth_form_password_input"
+            type="text"
+            name="password"/>
+          </div>
+        </div>
+        <button className='submit_button_solid'>Update</button>
+      </section>
+
+      <section>
+        <h1>Creators</h1>
+        <div className="section_input_content">
+          <span>Upgrade your account to post, stream and earn from your content</span>
+        </div>
+        <button className='submit_button_outline'>Upgrade</button>
+      </section>
+
+      <section>
+        <h1>Delete account</h1>
+        <div className="section_input_content">
+          <span>Remove your account and all your saved content.<br/>
+          NOTE: YOU WILL LOSE YOUR REMAINING BALANCE</span> 
+        </div>
+        <button className='submit_button_outline_negative'>DELETE</button>
+      </section>
     </div>
+    </>
   )
 }
 
-function UserProfile(props: userAuthType) {
+function PaymentSettings(){
+  return(
+    <div className='settings_content_section'>
+      <h1>Payments</h1>
+      <section>
+        <h1>Balance</h1>
+        <div className='settings_content_item_container' >
+          <div className='settings_content_item'>
+            <h1>999</h1>
+            <span>Token</span>
+          </div>
+        </div>
+      </section>
 
-    const auth = useSelector( ( state: RootState) => state.auth)
-    const [ navState, setNavState ] = useState("Home")
+      <section>
+        <h1>Cards</h1>
+        <div className='wallet_settings_content_item_container' >
+          <div className='wallet_card_icon_container'>
+            <div className='wallet_card_icon'>
+              <IoCardSharp/>
+            </div>
+            <span>Mastercard</span>
+          </div>
+          <div className='wallet_card_detail_container'>
+            <div className='wallet_card_data'> 
+              <div className='wallet_card_data_identity'>
 
-    const navigate = useNavigate()
+              <div className="wallet_card_data_input">
+                <label className="">NAME</label>
+                <input
+                className=""
+                type="text"
+                name="username"
+                placeholder='John'
+                disabled/>
+              </div>
 
-    const Videos = [
-        {
-          "title": "Alternate Ending - Episode 606",
-          "author": "The Joe Budden Podcast",
-          "posterURL": "../alternateending.jpg",
-          "imageURL": "../jbp.jpg",
-          "views": 12313
-        },
-        {
-          "title": "Gritz and Cornbread",
-          "author": "The Brilliant Idiot Podcast",
-          "posterURL": "../gritzandcornbread.jpg",
-          "imageURL": "../brilliantidiots.jpg",
-          "views": 12313
-        }
-        ,
-        {
-          "title": "Day Walker | Episode 10",
-          "author": "Rory & Mal Podcast",
-          "posterURL": "../daywalker.jpg",
-          "imageURL": "../rorynmal.jpg",
-          "views": 12313
-        },
-      ]
-
-
-    const AudioItems = [
-        {
-          "title": "Dark Times",
-          "author": "Vince Staples",
-          "imageURL": "darktimes.jpg"
-        },
-        {
-          "title": "Tyla",
-          "author": "Tyla",
-          "imageURL": "../tyla.jpg"
-        },
-        {
-          "title": "Talk Memory",
-          "author": "BADBADNOTGOOD",
-          "imageURL": "../Bbngtalkmemory.jpg"
-        },
-        {
-          "title": "Yes Lawd",
-          "author": "NxWorries",
-          "imageURL": "../yeslawd.jpg"
-        },
-        {
-          "title": "Why Lawd",
-          "author": "Anderson .Paak",
-          "imageURL": "../whylawd.jpg"
-        }
-      ]
-      
-    useEffect(() => {
-        console.log( auth.user.id === props.id)
-    })
-    return (
-      <div>
-        <header className='profile_header' style={{'backgroundImage': `url(${props.headerPosterURL})`}}>
-            <div className="profile_header_overlay">
-              <div className='user_profile_header_detail_container'>
-                  <div className='profile_avi' style={{'backgroundImage': `url(${props.imageURL})`}}/>
-                  <div className='user_profile_header_detail'>
-                      <span className='label_username'>{props.username}</span>
-                      <div className='follower_count_container'> 
-                          <span>Following 2342 </span>
-                          <span>Followers 2342</span>
-                      </div>
-                      {/* { auth.user.id != props.id ?  */}
-                      <button className='follow_button'>Follow</button> 
-                      {/* // <button className='following_button'>Following</button> */}
-                      {/* } */}
-                  </div>
-              </div>    
-              <div className='profile_header_nav'>
-                  <ul>
-                      <li 
-                      style={navState == "Home" ? activeNavButtonStyle : inActiveButtonStyle}
-                      onClick={(e: React.SyntheticEvent) => setNavState(e.currentTarget.innerHTML)}>Home</li>
-                      <li 
-                      style={navState == "Video" ? activeNavButtonStyle : inActiveButtonStyle}
-                      onClick={(e: React.SyntheticEvent) => setNavState(e.currentTarget.innerHTML) }>Video</li>
-                      <li 
-                      style={navState == "Tracks" ? activeNavButtonStyle : inActiveButtonStyle}
-                      onClick={(e: React.SyntheticEvent) => setNavState(e.currentTarget.innerHTML)}>Tracks</li>
-                  </ul>
+              <div className="wallet_card_data_input">
+                <label className="">SURNAME</label>
+                <input
+                className=""
+                type="text"
+                name="username"
+                placeholder='Doe'
+                disabled/>
               </div>
             </div>
-        </header>
-        <div className="page_body">
-            <section>
-                <span className="section_subheading">Podcast</span>
-                <div className="section_item_container">
-                    {
-                        Videos.map( video => {
-                            return <VideoItem {...video}/>
-                        })
-                        
-                    }
-                </div>
-            </section>
-        <section>
-            <span className="section_subheading">Music</span>
-            <div className="section_item_container">
-            {
-                AudioItems.map( item => {
-                    return <AudioItem {...item}/>
-                })
-                
-            }
+            <div className='wallet_card_data_security'>
+
+              <div className="wallet_card_data_input">
+                <label className="">CARD #</label>
+                <input
+                type="text"
+                name="username"
+                placeholder='********1234'
+                disabled
+                />
+              </div>
+
+              <div className="wallet_card_data_input">
+                <label className="">CVC</label>
+                <input
+                className=""
+                type="text"
+                name="username"
+                placeholder='***'
+                disabled/>
+              </div>
+
+              <div className="wallet_card_data_input">
+                <label className="">EXPIRY</label>
+                <input
+                className=""
+                type="text"
+                name="username"
+                placeholder='******'
+                disabled/>
+              </div>
+
+              
             </div>
-        </section>
-      </div>
-      </div>
-    )
+
+            </div>
+          </div>
+
+          
+        </div>
+        <button className='wallet_add_card'>Add Card</button>
+        <button className='submit_button_solid'>update</button>
+      </section>
+
+      <section>
+        <h1>History</h1>
+        <div className='wallet_settings_content_item_container'>
+          <table className='wallet_settings_purchase_history'>
+              <tr>
+                <th>ITEM</th>
+                <th>AMOUNT</th>
+                <th>DATE</th>
+              </tr>
+              
+            <tbody>
+              <tr>
+                <td>East Atlanta love letter</td>
+                <td>-1k</td>
+                <td>Feb 4, 24, 2:2</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+    </div>
+  )
+}
+
+function NotificationSettings(){
+  return(
+    <div className='settings_content_section'>
+    <h1>Notifications</h1>
+    </div>
+  )
+}
+
+function PrivacySettings(){
+  return(
+    <div className='settings_content_section'>
+    <h1>Privacy</h1>
+    </div>
+  )
+}
+function SettingsPageWrapper(){
+
+  const [navLocation, setNavLocation ] = useState("Home")
+  
+  const dispatch = useAppDispatch()
+  const userId = useSelector( (state: RootState) => state.auth.user.id)
+  const navigator = useNavigate()
+
+  const activeStyle = (link) => {
+    return navLocation === link ? {
+      color: 'rgb(198, 161, 104)', 
+      backgroundColor: 'inherit'} : {}
   }
 
+  const logoutUser = () => { 
+    dispatch(logout())
+    .then(() => {
+      navigator('/')
+    })
+   }
+
+  return(
+    <div className='settings_page_container'>
+      
+      <div className='settings_nav'>
+        <button style={activeStyle("Home")} onClick={((e) => setNavLocation('Home') )}><span style={activeStyle("Home")} className='settings_nav_icon'><IoHome/></span>Home</button>
+        <button style={activeStyle("Account")} onClick={((e) => setNavLocation('Account') )}><span style={activeStyle("Account")} className='settings_nav_icon'><IoPerson/></span>Account</button>
+        <button style={activeStyle("Payments")} onClick={((e) => setNavLocation('Payments') )}><span style={activeStyle("Payments")} className='settings_nav_icon'><BsCreditCard2BackFill/></span>Payments</button>
+        <button style={activeStyle("Notifications")} onClick={((e) => setNavLocation('Notifications') )}><span style={activeStyle("Notifications")} className='settings_nav_icon'><PiBellRingingFill/></span>Notifications</button>
+        <button style={activeStyle("Privacy")} onClick={((e) => setNavLocation('Privacy') )}><span style={activeStyle("Privacy")} className='settings_nav_icon'><CgEyeAlt/></span>Privacy</button>
+        <button onClick={() => logoutUser()}> <span style={{color: "#d6000090", backgroundColor: 'inherit'}} className='settings_nav_icon'><BiLockAlt/></span>Sign out</button>
+      </div>
+      {/* <> */}
+      {
+          {
+              "Home": <ProfileHome id={userId}/>,
+              "Account": <AccountSettings/>,
+              "Payments": <PaymentSettings/>,
+              "Notifications": <NotificationSettings/>,
+              "Privacy": <PrivacySettings/>
+          }[navLocation]
+      }
+      {/* </> */}
+    </div>
+  )
+}
+
 export default function Profile() {
+    const auth = useSelector( ( state: RootState ) => state.auth )
 
-    const [ profileData, setProfileData ] = useState<userAuthType>()
-
-    const params = useParams()
-
-    useEffect(() => {
-        if( params.id) {
-            axios.get(`http://127.0.0.1:5000/user?id=${params.id}`)
-            .then( response => {
-            setProfileData(response.data)
-            })
-        }
-    },[])
+    console.log( auth)
 
   return (
-    <div className='page_container'>
-        {profileData ? 
-            profileData.type  == 'User' ? <UserProfile {...profileData}/> : <CreatorProfile {...profileData}/>
-        : <>User Not Found </> }
-    </div>
+    <>
+    { auth.isLoggedIn ? <SettingsPageWrapper/> : <div className='page_container'>Please Log in</div>}
+    </>
   )
 }

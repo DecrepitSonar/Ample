@@ -6,10 +6,9 @@ import SignUpForm from './Pages/Auth/SignUpForm'
 import LoginForm from './Pages/Auth/LoginForm'
 import PasswordReset from './Pages/Auth/PasswordReset'
 import Home from './Pages/Main/Home'
-import Settings from './Pages/Main/Settings'
+import Profile from './Pages/Main/Profile'
 
 import Wrapper from './Pages/Main/Wrapper'
-import Profile from "./Pages/Main/Profile";
 import Watch from "./Pages/Main/Watch";
 import { useEffect } from "react";
 import { useDispatch } from "react-redux";
@@ -22,6 +21,7 @@ import Listen from "./Pages/Main/Listen";
 import PlaylistDetail from "./Pages/Main/PlaylistDetail";
 import VideoPlayerPage from "./Pages/Main/videoPlayerPage";
 import DashboardWrapper from "./Pages/Dashboard/DashboardWrapper";
+import CreatorProfile from './Pages/Main/CreatorProfile'
 
 
 function Dash(){
@@ -59,8 +59,8 @@ function App() {
           <Route path='/watch' element={<Watch/>}/>
           <Route path='/listen' element={<Listen/>}/>
           <Route path='/browse' element={<Browse/>}/>
+          <Route path='/user/:id' element={<CreatorProfile/>}/>
           <Route path='/profile/:id' element={<Profile/>}/>
-          <Route path='/settings/:id' element={<Settings/>}/>
           <Route path='/video/:videoId' element={<VideoPlayerPage/>}/>
           <Route path='/playlist/:id' element={<PlaylistDetail/>}/>
         </Route>

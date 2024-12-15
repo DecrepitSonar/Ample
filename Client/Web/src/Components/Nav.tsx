@@ -118,7 +118,6 @@ function Nav(){
             auth.isLoggedIn ? 
             < div className='nav_avi_container'>
               <Link to={'/notifications'} style={currentLocation[1] == 'notifications' ? activeLink : inActiveLink}>  <BiBell/></Link>
-              <Link to={`/settings/${auth.user.id}}`} style={currentLocation[1] == 'settings' ? activeLink : inActiveLink}> <BiCog/></Link>
               <span onClick={ (e: React.SyntheticEvent) => navigate(`/profile/${auth.user.id}`)} className="nav_usedrname">{auth.user.username}</span>
               <div onClick={ (e: React.SyntheticEvent) => navigate(`/profile/${auth.user.id}`)} className="nav_avi" style={{'backgroundImage': `url(${auth.user.imageURL}`}}/>
             </div> :
