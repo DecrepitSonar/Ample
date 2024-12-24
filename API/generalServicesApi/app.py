@@ -95,28 +95,21 @@ def confirmUserSession():
 
     user = databse.getUserBySession(token)
 
-    print( user )
+    print( "4:",user )
 
 
-    # if not user: 
-    #     return jsonify({'error': "invalid session key"})
+    if not user: 
+        return jsonify({'error': "invalid session key"})
 
     # print( 'user result ', user )
     # (id, username, email, password, imageURL, headerPosterURL, type) = user
     # # print( id, username, email, imageURL, headerPosterURL, type)
 
-    # response = jsonify({
-    #     "id": id,
-    #     "username": username,
-    #     "email": email,
-    #     "imageURL": imageURL,
-    #     "headerPosterURL": headerPosterURL,
-    #     "type": type
-    # })
+
 
     # # print( response )
     # return response
-    return jsonify({}, 200)
+    return jsonify(user)
 
 @app.route('/validate', methods=['POST'])
 def validateUser():
@@ -263,7 +256,7 @@ def logout():
     print( session )
 
     result = databse.deleteUserSession(session)
-    
+    print(result)
     if result == 0: 
         jsonify({"status": "failed"}), 404
 

@@ -230,7 +230,7 @@ class Database:
             self.__init__()
 
         sql = """SELECT * FROM users WHERE id = '%s' """ %id
-        user_account = """ SELECT * FROM accounts WHERE user_id::TEXT = '%s' """ 
+        user_account = """ SELECT  user_id, username, avi_image_url, email, header_image, verified  FROM accounts """
 
         try: 
             with self.conn.cursor() as cursor: 
@@ -238,24 +238,44 @@ class Database:
                 print( '2:', cursor.statusmessage )
                 print( cursor.query)
                 
+                user_id = cursor.fetchone()[0]
+                print( user_id )
+
+                cursor.execute(user_account)
+                print( '3:', cursor.statusmessage )
+                print( cursor.query)
                 result = cursor.fetchone()
+                print( result )
 
-                # cursor.execute(user_account)
-                # print( cursor.query)
-
-                # print( cursor.statusmessage )
-
-                print( 'result', result )
-                
                 if result is not None: 
-                    print( result[0])
-                    return result
+
+                    (
+                        id,
+                        username,
+                        avi_image_url,
+                        email,
+                        header_image,
+                        verified,
+                    ) = result
+                    
+
+                    result =  {
+                            "id": id,
+                            "username": username,
+                            "email": email,
+                            "imageURL": avi_image_url,
+                            "headerPosterURL": header_image,
+                            'verified': verified
+                    }
+
 
         except (self.conn.DatabaseError, Exception) as error: 
             print( error )
-            # return 
+            return 
         
         finally: 
+            self.conn.close()
+            print( result )
             return result
         
     def getUserByEmail(self, email):
@@ -263,9 +283,8 @@ class Database:
         if self.conn.closed: 
             self.__init__()
 
-        # print( 'SELECT (id, username, avi_image_url, header_image, verified) FROM users WHERE  email LIKE', email)
         sql = """ 
-        SELECT id, username, avi_image_url, email, header_image, verified, password 
+        SELECT user_id, username, avi_image_url, email, header_image, verified, password 
         FROM accounts 
         WHERE email LIKE '%s' """ %email
 
@@ -274,12 +293,8 @@ class Database:
                 cursor.execute(sql)
                 
                 results = cursor.fetchone()
-                # print( results )
 
                 if results is not None: 
-                    # results =  results[0]
-                    
-                    # print( results)  )
                 
                     (
                         id,
@@ -290,21 +305,6 @@ class Database:
                         verified,
                         password 
                     ) = results
-                    
-                    # ( password ) = results
-                    # print( data['password'])
-                    # print( password)
-                    # print( Bcrypt.check_password_hash(password, data['password']))
-
-                    # print( list(map(list, zip(*results)))  )
-                    # data = []
-                    # for x in results[0]:
-                        # data.append(x)
-                        # if x == ',':
-                            # pass
-                        
-                    # ( id) = results
-                    # print( email, password)
 
                     results = {
                         "user" : {
@@ -365,7 +365,7 @@ class Database:
                 FROM user_sessions
                 WHERE sessions_key = '%s' )
                 
-            SELECT user_id::uuid
+            SELECT user_id
             FROM rows
         ''' %sessionId
 
@@ -374,19 +374,16 @@ class Database:
                 cursor.execute(sql)
                 print( '1:', cursor.statusmessage )
                 result = cursor.fetchone()[0]
-                
-                print( result )
 
                 user = self.getUserById(result)
-                # print( user )
 # 
         except( self.conn.DatabaseError, Exception) as error :
             print( error )
 
         finally:
-            # print( user )
-            # return user       
-            return
+
+            self.conn.close()
+            return user       
     
     # UPDATE d
     def updateUsername(self, data):
@@ -435,11 +432,11 @@ class Database:
         print('removiing user session ' )
         
         sql = '''
-            DELETE FROM sessions
-            WHERE sessionid = '%s'
+            DELETE FROM user_sessions
+            WHERE sessions_key = '%s'
         ''' %sessionId
         
-        print( sessionId )
+        print( sessionId)
 
         try: 
             with self.conn.cursor() as cursor: 
@@ -450,7 +447,7 @@ class Database:
                 # print( result )
 
         except( self.conn.DatabaseError, Exception) as error:
-            print(  )
+            print( error  )
 
         finally:
             self.conn.close() 
