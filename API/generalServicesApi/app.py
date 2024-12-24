@@ -24,7 +24,7 @@ bcrypt = Bcrypt(app)
 with app.app_context():
     # db.create_all()
     databse = db()
-    databse.create_tables()
+    # databse.create_tables()
 
 
 # Auth
@@ -71,50 +71,73 @@ def register_user():
     
     finally:
         if result is None: 
-            return jsonify({}),400
+            return {
+                'error': {
+                    'message': "User already exists " ,
+                'Code': 'EMAIlLERR'}
+            }
         
         return jsonify({'id': result }),200
 
 @app.route('/validate', methods=['GET'])
-def validate():
+def confirmUserSession():
     print('validating user')
-    if not len(request.cookies): 
-            return  jsonify({}), 401
+    print( len(list(request.cookies)))
+
+    if len(list(request.cookies)) == 0 : 
+            return jsonify({'error': "invalid session key"})
 
     token = request.cookies['xrftoken']
 
+    print( token )
     if token == None: 
-        return jsonify({}, 401)
+        return jsonify({'error': "invalid session key"})
 
     user = databse.getUserBySession(token)
 
+    print( user )
 
-    if not user: 
-        return jsonify({}, 401)
 
-    print( 'user result ', user )
-    (id, username, email, password, imageURL, headerPosterURL, type) = user
-    # print( id, username, email, imageURL, headerPosterURL, type)
+    # if not user: 
+    #     return jsonify({'error': "invalid session key"})
 
-    response = jsonify({
-        "id": id,
-        "username": username,
-        "email": email,
-        "imageURL": imageURL,
-        "headerPosterURL": headerPosterURL,
-        "type": type
-    })
+    # print( 'user result ', user )
+    # (id, username, email, password, imageURL, headerPosterURL, type) = user
+    # # print( id, username, email, imageURL, headerPosterURL, type)
 
-    # print( response )
-    return response
+    # response = jsonify({
+    #     "id": id,
+    #     "username": username,
+    #     "email": email,
+    #     "imageURL": imageURL,
+    #     "headerPosterURL": headerPosterURL,
+    #     "type": type
+    # })
 
+    # # print( response )
+    # return response
+    return jsonify({}, 200)
+
+@app.route('/validate', methods=['POST'])
+def validateUser():
+    email = request.json['email']
+
+    user = databse.getUserByEmail(email)
+
+    if user == None: 
+        print( "User is none")
+        return jsonify({}, 404)
+    
+    print( "User found")
+    return jsonify(user)
+    
 @app.route('/login', methods=['POST', 'GET'])
 def login_user():
 
     print('Authenticating user')
     print( request.headers['User-Agent'] )
     print( request.method)
-
+    
     if request.method == 'POST':
             
         if( request.headers['User-Agent'] == 'Ample/1 CFNetwork/1568.100.1 Darwin/24.0.0'):
@@ -143,13 +166,12 @@ def login_user():
 
         request_password = request.json['password']
         
-        print("Found User:", password)
         print( bcrypt.check_password_hash(password, request_password) )
     
 
         if bcrypt.check_password_hash(password, request_password):
 
-            # Create and save sessionId
+        #     # Create and save sessionId
             sessionId = str(uuid.uuid4())
 
             databse.createUserSession({
@@ -158,6 +180,7 @@ def login_user():
             })
 
             result = jsonify(user)
+            print( result )
             response = make_response(result)
             response.set_cookie("xrftoken", sessionId, httponly=True, secure=True, samesite='None')
             
@@ -166,7 +189,8 @@ def login_user():
             print("failed")
             response = jsonify({"error": "Unauthorized"}), 401
     
-    return response 
+    # return response 
+    return response
       
   
 @app.route('/user', methods=['GET'])
@@ -190,7 +214,7 @@ def getUser():
 
     return jsonify({})
 
-@app.route('/user-profile', methods=['GET'])
+@app.route('/user-0rofile', methods=['GET'])
 def getUserProfile():  
     userId = request.args['id']
 
@@ -267,7 +291,9 @@ def logout():
 
 def migrateUsers():
     users = contentDb['artists'].find({})
-    print( list(users) )
+
+    # for user in list(users) :
+
 
 # Content
 @app.route('/', methods=['GET'])

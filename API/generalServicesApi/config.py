@@ -10,6 +10,7 @@ load_dotenv()
 class ApplicationConfig:
     UPLOAD_FOLDER = '/Users/robertaubow/Documents/Ample/API/generalServicesApi/static/downloads/'
     ALLOWED_EXTENSIONS = {'jpg', 'jpeg', 'webp'}
+    IMAGE_CDN = 'https://prophile.nyc3.cdn.digitaloceanspaces.com/images/'
 
     SECRET_KEY=os.environ['SECRET_KEY']
 
