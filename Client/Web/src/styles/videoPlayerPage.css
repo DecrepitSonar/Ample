@@ -8,6 +8,7 @@
 .videoHeaderContainer{
     border-radius: 20px;
     background-color: #1c1c2575;
+    margin-top: 10px;
 
 }
 .video_page_container{
@@ -182,6 +183,8 @@
     display: flex;
     gap: 20px;
     margin-bottom: 10px;
+    align-items: center;
+    /* justify-content: space-between; */
 }
 .comment_header span{
     font-weight: 500;
@@ -189,4 +192,6 @@
 .comment_header span:nth-child(2){
     color: #7d7d7d;
     font-weight: 100;
+    font-size: small;
+
 }

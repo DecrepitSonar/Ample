@@ -12,7 +12,7 @@ import Wrapper from './Pages/Main/Wrapper'
 import Watch from "./Pages/Main/Watch";
 import { useEffect } from "react";
 import { useDispatch } from "react-redux";
-import { auth, validate } from "./utils/Authslice";
+import { auth, setUser, validate } from "./utils/Authslice";
 import { useAppDispatch } from "./utils/store";
 import axios from "axios";
 import SignUpEditForm from "./Pages/Auth/SignUpEditForm";
@@ -37,12 +37,30 @@ function App() {
 
   useEffect( () => {
     ( async () => {
+
+      const user = window.localStorage.getItem('user')
+      if( user != undefined ) {
+          await dispatch(setUser(user))
+      }  
+
       try{
         console.log( 'validating user ')
         await dispatch(validate())
+        .then( response => {
+          console.log( response.data.error)
+          // if( response.data.error){
+          //   throw response.data.error
+          // }
+        })
+        // .catch( error => {
+        //   console.log( error )
+        // })
+        // .finally(() => {
+        //   setUser(Response.data)
+        // })
       }
       catch( err ){
-        console.log( err )
+        // console.log( err )
       }
 
     })()

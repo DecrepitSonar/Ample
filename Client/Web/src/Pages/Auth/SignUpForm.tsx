@@ -57,7 +57,7 @@ function SignUpForm() {
 
         console.log( 'success')
         setErrorState('')
-        navigate('/userdetailedits')
+        navigate('/login')
       })
       
     }catch( error ){
@@ -109,7 +109,7 @@ function SignUpForm() {
     return ( 
       <div className="auth">
         <form action="" method="post" onSubmit={(e: React.SyntheticEvent) => handleSubmit(e)}>
-          <h1>Moda</h1>
+          <h1>Alto</h1>
           <span className="auth_form_title">Sign up</span>
           <span className="auth_error_label">{errorState}</span>
           <label className="auth_form_username_label">Email</label>

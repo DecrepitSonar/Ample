@@ -10,20 +10,19 @@ const initialState: stateAuthType = {
 }
 
 const validateUser = createAsyncThunk('auth/validateUser', async () => {
-    const user = window.localStorage.getItem('user')
-    if( user ) return await new Promise( (resolve, reject ) => {
-        console.log( 'user stored')
-        console.log( 'resolveing ')
-        resolve(user)
-    })  
     
-    console.log( 'resolving user')
-    return await httpclient.get('http://127.0.0.1:5000/validate')
-    .then( response => {
-        console.log( response )
-        window.localStorage.setItem('user', JSON.stringify(response.data)) 
-        return response 
-    })
+        console.log( 'resolving user')
+        return await httpclient.get('http://127.0.0.1:5000/validate')
+        .then( response => {
+
+            if (!response.data.error){
+                window.localStorage.setItem('user', JSON.stringify(response.data)) 
+            } 
+
+            return response 
+        })
+        .catch( response => {return response })
+    
 })
 
 const handleLogin = createAsyncThunk("auth/handleLogin", async (data: LoginFormType) => {
@@ -45,16 +44,27 @@ export const authSlice = createSlice({
     name: 'auth',
     initialState,
     reducers: {
+        setUser: (state, action) => {
+            const user = action.payload
+            state.user = { 
+                id: user.id,
+                username: user.username,
+                imageURL: user.imageURL,
+                type: 'user',
+                headerPosterURL: user.headerPosterURL
 
+            }
+        }
     },
     extraReducers: ( builder: any ) => {    
         builder.addCase( handleLogin.pending, (state: any, action: any) => { console.log( 'pending')})
         builder.addCase( handleLogin.fulfilled, (state: any, action: any) => {
             console.log( 'fullfilled')
             state.isLoggedIn = true 
+            console.log( action.payload.data)
             state.user = action.payload.data
 
-            // window.localStorage.setItem('user', action.payload.data)
+            window.localStorage.setItem('user', JSON.stringify(action.payload.data))
         })
         builder.addCase( handleLogin.rejected, (state: any, action: any) => {
             console.log( "rejected" )
@@ -105,12 +115,13 @@ export const authSlice = createSlice({
 
         })
         builder.addCase(validateUser.fulfilled, ( state: any, action: any ) => {
-            // console.log( action.payload)
+            const error = action.payload.data.error
 
-            const storedUser = window.localStorage.getItem('user')
+            if( !error){
+                const storedUser = window.localStorage.getItem('user')
             
             // if( action.payload.data.error != undefined){
-                // const error = action.payload.data.error
+                // const error = action.payload.data.errorss
                 // console.log( error)
             // }else{
                 // console.log( window.localStorage.getItem('user'))
@@ -118,6 +129,7 @@ export const authSlice = createSlice({
                 state.user = storedUser ? JSON.parse(storedUser) : action.payload.data
                 state.isLoggedIn = true
             // }
+            }
         })
 
         builder.addCase( handleLogout.pending, ( state: any, action: any) => { console.log( 'pending')})
@@ -135,6 +147,7 @@ export const authSlice = createSlice({
 })
 
 export const auth = authSlice.reducer
+export const { setUser } =  authSlice.actions
 export const authState = authSlice
 export const login = handleLogin
 export const register = handleRegister
