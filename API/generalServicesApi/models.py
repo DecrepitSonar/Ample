@@ -315,6 +315,10 @@ class Database:
             self.conn.close()
             return 
     
+    # Save audio items
+    
+    # Save video items
+
     # GET 
     def getUserById(self, id):
 
@@ -519,6 +523,7 @@ class Database:
             with self.conn.cursor() as cursor: 
                 cursor.execute( sql)
                 result = cursor.fetchall()
+                u
 
         except(self.conn.DatabaseError, Exception) as error: 
             print( error )

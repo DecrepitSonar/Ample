@@ -809,8 +809,10 @@ def handleSavedContent():
     
     if( request.method == 'POST'):
         print( 'returning saved content')
-        print( request.json )
-        return jsonify({},200)
+        albumid =  request.json['albumId'] 
+        
+        if albumid is not None: 
+            return jsonify({},200)
     
     print( 'Saving content ')
     return jsonify(200)
