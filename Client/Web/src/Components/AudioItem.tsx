@@ -8,7 +8,6 @@ export default function AudioItem(props: AudioItemPropType){
 
     useEffect(() => {
       if( props.author == undefined ){
-        console.log( props)
       }
     })
     return(
@@ -18,7 +17,7 @@ export default function AudioItem(props: AudioItemPropType){
         />
         <div className="audio_item_info">
           <span>{props.title}</span>
-          <span>{props.author != undefined ? props.author : ''}</span>
+          <span>{props.author != undefined ? props.author : props.name }</span>
         </div>
       </div>
     )

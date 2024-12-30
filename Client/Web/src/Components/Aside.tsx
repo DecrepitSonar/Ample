@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 import { useParams, useLocation } from "react-router-dom";
 import { RootState } from "../utils/store";
+import '../styles/aside.css'
 import AsideVideoCollection from "./AsideVideoCollection";
 import Library from "./Library";
 import { PiX } from "react-icons/pi";
@@ -23,7 +24,6 @@ export default function Aside(props){
     } 
 
     useEffect(() => {
-      console.log( params )
       const currentLocation = location.pathname.split('/')[1]
       setAsideLocation(currentLocation)
     },[location])

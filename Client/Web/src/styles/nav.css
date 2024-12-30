@@ -44,7 +44,7 @@ nav{
     display: flex;
     justify-content: space-between;
     align-items: center;
-  }
+  }s
   .nav_auth_button_container button{
     padding: 5px 20px;
     text-wrap: nowrap;

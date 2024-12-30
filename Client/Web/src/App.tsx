@@ -44,10 +44,8 @@ function App() {
       }  
 
       try{
-        console.log( 'validating user ')
         await dispatch(validate())
         .then( response => {
-          console.log( response.data.error)
           // if( response.data.error){
           //   throw response.data.error
           // }

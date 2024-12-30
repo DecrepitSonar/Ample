@@ -2,15 +2,22 @@ import React, { useEffect, useState } from 'react'
 import { Link, Navigate, replace, useNavigate, useParams } from 'react-router-dom'
 import { activeNavButtonStyle, inActiveButtonStyle } from '../../utils/computedSyles'
 import axios from 'axios'
-import { userAuthType } from '../../utils/ObjectTypes'
+import { AudioItemPropType, userAuthType, VideoItemPropType } from '../../utils/ObjectTypes'
 import { useSelector } from 'react-redux'
-import { RootState } from '@reduxjs/toolkit/query'
+
 import AudioItem from '../../Components/AudioItem'
 import VideoItem from '../../Components/VideoItem'
+import httpclient from '../../httpclient'
+import { RootState } from '../../utils/store'
 
+type ProfileDataType = {
+  head: userAuthType, 
+  watchHistory: [VideoItemPropType],
+  audioHistory: [AudioItemPropType]
+}
+function UserProfile(props: ProfileDataType) {
 
-function UserProfile(props: userAuthType) {
-
+    const head = props.head
     const auth = useSelector( ( state: RootState) => state.auth)
     const [ navState, setNavState ] = useState("Home")
 
@@ -83,16 +90,16 @@ function UserProfile(props: userAuthType) {
       ]
       
     useEffect(() => {
-        console.log( auth.user.id === props.id)
+        // console.log( auth.user.id === head.id)
     })
     return (
       <>
-        <header className='profile_header' style={{'backgroundImage': `url(${props.headerPosterURL})`}}>
+        <header className='profile_header' style={{'backgroundImage': `url(${head.headerPosterURL})`}}>
             <div className="profile_header_overlay">
               <div className='user_profile_header_detail_container'>
-                  <div className='profile_avi' style={{'backgroundImage': `url(${props.imageURL})`}}/>
+                  <div className='profile_avi' style={{'backgroundImage': `url(${head.imageURL})`}}/>
                   <div className='user_profile_header_detail'>
-                      <span className='label_username'>{props.username}</span>
+                      <span className='label_username'>{head.username}</span>
                       <div className='follower_count_container'> 
                           <span>Following 2342 </span>
                           <span>Followers 2342</span>
@@ -105,36 +112,50 @@ function UserProfile(props: userAuthType) {
               </div>    
               <div className='profile_header_nav'>
                   <ul>
-                      <li 
+                      {/* <li 
                       style={navState == "Home" ? activeNavButtonStyle : inActiveButtonStyle} onClick={(e: React.SyntheticEvent) => setNavState(e.currentTarget.innerHTML)}>Home</li><li 
                       style={navState == "Video" ? activeNavButtonStyle : inActiveButtonStyle} onClick={(e: React.SyntheticEvent) => setNavState(e.currentTarget.innerHTML) }>Saved</li><li 
-                      style={navState == "Tracks" ? activeNavButtonStyle : inActiveButtonStyle} onClick={(e: React.SyntheticEvent) => setNavState(e.currentTarget.innerHTML)}>Tracks</li>
+                      style={navState == "Tracks" ? activeNavButtonStyle : inActiveButtonStyle} onClick={(e: React.SyntheticEvent) => setNavState(e.currentTarget.innerHTML)}>Tracks</li> */}
                   </ul>
               </div>
             </div>
         </header>
         <div className="page_body">
+          {
+            props.watchHistory.length > 0 ? 
             <section>
                 <span className="section_subheading">Watch again</span>
-                <div className="section_item_container">
+                <div className="profile_section_item_container">
                     {
-                        Videos.map( video => {
-                            return <VideoItem {...video}/>
+                        props.watchHistory.map( video => {
+                            return <VideoItem key={video.id} {...video}/>
                         })
-                        
                     }
                 </div>
-            </section>
+            </section> : <></>
+          }
+
+        {
+          props.watchHistory.length > 0 ? 
+            <section>
+              <span className="section_subheading">Recent Plays</span>
+              <div className="profile_section_item_container">
+              {
+                  props.audioHistory.map( item => {
+                      return <AudioItem key={item.id} {...item}/>
+                  })
+                  
+              }
+              </div>
+          </section> 
+          :<></>
+        }
+
         <section>
-            <span className="section_subheading">Recent Plays</span>
-            <div className="section_item_container">
-            {
-                AudioItems.map( item => {
-                    return <AudioItem {...item}/>
-                })
-                
-            }
-            </div>
+          <span className="section_subheading">Saved</span>
+        </section>
+        <section>
+          <span className="section_subheading">Following</span>
         </section>
         </div>
       </>
@@ -143,13 +164,13 @@ function UserProfile(props: userAuthType) {
 
 export default function ProfileHome(props: {id: string}) {
 
-    const [ profileData, setProfileData ] = useState<userAuthType>()
+    const [ profileData, setProfileData ] = useState<ProfileDataType>()
 
     const params = useParams()
 
     useEffect(() => {
-        if( props.id) {
-            axios.get(`http://127.0.0.1:5000/user?id=${props.id}`)
+        if( params.id) {
+            httpclient.get(`http://127.0.0.1:5000/user-profile?id=${params.id}`)
             .then( response => {
             setProfileData(response.data)
             })

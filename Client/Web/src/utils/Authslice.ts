@@ -11,7 +11,6 @@ const initialState: stateAuthType = {
 
 const validateUser = createAsyncThunk('auth/validateUser', async () => {
     
-        console.log( 'resolving user')
         return await httpclient.get('http://127.0.0.1:5000/validate')
         .then( response => {
 
@@ -21,7 +20,9 @@ const validateUser = createAsyncThunk('auth/validateUser', async () => {
 
             return response 
         })
-        .catch( response => {return response })
+        .catch( response => {
+            return response 
+        })
     
 })
 
@@ -105,9 +106,9 @@ export const authSlice = createSlice({
             
             window.localStorage.setItem('userId', responseData.id) 
         })
-        builder.addCase(validateUser.pending, ( state: any, action: any ) => { console.log( 'pending')})
+        builder.addCase(validateUser.pending, ( state: any, action: any ) => { console.log()})
         builder.addCase(validateUser.rejected, ( state: any, action: any) => { 
-            console.log( 'rejected')
+
             if (window.localStorage.getItem('userId') ) {
                 window.localStorage.removeItem('userId') 
                 window.localStorage.removeItem('user')
@@ -116,19 +117,18 @@ export const authSlice = createSlice({
         })
         builder.addCase(validateUser.fulfilled, ( state: any, action: any ) => {
             const error = action.payload.data.error
-
-            if( !error){
-                const storedUser = window.localStorage.getItem('user')
             
-            // if( action.payload.data.error != undefined){
-                // const error = action.payload.data.errorss
-                // console.log( error)
-            // }else{
-                // console.log( window.localStorage.getItem('user'))
-                // console.log( action.payload)
+            if( action.payload.data.error != undefined){
+                const error = action.payload.data.errorss
+
+                window.localStorage.removeItem('userId') 
+                window.localStorage.removeItem('user')
+            }else{
+                
+                const storedUser = window.localStorage.getItem('user')
+
                 state.user = storedUser ? JSON.parse(storedUser) : action.payload.data
                 state.isLoggedIn = true
-            // }
             }
         })
 

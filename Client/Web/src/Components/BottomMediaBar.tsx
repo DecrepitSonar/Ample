@@ -3,23 +3,28 @@ import { FaBackward, FaPlay, FaForward, FaPause } from "react-icons/fa"
 import { RootState, useAppDispatch } from '../utils/store'
 import { FaRepeat, FaShuffle } from "react-icons/fa6"
 import { useSelector } from "react-redux"
-import { playNext, togglePlayer } from "../utils/mediaPlayerSlice"
+import { playNext, setAudioHistory, togglePlayer } from "../utils/mediaPlayerSlice"
 import { useNavigate } from "react-router-dom"
 import { BiVolumeFull, BiVolumeLow, BiVolumeMute } from "react-icons/bi"
 import { LuListMinus } from "react-icons/lu"
 import Aside from "./Aside"
 import { CgClose } from "react-icons/cg"
+import httpclient from "../httpclient"
 
 function BottomMediaBar(props){
   const [ toggldState, setToggleState ] = useState<boolean>(false)
   
+  const auth =  useSelector( (state: RootState ) => state.auth)
   const audioPlayer = useSelector( (state: RootState) => state.audioPlayer)
+  const queue = useSelector( (state: RootState ) => state.audioPlayer.queue )
+  
   const progressbarRef = createRef<HTMLDivElement>()
   const dispatch = useAppDispatch()
   const navigate = useNavigate()
 
   const audioPlayerElement = createRef<HTMLAudioElement>()
   const asideRef = createRef<HTMLElement>()
+
 
   const [currentPlayerTime, setcurrentPlayerTime] = useState('00:00')
   const [playerDuration, setPlayerDuration] = useState('00:00')
@@ -42,8 +47,18 @@ function BottomMediaBar(props){
     throw new Error("Function not implemented.")
   }
   useEffect(() => {
-    console.log( audioPlayer.nowPlaying.imageURL != undefined)
+    // console.log( audioPlayer.nowPlaying.imageURL != undefined)
+    
   },[])
+
+  useEffect(() => {
+    auth.isLoggedIn == true && 
+      httpclient.get(`http://127.0.0.1:5000/history?filter=audio&&id=${auth.user.id}`)
+      .then( response => {
+        dispatch(setAudioHistory(response.data))
+        console.log(response.data)
+      })
+  }, [auth.user, audioPlayer.nowPlaying])
 
     return(
       <>
@@ -62,7 +77,10 @@ function BottomMediaBar(props){
                   updatePlayerDuration(e)
                   setVolume(e.currentTarget.volume)
                 } }
-                onEnded={() => dispatch(playNext(null))}
+                onEnded={() => {
+                  dispatch(playNext(null))
+                  dispatch(togglePlayer(null))
+                }}
                 ref={audioPlayerElement}
                 onTimeUpdate={ (e) => updatePlayerTime(e) }
                 id="audioPlayer" autoPlay controls preload="auto">

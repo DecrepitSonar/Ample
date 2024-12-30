@@ -1,5 +1,8 @@
 import axios from 'axios'
 
 export default axios.create({
-    withCredentials: true,
+    withCredentials: true, 
+    headers: {
+        'Access-Control-Allow-Origin' : '*',
+    }
 })

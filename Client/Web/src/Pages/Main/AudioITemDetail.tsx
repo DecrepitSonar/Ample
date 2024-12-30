@@ -1,17 +1,17 @@
 import React, { useEffect, useState } from 'react'
 import { HiEllipsisHorizontal } from 'react-icons/hi2'
 import { BiHeart } from 'react-icons/bi'
-import { FaPause, FaPauseCircle, FaPlayCircle } from 'react-icons/fa'
-import UserAvi from '../../Components/UserAvi'
+import { FaPause, FaPlayCircle } from 'react-icons/fa'
 import { AudioItemPropType, UserAviPropType, VideoItemPropType } from '../../utils/ObjectTypes'
-import VideoItem from '../../Components/VideoItem'
-import AudioItem from '../../Components/AudioItem'
-import axios from 'axios'
 import { useNavigate, useParams } from 'react-router-dom'
 import { useSelector } from 'react-redux'
 import { addToQueue, play, save } from '../../utils/mediaPlayerSlice'
 import { RootState, useAppDispatch } from '../../utils/store'
 import { RiPlayList2Line } from 'react-icons/ri'
+
+import UserAvi from '../../Components/UserAvi'
+import VideoItem from '../../Components/VideoItem'
+import AudioItem from '../../Components/AudioItem'
 
 type TrackPropType = {
   id: string, 
@@ -19,6 +19,7 @@ type TrackPropType = {
   title: String,
   author: String
 }
+
 function PlaylistItem(props: TrackPropType){
 
   const audioPlayer = useSelector( (state: RootState) => state.audioPlayer)
@@ -32,16 +33,16 @@ function PlaylistItem(props: TrackPropType){
     style={audioPlayer.nowPlaying.id == props.id ? activeTrackStyle : {}}>
       
       <div className="track_item_container" onClick={() => {dispatch(play(props))}}>
-      {audioPlayer.nowPlaying.id == props.id && audioPlayer.player.isPlaying ? <><span className='track_numner'>{props.trackNum + 1} </span> <button style={{'color': 'rgba(198, 161, 104,1)' }}><FaPause/></button> </>: <span className='track_numner'>{props.trackNum + 1} </span>
-       }
+      {audioPlayer.nowPlaying.id == props.id ? <button style={{'color': 'rgba(198, 161, 104,1)' }}><FaPause/></button> :
+      <span className='track_numner'>{props.trackNum + 1}</span> }
         <div className="track_item_detail">
           <span>{props.title}</span>
           <span>{props.author}</span>
         </div>
       </div>
       <div className="track_buttons">
-        <button onClick={() => dispatch(save(props))}><BiHeart/></button>
-        <button onClick={(e) =>  dispatch(addToQueue(props)) }><RiPlayList2Line/></button>
+        <button onClick={() => { dispatch(save(props))}}><BiHeart/></button>
+        <button onClick={(e) => { dispatch(addToQueue(props)) }}><RiPlayList2Line/></button>
         <button className='optionsBtn'><HiEllipsisHorizontal/></button>
       </div>
     </div>
@@ -61,7 +62,7 @@ type PlaylistPageDataType = {
   relatedVideos: [VideoItemPropType]
 }
 
-export default function PlaylistDetail() {
+export default function AudioItemDetail(track: AudioItemPropType) {
 
   const [playListITem, setPlayyListItem ] = useState<PlaylistPageDataType>()
   const params = useParams()
@@ -70,35 +71,27 @@ export default function PlaylistDetail() {
 
   const audioPlayer = useSelector( (state: RootState) => state.audioPlayer)
 
-  useEffect(() => {
-    axios.get(`http://127.0.0.1:5000/playlist?id=${params.id}`)
-    .then( response => {
-      setPlayyListItem(response.data)
-      console.log( response.data.head )
-    })
-
-  },[params])
 
   return ( 
     <div className='page_container'>
         <div className="playlist_header">
           <div className="playlist_header" 
-               style={{backgroundImage: `url(https://prophile.nyc3.digitaloceanspaces.com/images/${playListITem?.head.playlist.imageURL}.jpg)`}}>
+               style={{backgroundImage: `url(https://prophile.nyc3.digitaloceanspaces.com/images/${track.imageURL}.jpg)`}}>
             <div className="playlist_header_overlay">
               <div className="playlist_header_item_container">
-              <div className="header_playlist_image" style={{backgroundImage: `url(https://prophile.nyc3.digitaloceanspaces.com/images/${playListITem?.head.playlist.imageURL}.jpg)`}}/>
+              <div className="header_playlist_image" style={{backgroundImage: `url(https://prophile.nyc3.digitaloceanspaces.com/images/${track.imageURL}.jpg)`}}/>
                 
               </div>
               <div className="header_playlist_detail">
               <div className="header_playlist_author_detail_container">
                 {/* <div className="header_playlist_author_image" style={{backgroundImage: `url(https://prophile.nyc3.digitaloceanspaces.com/images/${playListITem?.head.author.imageURL}.jpg`}}/> */}
                 <div className="header_playlist_author_detail">
-                    <span>{playListITem?.head.playlist.title}</span>
+                    <span>{track.title}</span>
                     <span>{playListITem?.head.playlist.author}</span>
                 </div>
               </div>
             <div className="header_playlist_buttons">
-              <button>{audioPlayer.nowPlaying.albumId == playListITem?.head.playlist.id && audioPlayer.player.isPlaying ? <FaPauseCircle/>: <FaPlayCircle/>} </button>
+              <button><FaPlayCircle/></button>
               <button><BiHeart/></button>
               <button><HiEllipsisHorizontal/></button>
             </div>

@@ -10,6 +10,7 @@ aside{
   transition: all .3s ease-in-out;
   /* opacity: .8; */
   backdrop-filter: blur(50px);
+  overflow: hidden;
 
 }
   .aside_header span{

@@ -81,7 +81,6 @@ class Database:
         except (psycopg2.DatabaseError, Exception) as error: 
             print( error)
             return   
-        
     def create_tables(self):
         
         if self.conn.closed:
@@ -125,6 +124,8 @@ class Database:
             return error
     
     # CREATE 
+
+    # User
     def create_user(self, email, password):
             
         """ Check if user exists """        
@@ -199,8 +200,9 @@ class Database:
         finally:
                 self.conn.commit()
                 self.conn.close()
-                return userId
-        
+                return userId   
+    
+    # User Sessions
     def createUserSession(self, data):
         
         print( data,'\n' )
@@ -223,6 +225,96 @@ class Database:
         finally: 
             self.conn.close
             return
+    
+    # Watch History
+    def addWatchHistoryItem(self, video_id, user_id):
+        
+        print( user_id)
+        print( video_id)
+
+        if self.conn.closed:
+            self.__init__()
+
+        update_watch_history = """
+            INSERT INTO watch_history ( id, user_id, video_id )
+            VALUES (DEFAULT, %s, %s)
+        """ 
+
+        check_if_exist = """
+            SELECT * 
+            FROM watch_history 
+            WHERE video_id = '%s'
+        """ %video_id
+
+        try: 
+            with self.conn.cursor() as cursor:
+
+                cursor.execute(check_if_exist)
+                print( cursor.statusmessage )
+                if cursor.fetchone() is not None:
+                    return 
+                
+                cursor.execute(update_watch_history, (user_id, video_id))
+                print( cursor.statusmessage ) 
+    
+        except ( self.conn.DatabaseError, Exception) as error: 
+            print( error )
+        
+        finally:
+            self.conn.commit()
+            self.conn.close()
+
+            return
+    
+    # Listening History
+    def addAudioHistoryItem( self, id, user_id):
+
+        print( id, user_id )
+
+        if self.conn.closed:
+            self.__init__()
+
+        sql = """
+            INSERT INTO audio_history ( id, audio_id, user_id, time_created, date_created)
+            VALUES ( DEFAULT, %s, %s, DEFAULT, DEFAULT)     
+        """
+
+        check_Track_exists_sql = """
+            SELECT *
+            FROM audio_history
+            WHERE audio_id = '%s'
+        """ %id
+
+        update_audio_record = """ 
+            UPDATE audio_history
+            SET time_created = DEFAULT
+            WHERE audio_id = '%s'
+        """ %id
+
+        try:
+            with self.conn.cursor() as cursor: 
+                
+                cursor.execute(check_Track_exists_sql)
+                result = cursor.fetchone()
+
+                if result is not None:
+                        
+                    cursor.execute(update_audio_record)
+                    print( cursor.statusmessage )    
+                    
+                    return
+
+                cursor.execute(sql, ( id, user_id))
+                print( cursor.statusmessage )
+        
+        except( self.conn.DatabaseError, Exception) as error: 
+            print( error )
+        
+        finally: 
+            self.conn.commit()
+            self.conn.close()
+            return 
+    
     # GET 
     def getUserById(self, id):
 
@@ -235,17 +327,17 @@ class Database:
         try: 
             with self.conn.cursor() as cursor: 
                 cursor.execute(sql)
-                print( '2:', cursor.statusmessage )
-                print( cursor.query)
+                # print( '2:', cursor.statusmessage )
+                # print( cursor.query)
                 
                 user_id = cursor.fetchone()[0]
-                print( user_id )
+                # print( user_id )
 
                 cursor.execute(user_account)
-                print( '3:', cursor.statusmessage )
-                print( cursor.query)
+                # print( '3:', cursor.statusmessage )
+                # print( cursor.query)
                 result = cursor.fetchone()
-                print( result )
+                # print( result )
 
                 if result is not None: 
 
@@ -268,16 +360,14 @@ class Database:
                             'verified': verified
                     }
 
-
         except (self.conn.DatabaseError, Exception) as error: 
             print( error )
             return 
         
         finally: 
             self.conn.close()
-            print( result )
+            # print( result )
             return result
-        
     def getUserByEmail(self, email):
 
         if self.conn.closed: 
@@ -293,6 +383,7 @@ class Database:
                 cursor.execute(sql)
                 
                 results = cursor.fetchone()
+                print( results )
 
                 if results is not None: 
                 
@@ -325,7 +416,7 @@ class Database:
         finally: 
             self.conn.close()
             return results 
-        
+
     def getUserByUsername(self, username):
 
         if self.conn.closed: 
@@ -372,7 +463,7 @@ class Database:
         try: 
             with self.conn.cursor() as cursor:
                 cursor.execute(sql)
-                print( '1:', cursor.statusmessage )
+                # print( '1:', cursor.statusmessage )
                 result = cursor.fetchone()[0]
 
                 user = self.getUserById(result)
@@ -385,7 +476,89 @@ class Database:
             self.conn.close()
             return user       
     
-    # UPDATE d
+    # WATCH HISTORY
+    def getUserWatchHistory(self, user_id):
+        
+        if self.conn.closed:
+            self.__init__() 
+
+        sql = """
+            SELECT video_id 
+            FROM watch_history
+            WHERE user_id = '%s'
+            LIMIT 4
+        """ %user_id
+
+        try: 
+            with self.conn.cursor() as cursor: 
+                cursor.execute( sql )
+                print( cursor.statusmessage)
+
+                result = cursor.fetchall()
+
+        except( self.conn.DatabaseError, Exception) as error: 
+            print( error )
+
+        finally: 
+            return result
+    
+    # LISTENING HISTORY
+    def getUserAudioHistory(self, user_id):
+        
+        if self.conn.closed: 
+            self.__init__()
+
+        sql = """
+            SELECT audio_id 
+            FROM audio_history 
+            WHERE user_id = '%s'
+            ORDER BY time_created DESC;
+        """ %user_id
+
+        try: 
+            with self.conn.cursor() as cursor: 
+                cursor.execute( sql)
+                result = cursor.fetchall()
+
+        except(self.conn.DatabaseError, Exception) as error: 
+            print( error )
+
+        finally: 
+            self.conn.close()
+            return result
+
+    # PROFILE 
+    def getUserProfile(self, user_id):
+
+        print( user_id )
+        if self.conn.closed: 
+            self.__init__()
+
+        profile_sql = """
+            CREATE VIEW profile AS
+            
+                SELECT * 
+                FROM users
+                WHERE id = '%s'
+        
+        """ %user_id
+        try: 
+            with self.conn.cursor() as cursor: 
+                # cursor.execute(profile_sql)
+                # user = cursor.fetchone()
+                # print( user )
+
+                user = self.getUserById(user_id)
+                print( user )
+
+
+        except ( self.conn.DatabaseError, Exception) as error:
+            print( error )
+
+        finally: 
+            return user
+        
+    # UPDATE 
     def updateUsername(self, data):
 
         if self.conn.closed:
@@ -452,6 +625,7 @@ class Database:
         finally:
             self.conn.close() 
             return result
+
 
 
     def postAudioTrack(self, item):

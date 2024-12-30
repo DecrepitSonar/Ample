@@ -26,7 +26,6 @@ with app.app_context():
     databse = db()
     # databse.create_tables()
 
-
 # Auth
 @app.route('/whoami', methods=['GET'])
 def getCurrentUser():
@@ -41,7 +40,7 @@ def getCurrentUser():
     if token == None: 
         return jsonify({ "error": "unauthorized user "}, 401)
 
-    user = User.getUserByToken(token)
+    user = databse.getUserByToken(token)
 
     if not user: 
         return jsonify({ "error": "unauthorized user "}, 401)
@@ -54,7 +53,6 @@ def getCurrentUser():
         "headerPosterURL": user.headerPosterURL,
         "type": user.type
     }), 200
-
 
 @app.route('/register', methods=['POST'])
 def register_user():
@@ -137,7 +135,7 @@ def login_user():
             user = databse.getUserByUsername(request.json['username'])
 
         data = databse.getUserByEmail(request.json['email'])
-
+        print( data )
         if data is None:
             print("user not found")
             return jsonify(
@@ -154,7 +152,6 @@ def login_user():
         user = data['user']
         password = data['password']
 
-
         print('Authenticating web client')
 
         request_password = request.json['password']
@@ -166,7 +163,6 @@ def login_user():
 
         #     # Create and save sessionId
             sessionId = str(uuid.uuid4())
-
             databse.createUserSession({
                 'id': user['id'],
                 'sessionId': sessionId
@@ -183,9 +179,9 @@ def login_user():
             response = jsonify({"error": "Unauthorized"}), 401
     
     # return response 
+    # response.headers.add('Access-Control-Allow-Origin', '*')
     return response
       
-  
 @app.route('/user', methods=['GET'])
 def getUser():
     userId = request.args['id']
@@ -207,22 +203,71 @@ def getUser():
 
     return jsonify({})
 
-@app.route('/user-0rofile', methods=['GET'])
+@app.route('/user-profile', methods=['GET'])
 def getUserProfile():  
     userId = request.args['id']
+    user = databse.getUserProfile(userId)
 
-    user = databse.getUserById(userId)
-    (id, username, email, password, imageURL, headerPosterURL, type) = user
+    # GET USER WATCHLIST 
+    # GET USER LISTENING HISTORY 
+    # GET USER
+    profileData = { 
+        'head': user,
+        'watchHistory': [],
+        'audioHistory': []
+    }
     
-    print( user )
-    return jsonify({
-            "id": id,
-            "username": username,
-            "email": email,
-            "imageURL": imageURL,
-            "headerPosterURL": headerPosterURL,
-            "type": type
-        }), 200
+    watchHistory = databse.getUserWatchHistory(userId)
+
+    for item in watchHistory: 
+        id =  item[0]
+
+        video = contentDb['videos'].find_one({'id': id}, {'_id': 0,
+                                                            'id': 1,
+                                                            'title': 1,
+                                                            'artistImageURL': 1,
+                                                            'imageURL': 1,
+                                                            'views': 1,
+                                                            'artist': 1,
+                                                            'videoURL': 1,
+                                                            'artistId': 1})
+
+        profileData['watchHistory'].append({
+            'id': video['id'],
+            'title': video['title'],
+            'author': video['artist'],
+            'views': video['views'],
+            'posterURL': video['imageURL'],
+            'imageURL': video['artistImageURL'],
+            'contentURL': video['videoURL']
+        })
+
+    audioHistory = databse.getUserAudioHistory(userId)
+
+    for item in audioHistory: 
+        id = item[0]
+        
+        
+        item = contentDb['tracks'].find_one({'id': id}, {'_id': 0})
+
+
+        if item is None:
+            return jsonify(profileData) 
+    
+        profileData['audioHistory'].append({
+            'id': item['id'],
+            'title': item['title'],
+            'name': item['name'],
+            'imageURL': item['imageURL'],
+            'audioURL': item['audioURL'],
+            'albumId': item['albumId']
+        })
+
+
+        
+
+    response = jsonify(profileData) 
+    return response 
 
 @app.route('/updateSettings', methods=['PUT'])
 def updateUserSettings(): 
@@ -284,9 +329,6 @@ def logout():
 
 def migrateUsers():
     users = contentDb['artists'].find({})
-
-    # for user in list(users) :
-
 
 # Content
 @app.route('/', methods=['GET'])
@@ -502,6 +544,8 @@ def getPlaylist():
 @app.route('/video', methods=['GET'])
 def getVideo():
     videoId = request.args['videoId']
+    user_id = request.args['id']
+    print( user_id )
     
     video = contentDb['videos'].find_one({'id': videoId}, {'_id': 0,
                                                            'id': 1,
@@ -522,7 +566,7 @@ def getVideo():
                                                             'artist': 1,
                                                             'videoURL': 1,
                                                             'artistId': 1}))
-    print('Recommended ', recommendedVideos)
+    # print('Recommended ', recommendedVideos)
     pageContent = {
         'video': {
             'id': video['id'],
@@ -535,7 +579,10 @@ def getVideo():
         'recommendedVideos': recommendedVideos
     }
 
-    print( pageContent)
+    if user_id != 'undefined': 
+        databse.addWatchHistoryItem(videoId, user_id)
+
+    # print( pageContent)
 
     return jsonify(pageContent)
 
@@ -624,6 +671,16 @@ def getAudioPageContent():
     print( content['featured'])
     return jsonify(content)
 
+@app.route('/listen', methods=['POST'])
+def updateListeningHistory(): 
+    print( 'Track added to history ')
+
+    user = databse.getUserBySession(request.cookies['xrftoken'])
+
+    databse.addAudioHistoryItem(request.args['audio_id'], user['id'])
+
+    return jsonify({}, 200)
+
 @app.route('/search', methods=['GET'])
 def handleSearchQuery():
     print( list(request.args))
@@ -708,6 +765,59 @@ def handleSearchQuery():
 
 @app.route('/browse', methods=['GET'])
 
+@app.route('/history', methods={'GET'})
+def getUserHistory():
+
+    def getAudioHistory():
+
+        audioHistory = []
+        
+        items = databse.getUserAudioHistory(request.args['id'])
+
+        for item in items: 
+            id = item[0]
+            
+            item = contentDb['tracks'].find_one({'id': id})
+            
+            if item is None: 
+                continue
+
+            audioHistory.append({
+                'id': item['id'],
+                'title': item['title'],
+                'author': item['name'],
+                'imageURL': item['imageURL'],
+                'audioURL': item['audioURL'],
+                'albumId': item['albumId']
+            })
+            
+        return audioHistory
+
+
+    filter = {
+        'audio': getAudioHistory
+    }
+
+    history = filter[request.args['filter']]()
+    
+    
+    response =  jsonify(history)
+    return response 
+
+@app.route('/save', methods=['GET', 'POST'])
+def handleSavedContent(): 
+    
+    if( request.method == 'POST'):
+        print( 'returning saved content')
+        print( request.json )
+        return jsonify({},200)
+    
+    print( 'Saving content ')
+    return jsonify(200)
+
+
+    
+    
 # audio
 @app.route('/audio', methods=['GET'])
 def getAudioItem():

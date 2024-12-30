@@ -1,0 +1,14 @@
+.aside_body_container{
+    /* border: 1px solid red;  */
+    height: 95%;
+    padding-top: 10px;
+    overflow: hidden;
+}
+.aside_body{
+    display: flex; 
+    flex-direction: column;
+    gap: 10px;
+    overflow: scroll;
+    height: inherit;
+    /* border: 1px solid red;  */
+}

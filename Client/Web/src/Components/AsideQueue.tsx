@@ -25,7 +25,6 @@ export default function AsideQueue(){
       },
     ]
   
-    console.log( audioPlayer.nowPlaying )
     return(
       <>
   

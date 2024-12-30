@@ -41,10 +41,12 @@ function VideoPlayerPage(){
     const [content, setContent] = useState<videPlayerPageData>()
     const params = useParams()
     const audioPlayer = useSelector((state: RootState) => state.audioPlayer) 
+    const user = useSelector( (state: RootState) => state.auth.user)
+
     const dispatch = useAppDispatch()
 
     useEffect(() => {
-        axios.get(`http://127.0.0.1:5000/video?videoId=${params.videoId}`)
+        axios.get(`http://127.0.0.1:5000/video?videoId=${params.videoId}&&id=${user.id}`)
         .then( response => {
             console.log( response.data )
             setContent( response.data )
@@ -75,7 +77,6 @@ function VideoPlayerPage(){
           "views": 12313
         },
       ]
-
 
       const videos = [
         {
@@ -222,7 +223,7 @@ function VideoPlayerPage(){
                         dispatch(togglePlayer(null))
                       }
                     }}
-                    autoPlay controls className="video_player" src={content ? content.video.contentURL : ''}/>
+                    autoPlay  muted controls className="video_player" src={content ? content.video.contentURL : ''}/>
                     <div className="videoDetailContainer">
                         <div className="videoDetail">
                             

@@ -49,8 +49,8 @@ export default function CreatorProfile(){
         if( params.id) {
             axios.get(`http://127.0.0.1:5000/user-profile?id=${params.id}`)
             .then( response => {
-            setProfileData(response.data)
-            console.log( response.data)
+            // setProfileData(response.data)
+            // console.log( response.data)
             })
         }
     },[])

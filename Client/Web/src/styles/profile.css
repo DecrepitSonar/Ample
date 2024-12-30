@@ -5,7 +5,7 @@
     color: #ddd;
 }
 .profile_header{
-    height: 40vh;
+    height: 30vh;
     position: relative;
     /* background-image: url("../../public/3400954.jpg"); */
     background-position: center;
@@ -86,6 +86,13 @@
     /* width: 100px;  */
     /* border: 1px solid red; */
     padding: 20px;
+  }
+  .profile_section_item_container{
+    display: flex;
+    overflow: scroll;
+    gap: 20px;
+    margin: 20px 0;
+    padding: 20px 0;
   }
   .featured_section{
     display: flex;
@@ -258,7 +265,7 @@
   border-radius: 10px;;
 }
 .settings_input_container{
-  width: 100%;
+  /* width: 100%; */
   /* border: 1px solid red; */
   display: flex;
   flex-direction: column;

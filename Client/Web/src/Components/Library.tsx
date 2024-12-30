@@ -36,7 +36,7 @@ export default function Library(){
           <button value="Subscriptions" style={ libstate == "Subscriptions" ? active : inacitve}
           onClick={() => { setNav('Subscriptions')}}><BsRadar/></button>
       </div>
-      <div className="aside_body">
+      <div className="aside_body_container">
         {
           {
             "Queue": <AsideQueue/>,

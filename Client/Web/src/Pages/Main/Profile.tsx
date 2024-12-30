@@ -10,6 +10,7 @@ import { RiImageCircleFill } from 'react-icons/ri'
 import { logout, validate } from '../../utils/Authslice'
 import { Navigate, useNavigate } from 'react-router-dom'
 import ProfileHome from './ProfileHome'
+import { AudioListItemPropType } from '../../utils/ObjectTypes'
 
 function AccountSettings(){
   const user = useSelector( (state: RootState) => state.auth.user)
@@ -118,6 +119,8 @@ function AccountSettings(){
 }
 
 function PaymentSettings(){
+
+  const history = useSelector( (state: RootState) => state.audioPlayer.audioHistory)
   return(
     <div className='settings_content_section'>
       <h1>Payments</h1>
@@ -215,15 +218,17 @@ function PaymentSettings(){
               <tr>
                 <th>ITEM</th>
                 <th>AMOUNT</th>
-                <th>DATE</th>
               </tr>
               
             <tbody>
-              <tr>
-                <td>East Atlanta love letter</td>
+              {
+                history.map( (item: AudioListItemPropType)  => {
+                  return <tr>
+                <td>{item.title }</td>
                 <td>-1k</td>
-                <td>Feb 4, 24, 2:2</td>
               </tr>
+                })
+              }
             </tbody>
           </table>
         </div>
@@ -296,8 +301,6 @@ function SettingsPageWrapper(){
 
 export default function Profile() {
     const auth = useSelector( ( state: RootState ) => state.auth )
-
-    console.log( auth)
 
   return (
     <>
