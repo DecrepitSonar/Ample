@@ -316,7 +316,41 @@ class Database:
             return 
     
     # Save audio items
-    
+    def saveAudioItem(self, user_id, id):
+
+        if self.conn.closed:
+            self.__init__()
+
+        sql = """
+            INSERT INTO saved_audio ( id, user_id, audio_id, date_created, time_created )
+            VALUES ( DEFAULT, %s, %s, DEFAULT, DEFAULT)
+        """
+
+        check_if_item_exist = """
+            SELECT * FROM saved_audio 
+            WHERE audio_id = '%s'
+        """ %id
+
+        try: 
+            with self.conn.cursor() as cursor: 
+                cursor.execute(check_if_item_exist)
+                result = cursor.fetchone()
+                print( cursor.statusmessage)
+                 
+                if result is not None: 
+                    return 
+                
+                cursor.execute(sql, (user_id, id))
+                print( cursor.statusmessage )
+                self.conn.commit()
+
+        except(self.conn.DatabaseError, Exception) as error:
+            print( error )
+
+        finally: 
+            self.conn.close()
+            return 
+        
     # Save video items
 
     # GET 
@@ -420,7 +454,6 @@ class Database:
         finally: 
             self.conn.close()
             return results 
-
     def getUserByUsername(self, username):
 
         if self.conn.closed: 
@@ -516,14 +549,14 @@ class Database:
             SELECT audio_id 
             FROM audio_history 
             WHERE user_id = '%s'
-            ORDER BY time_created DESC;
+            ORDER BY time_created DESC
+            LIMIT 6;
         """ %user_id
 
         try: 
             with self.conn.cursor() as cursor: 
                 cursor.execute( sql)
                 result = cursor.fetchall()
-                u
 
         except(self.conn.DatabaseError, Exception) as error: 
             print( error )
@@ -563,6 +596,28 @@ class Database:
         finally: 
             return user
         
+    # Get saved content
+    def getSavedAudio(self, user_id):
+        
+        if self.conn.close:
+            self.__init__()
+
+        sql = """
+            SELECT audio_id 
+            FROM saved_audio
+            WHERE user_id = '%s'
+        """ %user_id
+
+        try: 
+            with self.conn.cursor() as cursor:
+                cursor.execute(sql)
+                result = cursor.fetchall()
+
+        except( self.conn.DatabaseError, Exception) as error:
+            print( error )
+
+        finally: 
+            return result
     # UPDATE 
     def updateUsername(self, data):
 

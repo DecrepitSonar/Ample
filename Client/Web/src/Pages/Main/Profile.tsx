@@ -11,6 +11,8 @@ import { logout, validate } from '../../utils/Authslice'
 import { Navigate, useNavigate } from 'react-router-dom'
 import ProfileHome from './ProfileHome'
 import { AudioListItemPropType } from '../../utils/ObjectTypes'
+import AudioListItem from '../../Components/AudioListItem'
+import AudioItem from '../../Components/AudioItem'
 
 function AccountSettings(){
   const user = useSelector( (state: RootState) => state.auth.user)
@@ -223,8 +225,9 @@ function PaymentSettings(){
             <tbody>
               {
                 history.map( (item: AudioListItemPropType)  => {
+                  
                   return <tr>
-                <td>{item.title }</td>
+                <td> <AudioListItem {...item} /></td>
                 <td>-1k</td>
               </tr>
                 })

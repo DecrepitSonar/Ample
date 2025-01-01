@@ -5,7 +5,7 @@ from flask import Blueprint
 dashboard = Blueprint('dashboard', __name__, url_prefix='/dashboard')
 
 # Dashboard 
-@dashboard.route('/dashboard', methods=['GET'])
+@dashboard.route('/', methods=['GET'])
 def dash():
     return render_template('home.html')
 

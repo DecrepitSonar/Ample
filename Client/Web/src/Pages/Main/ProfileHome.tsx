@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react'
-import { Link, Navigate, replace, useNavigate, useParams } from 'react-router-dom'
+import { Link, Navigate, replace, useLocation, useNavigate, useNavigation, useParams } from 'react-router-dom'
 import { activeNavButtonStyle, inActiveButtonStyle } from '../../utils/computedSyles'
 import axios from 'axios'
 import { AudioItemPropType, userAuthType, VideoItemPropType } from '../../utils/ObjectTypes'
@@ -9,97 +9,26 @@ import AudioItem from '../../Components/AudioItem'
 import VideoItem from '../../Components/VideoItem'
 import httpclient from '../../httpclient'
 import { RootState } from '../../utils/store'
+import { Dispatch } from '@reduxjs/toolkit'
+import { BiChevronLeft } from 'react-icons/bi'
 
 type ProfileDataType = {
   head: userAuthType, 
   watchHistory: [VideoItemPropType],
-  audioHistory: [AudioItemPropType]
+  audioHistory: [AudioItemPropType],
+  savedAudio: [AudioItemPropType],
 }
-function UserProfile(props: ProfileDataType) {
 
-    const head = props.head
-    const auth = useSelector( ( state: RootState) => state.auth)
-    const [ navState, setNavState ] = useState("Home")
+const  UserProfileHome = ({props, setNavState }) => {
 
-    const navigate = useNavigate()
-
-    const Videos = [
-        {
-          "title": "Alternate Ending - Episode 606",
-          "author": "The Joe Budden Podcast",
-          "posterURL": "../alternateending.jpg",
-          "imageURL": "../jbp.jpg",
-          "views": 12313
-        },
-        {
-          "title": "Gritz and Cornbread",
-          "author": "The Brilliant Idiot Podcast",
-          "posterURL": "../gritzandcornbread.jpg",
-          "imageURL": "../brilliantidiots.jpg",
-          "views": 12313
-        }
-        ,
-        {
-          "title": "Day Walker | Episode 10",
-          "author": "Rory & Mal Podcast",
-          "posterURL": "../daywalker.jpg",
-          "imageURL": "../rorynmal.jpg",
-          "views": 12313
-        },
-        {
-          "title": "Day Walker | Episode 10",
-          "author": "Rory & Mal Podcast",
-          "posterURL": "../daywalker.jpg",
-          "imageURL": "../rorynmal.jpg",
-          "views": 12313
-        },
-      ]
-
-
-    const AudioItems = [
-        {
-          "title": "Dark Times",
-          "author": "Vince Staples",
-          "imageURL": "darktimes.jpg"
-        },
-        {
-          "title": "Dark Times",
-          "author": "Vince Staples",
-          "imageURL": "darktimes.jpg"
-        },
-        {
-          "title": "Tyla",
-          "author": "Tyla",
-          "imageURL": "../tyla.jpg"
-        },
-        {
-          "title": "Talk Memory",
-          "author": "BADBADNOTGOOD",
-          "imageURL": "../Bbngtalkmemory.jpg"
-        },
-        {
-          "title": "Yes Lawd",
-          "author": "NxWorries",
-          "imageURL": "../yeslawd.jpg"
-        },
-        {
-          "title": "Why Lawd",
-          "author": "Anderson .Paak",
-          "imageURL": "../whylawd.jpg"
-        }
-      ]
-      
-    useEffect(() => {
-        // console.log( auth.user.id === head.id)
-    })
-    return (
-      <>
-        <header className='profile_header' style={{'backgroundImage': `url(${head.headerPosterURL})`}}>
+  return(
+    <>
+        <header className='profile_header' style={{'backgroundImage': `url(${props.head.headerPosterURL})`}}>
             <div className="profile_header_overlay">
               <div className='user_profile_header_detail_container'>
-                  <div className='profile_avi' style={{'backgroundImage': `url(${head.imageURL})`}}/>
+                  <div className='profile_avi' style={{'backgroundImage': `url(${props.head.imageURL})`}}/>
                   <div className='user_profile_header_detail'>
-                      <span className='label_username'>{head.username}</span>
+                      <span className='label_username'>{props.head.username}</span>
                       <div className='follower_count_container'> 
                           <span>Following 2342 </span>
                           <span>Followers 2342</span>
@@ -110,21 +39,16 @@ function UserProfile(props: ProfileDataType) {
                       {/* } */}
                   </div>
               </div>    
-              <div className='profile_header_nav'>
-                  <ul>
-                      {/* <li 
-                      style={navState == "Home" ? activeNavButtonStyle : inActiveButtonStyle} onClick={(e: React.SyntheticEvent) => setNavState(e.currentTarget.innerHTML)}>Home</li><li 
-                      style={navState == "Video" ? activeNavButtonStyle : inActiveButtonStyle} onClick={(e: React.SyntheticEvent) => setNavState(e.currentTarget.innerHTML) }>Saved</li><li 
-                      style={navState == "Tracks" ? activeNavButtonStyle : inActiveButtonStyle} onClick={(e: React.SyntheticEvent) => setNavState(e.currentTarget.innerHTML)}>Tracks</li> */}
-                  </ul>
-              </div>
             </div>
         </header>
         <div className="page_body">
           {
             props.watchHistory.length > 0 ? 
             <section>
+              <div className="section_header">
                 <span className="section_subheading">Watch again</span>
+                <span onClick={() => setNavState('Watch_history')}>See all</span>
+              </div>
                 <div className="profile_section_item_container">
                     {
                         props.watchHistory.map( video => {
@@ -138,7 +62,10 @@ function UserProfile(props: ProfileDataType) {
         {
           props.watchHistory.length > 0 ? 
             <section>
-              <span className="section_subheading">Recent Plays</span>
+              <div className="section_header">
+                <span className="section_subheading">Recent Plays</span>
+                <span onClick={() => setNavState('audio_history')}>See all</span>
+              </div>
               <div className="profile_section_item_container">
               {
                   props.audioHistory.map( item => {
@@ -151,13 +78,94 @@ function UserProfile(props: ProfileDataType) {
           :<></>
         }
 
+        {
+          props.savedAudio.length > 0 ? 
+            <section>
+              <div className="section_header">
+              <span className="section_subheading">Saved</span>
+              <span onClick={() => setNavState('saved_audio')}>See all</span>
+              </div>
+              <div className="profile_section_item_container">
+              {
+                  props.savedAudio.map( item => {
+                      return <AudioItem key={item.id} {...item}/>
+                  })
+                  
+              }
+              </div>
+            </section> 
+          :<></>
+        }
+
         <section>
-          <span className="section_subheading">Saved</span>
-        </section>
-        <section>
-          <span className="section_subheading">Following</span>
+          <div className="section_header">
+            <span className="section_subheading">Following</span>
+            <span onClick={() => setNavState('following')}>See all</span>
+          </div>
         </section>
         </div>
+      </>
+  )
+}
+function UserProfileSavedVideos(props: {id: String}){
+  return (
+    <div className="page_body">
+      <div className="section_header">
+        <h2>Saved Videos</h2>
+      </div>
+    </div>
+  )}
+function UserProfileSavedAudio({id, setNavState}){ 
+  return (
+    <div className="page_body">
+      <div className="section_header">
+        <h3><i onClick={() => setNavState('/')}><BiChevronLeft/></i> Saved audio</h3>
+      </div>
+    </div>
+  )}
+function UserProfileFollowing({id, setNavState}){
+  return( 
+    <div className="page_body">
+      <div className="section_header">
+        <h3><i onClick={() => setNavState('/')}><BiChevronLeft/></i> Following</h3>
+      </div>
+    </div>
+  )}
+function UserProfileWatchHistory({id, setNavState}){
+  return(
+    <div className="page_body">
+      <div className="section_header">
+        <h3><i onClick={() => setNavState('/')}><BiChevronLeft/></i> Watch History</h3>
+      </div>
+    </div>  
+  )}
+function UserProfileAudioHistory({id, setNavState}){
+  return(
+    <div className="page_body">
+      <div className="section_header">
+        <h3><i onClick={() => setNavState('/')}><BiChevronLeft/></i> Audio history</h3>
+      </div>
+    </div>
+  )}
+
+function UserProfile(props: ProfileDataType) {
+
+    const head = props.head
+    const auth = useSelector( ( state: RootState) => state.auth)
+    const [ navState, setNavState ] = useState("/")
+    
+    
+    return (
+      <>
+      {
+        {
+          'saved_video': <UserProfileSavedVideos id={auth.user.id}/>,
+          'saved_audio': <UserProfileSavedAudio id={auth.user.id} setNavState={setNavState}/>,
+          'audio_history': <UserProfileAudioHistory id={auth.user.id} setNavState={setNavState}/>,
+          'Watch_history': <UserProfileWatchHistory id={auth.user.id} setNavState={setNavState}/>,
+          'following': <UserProfileFollowing id={auth.user.id} setNavState={setNavState} />
+        }[navState] || <UserProfileHome  props={props}  setNavState={setNavState}/>
+      }
       </>
     )
   }

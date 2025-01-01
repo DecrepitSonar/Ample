@@ -89,7 +89,8 @@ def getUserProfile():
     profileData = { 
         'head': user,
         'watchHistory': [],
-        'audioHistory': []
+        'audioHistory': [],
+        'savedAudio': []    
     }
     
     watchHistory = databse.getUserWatchHistory(userId)
@@ -138,6 +139,26 @@ def getUserProfile():
             'albumId': item['albumId']
         })
 
+    savedAudio = databse.getSavedAudio(userId)
+    
+    print( savedAudio )
+
+    for item in savedAudio: 
+        id = item[0]
+        
+        item = contentDb['tracks'].find_one({'id': id}, {'_id': 0})
+
+        if item is None:
+            return jsonify(profileData) 
+    
+        profileData['savedAudio'].append({
+            'id': item['id'],
+            'title': item['title'],
+            'name': item['name'],
+            'imageURL': item['imageURL'],
+            'audioURL': item['audioURL'],
+            'albumId': item['albumId']
+        })
 
         
 
@@ -172,7 +193,7 @@ def updateUserSettings():
 @app.route('/migrate', methods=['GET'])
 # def migrateTrack():
 #     tracks = contentDb['tracks'].find().limit(1)
-#     for item in list(tracks ):
+#     for item in list(tracks ):D
 #         track = {
 #             'id': item['id'],
 #             'tracknum':item['trackNum'], 
@@ -668,14 +689,20 @@ def getUserHistory():
 @app.route('/save', methods=['GET', 'POST'])
 def handleSavedContent(): 
     
+    user_id = databse.getUserBySession(request.cookies['xrftoken'])['id']
+
     if( request.method == 'POST'):
-        print( 'returning saved content')
+        
         albumid =  request.json['albumId'] 
         
         if albumid is not None: 
-            return jsonify({},200)
+            
+            databse.saveAudioItem(user_id, request.json['id'])
+
+            return jsonify(200)
     
-    print( 'Saving content ')
+    print(request.args['filter'])
+    
     return jsonify(200)
 
 # audio
