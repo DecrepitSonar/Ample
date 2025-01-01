@@ -8,25 +8,9 @@ import AudioListItem from "./AudioListItem";
 export default function AsideQueue(){
   
     const audioPlayer = useSelector( (state: RootState) => state.audioPlayer)
-  
-    const features = [
-      {
-        "artist": "Anderson .Paak",
-        "imageURL": "../andersonpaak.jpg"
-      },
-      {
-        "artist": "NxWorries",
-        "imageURL": "../yeslawd.jpg"
-      },
-  
-      {
-        "artist": "Knowledge",
-        "imageURL": "../knx.jpg"
-      },
-    ]
-  
+
     return(
-      <>
+      <div className="aside_body">
   
       {/* Now Playing */
         audioPlayer.nowPlaying.title != undefined ? 
@@ -77,6 +61,6 @@ export default function AsideQueue(){
           }
         </div>
       </section> */}
-      </>
+      </div>
     )
   }

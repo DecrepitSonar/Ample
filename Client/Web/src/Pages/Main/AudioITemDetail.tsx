@@ -93,6 +93,7 @@ export default function AudioItemDetail(track: AudioItemPropType) {
             <div className="header_playlist_buttons">
               <button><FaPlayCircle/></button>
               <button><BiHeart/></button>
+              <button><RiPlayList2Line/></button>
               <button><HiEllipsisHorizontal/></button>
             </div>
           </div>

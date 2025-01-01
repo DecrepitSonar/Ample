@@ -46,7 +46,7 @@ const savedItem = createAsyncThunk('mediaPlayer/savedItem', async (track: AudioL
 })
 
 const playNextTrack = createAsyncThunk('mediaPlayer/playNextTrack', async (queue: [AudioListItemPropType]) => {
-    
+        console.log( queue )
     try{
         await httpclient.post(`http://127.0.0.1:5000/listen?audio_id=${queue[0].id}`, )
     }
@@ -84,6 +84,25 @@ export const AudioPlayer = createSlice({
             
         },
         addToQueue: ( state, action ) => {
+
+            if ( action.payload.length > 1) {
+
+                if(state.queue.length > 0) {
+                    
+                    
+                    for (const i in action.payload){
+                        state.queue.push(i)
+                    }
+
+
+                }
+
+                return state = {
+                    ...state, 
+                    queue: action.payload
+                }
+            }
+
             state.queue.push(action.payload)
         },
         playNext: ( state, action ) => {
@@ -99,7 +118,7 @@ export const AudioPlayer = createSlice({
                     httpclient.post(`http://127.0.0.1:5000/listen?audio_id=${track.id}`)
                 }
                 catch( err ){
-                    console.log( err)
+                    // console.log( err)
                 }
                 
                 player!.src = 'https://prophile.nyc3.cdn.digitaloceanspaces.com/audio/' + track.audioURL + '.mp3'
@@ -111,13 +130,9 @@ export const AudioPlayer = createSlice({
             }
         },
         setAudioHistory: (state, action) => {
-            console.log( action.payload )
             return state = {
                 ...state, audioHistory: action.payload
             }
-        },
-        updateAudioHistory: (state, action ) => {
-
         }
     },
     extraReducers: (builder: any) => {

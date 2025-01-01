@@ -118,15 +118,12 @@ export const authSlice = createSlice({
         builder.addCase(validateUser.fulfilled, ( state: any, action: any ) => {
             const error = action.payload.data.error
             
-            if( action.payload.data.error != undefined){
-                const error = action.payload.data.errorss
-
+            if( error != undefined){
                 window.localStorage.removeItem('userId') 
                 window.localStorage.removeItem('user')
             }else{
                 
                 const storedUser = window.localStorage.getItem('user')
-
                 state.user = storedUser ? JSON.parse(storedUser) : action.payload.data
                 state.isLoggedIn = true
             }
