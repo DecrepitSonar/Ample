@@ -12,6 +12,7 @@ from flask_cors import CORS
 from Auth.auth import auth
 from Live.live import live
 from Dashboard.dashboard import dashboard
+from Admin.admin import admin
 
 app = Flask(__name__)
 app.config.from_object(ApplicationConfig)
@@ -20,6 +21,7 @@ CORS(app, supports_credentials=True)
 app.register_blueprint(auth)
 app.register_blueprint(live)
 app.register_blueprint(dashboard)
+app.register_blueprint(admin)
 
 with app.app_context():
     databse = db()
@@ -93,7 +95,7 @@ def getUserProfile():
         'savedAudio': []    
     }
     
-    watchHistory = databse.getUserWatchHistory(userId)
+    watchHistory = databse.getUserWatchHistory(userId, 4)
 
     for item in watchHistory: 
         id =  item[0]
@@ -118,7 +120,7 @@ def getUserProfile():
             'contentURL': video['videoURL']
         })
 
-    audioHistory = databse.getUserAudioHistory(userId)
+    audioHistory = databse.getUserAudioHistory(userId, 8)
 
     for item in audioHistory: 
         id = item[0]
@@ -140,8 +142,6 @@ def getUserProfile():
         })
 
     savedAudio = databse.getSavedAudio(userId)
-    
-    print( savedAudio )
 
     for item in savedAudio: 
         id = item[0]
@@ -650,11 +650,13 @@ def handleSearchQuery():
 @app.route('/history', methods={'GET'})
 def getUserHistory():
 
+    userId = databse.getUserBySession(request.cookies['xrftoken'])['id']
+
     def getAudioHistory():
 
         audioHistory = []
-        
-        items = databse.getUserAudioHistory(request.args['id'])
+
+        items = databse.getUserAudioHistory(userId, limit=None)
 
         for item in items: 
             id = item[0]
@@ -672,19 +674,48 @@ def getUserHistory():
                 'audioURL': item['audioURL'],
                 'albumId': item['albumId']
             })
-            
-        return audioHistory
 
+        response =  jsonify(audioHistory)
+        return response
+    
+    def getVideoHistory():
+        videos = []
+
+        watchHistory = databse.getUserWatchHistory(userId, None)
+
+        print( watchHistory)
+        for item in watchHistory: 
+            id =  item[0]
+            print( id )
+
+            video = contentDb['videos'].find_one({'id': id}, {'_id': 0,
+                                                                'id': 1,
+                                                                'title': 1,
+                                                                'artistImageURL': 1,
+                                                                'imageURL': 1,
+                                                                'views': 1,
+                                                                'artist': 1,
+                                                                'videoURL': 1,
+                                                                'artistId': 1})
+
+            videos.append({
+                'id': video['id'],
+                'title': video['title'],
+                'author': video['artist'],
+                'views': video['views'],
+                'posterURL': video['imageURL'],
+                'imageURL': video['artistImageURL'],
+                'contentURL': video['videoURL']
+            })
+
+        return jsonify(videos)
 
     filter = {
-        'audio': getAudioHistory
+        'audio': getAudioHistory,
+        'video': getVideoHistory
     }
 
-    history = filter[request.args['filter']]()
-    
-    
-    response =  jsonify(history)
-    return response 
+    return filter[request.args['filter']]()
 
 @app.route('/save', methods=['GET', 'POST'])
 def handleSavedContent(): 

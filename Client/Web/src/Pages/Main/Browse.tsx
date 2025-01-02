@@ -187,6 +187,7 @@ export default function Browse() {
         localStorage.removeItem('searchHistory')
         setsearchHistory([])
     }
+
     useEffect(()=> {
         if (localStorage.getItem('searchHistory') != null) {
             setsearchHistory(JSON.parse(localStorage.getItem('searchHistory')))

@@ -92,7 +92,7 @@ export default function Listen() {
         
         <section>
             <h1>New For you</h1>
-            <div className='h_list'>
+            <div className='h_list' style={{'justifyContent': 'space-between'}}>
                 
                 {
                     pageData?.new.map( item => {

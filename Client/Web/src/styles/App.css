@@ -469,7 +469,7 @@ form a {
 /* Video Items */
 .video_item_container{
   /* height: 100px;  */
-  width: 375px;
+  width: 345px;
   /* border: 1px solid rgba(115, 115, 115, .1); */
   /* padding: 5px; */
   border-radius: 10px;
@@ -528,8 +528,9 @@ form a {
   color: #ddd;
 }
 .audio_item_art{
-  height: 200px; 
-  width: 200px; 
+  height: 180px; 
+  width: 180px; 
+  overflow: hidden;
   /* border: 1px solid red; */
   /* background-color: #ddd; */
   border-radius: 10px;;
@@ -543,7 +544,7 @@ form a {
   display: flex;
   flex-direction: column;
   margin-top: 10px;
-  max-width: 200px;
+  max-width: 150px;
   text-wrap: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -609,5 +610,5 @@ font-weight: bold;
 .h_list{
   display: flex;
   justify-content: start;
-  gap: 25px;/
+  gap: 25px;
 }

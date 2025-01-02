@@ -514,7 +514,7 @@ class Database:
             return user       
     
     # WATCH HISTORY
-    def getUserWatchHistory(self, user_id):
+    def getUserWatchHistory(self, user_id, limit):
         
         if self.conn.closed:
             self.__init__() 
@@ -523,13 +523,22 @@ class Database:
             SELECT video_id 
             FROM watch_history
             WHERE user_id = '%s'
+        """ %user_id
+        
+        sql_with_limit = """
+            SELECT video_id 
+            FROM watch_history
+            WHERE user_id = '%s'
             LIMIT 4
         """ %user_id
 
         try: 
             with self.conn.cursor() as cursor: 
-                cursor.execute( sql )
-                print( cursor.statusmessage)
+                if limit is None:
+                    cursor.execute( sql )
+                    print( cursor.statusmessage)
+
+                cursor.execute(sql_with_limit)
 
                 result = cursor.fetchall()
 
@@ -540,8 +549,8 @@ class Database:
             return result
     
     # LISTENING HISTORY
-    def getUserAudioHistory(self, user_id):
-        
+    def getUserAudioHistory(self, user_id, limit ):
+
         if self.conn.closed: 
             self.__init__()
 
@@ -549,12 +558,24 @@ class Database:
             SELECT audio_id 
             FROM audio_history 
             WHERE user_id = '%s'
-            ORDER BY time_created DESC
-            LIMIT 6;
+            ORDER BY time_created DESC;
         """ %user_id
 
+        sql_with_limit = """
+            SELECT audio_id 
+            FROM audio_history 
+            WHERE user_id = '%s'
+            ORDER BY time_created DESC
+            LIMIT 8;
+        """ %user_id
         try: 
             with self.conn.cursor() as cursor: 
+
+                if limit is not None:
+                    cursor.execute( sql_with_limit)
+                    result = cursor.fetchall()
+                    return
+                
                 cursor.execute( sql)
                 result = cursor.fetchall()
 

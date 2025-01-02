@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react'
 import { Link, Navigate, replace, useLocation, useNavigate, useNavigation, useParams } from 'react-router-dom'
 import { activeNavButtonStyle, inActiveButtonStyle } from '../../utils/computedSyles'
 import axios from 'axios'
-import { AudioItemPropType, userAuthType, VideoItemPropType } from '../../utils/ObjectTypes'
+import { AudioItemPropType, userAuthType, UserAviPropType, VideoItemPropType } from '../../utils/ObjectTypes'
 import { useSelector } from 'react-redux'
 
 import AudioItem from '../../Components/AudioItem'
@@ -10,7 +10,7 @@ import VideoItem from '../../Components/VideoItem'
 import httpclient from '../../httpclient'
 import { RootState } from '../../utils/store'
 import { Dispatch } from '@reduxjs/toolkit'
-import { BiChevronLeft } from 'react-icons/bi'
+import { BiChevronLeft, BiListUl } from 'react-icons/bi'
 
 type ProfileDataType = {
   head: userAuthType, 
@@ -96,6 +96,18 @@ const  UserProfileHome = ({props, setNavState }) => {
             </section> 
           :<></>
         }
+        {
+          props.savedAudio.length > 0 ? 
+            <section>
+              <div className="section_header">
+              <span className="section_subheading">Saved Vidoes</span>
+              <span onClick={() => setNavState('saved_videos')}>See all</span>
+              </div>
+              <div className="profile_section_item_container">
+              </div>
+            </section> 
+          :<></>
+        }
 
         <section>
           <div className="section_header">
@@ -111,39 +123,90 @@ function UserProfileSavedVideos(props: {id: String}){
   return (
     <div className="page_body">
       <div className="section_header">
-        <h2>Saved Videos</h2>
+      <h3 onClick={() => setNavState('/')}><i><BiChevronLeft/></i> Home</h3>
+      <button><i><BiListUl/></i></button>
       </div>
+      <h2>Saved Videos</h2>
     </div>
   )}
 function UserProfileSavedAudio({id, setNavState}){ 
   return (
     <div className="page_body">
       <div className="section_header">
-        <h3><i onClick={() => setNavState('/')}><BiChevronLeft/></i> Saved audio</h3>
+        <h3><i onClick={() => setNavState('/')}><BiChevronLeft/></i> Home</h3>
       </div>
+      <h2>Saved Audio</h2>
     </div>
   )}
 function UserProfileFollowing({id, setNavState}){
+
+  const [ following, setFollowing ] = useState<[UserAviPropType]>()
+
   return( 
     <div className="page_body">
       <div className="section_header">
-        <h3><i onClick={() => setNavState('/')}><BiChevronLeft/></i> Following</h3>
+        <h3 onClick={() => setNavState('/')} ><i><BiChevronLeft/></i> Home</h3>
       </div>
+      <h2>Following</h2>
+      {
+        following?.length > 0 && following != undefined ? <></> : <> You are not following anyone yet</>
+      }
+
     </div>
   )}
 function UserProfileWatchHistory({id, setNavState}){
+  
+  const [videos, setVideos ] = useState<[VideoItemPropType]>([])
+
+  useEffect(() => {
+    httpclient.get(`http://127.0.0.1:5000/history?id=${id}&&filter=video`)
+    .then( response => setVideos( response.data ))
+  },[])
+
   return(
     <div className="page_body">
       <div className="section_header">
-        <h3><i onClick={() => setNavState('/')}><BiChevronLeft/></i> Watch History</h3>
+        <h3><i onClick={() => setNavState('/')}><BiChevronLeft/></i> Home</h3>
       </div>
+      <h2>Watch History</h2>
+      
+      <div className='page_body_collection'>
+        {
+          videos?.length > 0 && videos != undefined ? 
+          videos!.map( item => {
+            console.log( item )
+            return <VideoItem key={item.id} {...item }/>
+          })
+          
+          : <> No Recent videos </>
+        }
+      </div>
+
     </div>  
   )}
 function UserProfileAudioHistory({id, setNavState}){
+
+  const [tracks, setTracks ] = useState<[AudioItemPropType]>()
+
+  useEffect(() => {
+    httpclient.get(`http://127.0.0.1:5000/history?filter=audio`)
+    .then( response => setTracks( response.data ))
+  },[])
   return(
     <div className="page_body">
       <div className="section_header">
-        <h3><i onClick={() => setNavState('/')}><BiChevronLeft/></i> Audio history</h3>
+        <h3 onClick={() => setNavState('/')}><i><BiChevronLeft/></i> Home</h3>
+      </div>
+      <h2>Audio history</h2>
+      <div className='page_body_collection'>
+
+        {
+          tracks?.length > 0 && tracks != undefined ? 
+          tracks.map( item => {
+            return <AudioItem {...item}/>
+          }) : <> No Recent play history </>
+        }
+
       </div>
     </div>
   )}
@@ -159,7 +222,7 @@ function UserProfile(props: ProfileDataType) {
       <>
       {
         {
-          'saved_video': <UserProfileSavedVideos id={auth.user.id}/>,
+          'saved_videos': <UserProfileSavedVideos id={auth.user.id}/>,
           'saved_audio': <UserProfileSavedAudio id={auth.user.id} setNavState={setNavState}/>,
           'audio_history': <UserProfileAudioHistory id={auth.user.id} setNavState={setNavState}/>,
           'Watch_history': <UserProfileWatchHistory id={auth.user.id} setNavState={setNavState}/>,
