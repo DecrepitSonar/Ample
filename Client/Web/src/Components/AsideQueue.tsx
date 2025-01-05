@@ -4,10 +4,14 @@ import MediumUserListItem from "./MediumUserListItem";
 import { AudioListItemPropType } from "../utils/ObjectTypes";
 import { RootState } from "../utils/store";
 import AudioListItem from "./AudioListItem";
+import { useDispatch } from "react-redux";
+import { clearQueue } from "../utils/mediaPlayerSlice";
 
 export default function AsideQueue(){
   
     const audioPlayer = useSelector( (state: RootState) => state.audioPlayer)
+    
+    const dispatch = useDispatch()
 
     return(
       <div className="aside_body">
@@ -39,7 +43,11 @@ export default function AsideQueue(){
       {
         audioPlayer.queue.length > 0 ? 
         <section>
-        <span className="aside_section_title">Up next</span>
+          <div className="queue_list_header">
+            <span className="aside_section_title">Up next</span>
+            <button onClick={() => dispatch(clearQueue())}>Clear</button>
+          </div>
+        
         <div className="lib_collection_container">
         {
           audioPlayer.queue.map( ( item: AudioListItemPropType ) => {

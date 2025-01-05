@@ -12,3 +12,12 @@
     height: inherit;
     /* border: 1px solid red;  */
 }
+.queue_list_header{
+    display: flex;
+    justify-content: space-between;
+}
+.queue_list_header button{
+    background: none;
+    border: 0;
+    color: hwb(0 65% 35%)
+}

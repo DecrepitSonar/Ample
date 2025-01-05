@@ -73,13 +73,14 @@ function BottomMediaBar(props){
               {
                 audioPlayer.nowPlaying ? 
                 <audio 
+                // onPlay={() => dispatch(togglePlayer(null))}
                 onCanPlay={(e) => {
                   updatePlayerDuration(e)
                   setVolume(e.currentTarget.volume)
                 } }
                 onEnded={() => {
                   dispatch(playNext(null))
-                  dispatch(togglePlayer(null))
+                  // dispatch(togglePlayer(null))
                 }}
                 ref={audioPlayerElement}
                 onTimeUpdate={ (e) => updatePlayerTime(e) }

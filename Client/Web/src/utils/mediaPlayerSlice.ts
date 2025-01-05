@@ -46,7 +46,7 @@ const savedItem = createAsyncThunk('mediaPlayer/savedItem', async (track: AudioL
 })
 
 const playNextTrack = createAsyncThunk('mediaPlayer/playNextTrack', async (queue: [AudioListItemPropType]) => {
-        console.log( queue )
+        // console.log( queue )
     try{
         await httpclient.post(`http://127.0.0.1:5000/listen?audio_id=${queue[0].id}`, )
     }
@@ -105,10 +105,32 @@ export const AudioPlayer = createSlice({
 
             state.queue.push(action.payload)
         },
+        playPlaylist: ( state, action ) => {
+
+            const player: HTMLAudioElement = document.getElementById('audioPlayer') as HTMLAudioElement
+            
+            const queue: [AudioListItemPropType] = [...action.payload] as [AudioListItemPropType]
+            const track: AudioListItemPropType = queue.reverse().pop() as AudioListItemPropType
+
+            try{
+                httpclient.post(`http://127.0.0.1:5000/listen?audio_id=${track.id}`)
+            }
+            catch( err ){
+                // console.log( err)
+            }
+            
+            player!.src = 'https://prophile.nyc3.cdn.digitaloceanspaces.com/audio/' + track.audioURL + '.mp3'
+            state.player.isPlaying = true
+            state.nowPlaying = track 
+            state.queue = queue.reverse() as [AudioListItemPropType]
+            console.log( state.queue.length )
+        },
+
         playNext: ( state, action ) => {
 
             const player: HTMLAudioElement = document.getElementById('audioPlayer') as HTMLAudioElement
 
+            console.log( state.queue.length > 0  )
             if ( state.queue.length > 0){
                 
                 const queue: [AudioListItemPropType] = state.queue.reverse() as [AudioListItemPropType]
@@ -118,21 +140,26 @@ export const AudioPlayer = createSlice({
                     httpclient.post(`http://127.0.0.1:5000/listen?audio_id=${track.id}`)
                 }
                 catch( err ){
-                    // console.log( err)
+                    console.log( err)
                 }
                 
                 player!.src = 'https://prophile.nyc3.cdn.digitaloceanspaces.com/audio/' + track.audioURL + '.mp3'
+                // player.play() 
 
                 state.nowPlaying = track 
                 state = {...state,
                     queue: queue.reverse() as [AudioListItemPropType]
                 }
             }
+            console.log( null )
         },
         setAudioHistory: (state, action) => {
             return state = {
                 ...state, audioHistory: action.payload
             }
+        },
+        clearQueue: ( state ) => {
+            state.queue = []
         }
     },
     extraReducers: (builder: any) => {
@@ -156,4 +183,10 @@ export const audioPlayer = AudioPlayer.reducer
 export const play = playTrack
 export const next = playNextTrack
 export const save = savedItem
-export const  {togglePlayer, addToQueue, playNext, setAudioHistory } = AudioPlayer.actions
+export const  {
+    togglePlayer, 
+    addToQueue, 
+    playNext, 
+    setAudioHistory, 
+    playPlaylist, 
+    clearQueue } = AudioPlayer.actions
