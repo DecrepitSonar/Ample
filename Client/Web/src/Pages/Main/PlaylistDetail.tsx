@@ -9,7 +9,7 @@ import AudioItem from '../../Components/AudioItem'
 import axios from 'axios'
 import { useNavigate, useParams } from 'react-router-dom'
 import { useSelector } from 'react-redux'
-import { addToQueue, next, play, playPlaylist, save } from '../../utils/mediaPlayerSlice'
+import { addToQueue, next, play, addToPlayNext, save, togglePlayer } from '../../utils/mediaPlayerSlice'
 import { RootState, useAppDispatch } from '../../utils/store'
 import { RiPlayList2Line } from 'react-icons/ri'
 
@@ -101,14 +101,14 @@ export default function PlaylistDetail() {
               <button 
                 onClick={() => {
                   if( audioPlayer.nowPlaying.albumId != playListITem?.head.playlist.id ){
-                     dispatch(playPlaylist(playListITem?.head.tracks))
-                     dispatch
+                     dispatch(addToPlayNext(playListITem?.head.tracks))
                     }
-                  // dispatch(next(audioPlayer.queue))
+                  dispatch(togglePlayer(null))
                 }}>
                 {audioPlayer.nowPlaying.albumId == playListITem?.head.playlist.id && audioPlayer.player.isPlaying ? <FaPauseCircle/>: <FaPlayCircle/>} 
               </button>
               <button><BiHeart/></button>
+              <button onClick={(() => dispatch(addToQueue(playListITem?.head.tracks)))}><RiPlayList2Line/></button>
               <button><HiEllipsisHorizontal/></button>
             </div>
           </div>

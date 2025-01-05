@@ -41,10 +41,28 @@ export default function AsideQueue(){
       {/* Queued  */}
   
       {
+        audioPlayer.upnext.length > 0 ? 
+        <section>
+          <div className="queue_list_header">
+            <span className="aside_section_title">Up Next</span>
+            {/* <button onClick={() => dispatch(clearQueue())}>Clear</button> */}
+          </div>
+        
+        <div className="lib_collection_container">
+        {
+          audioPlayer.upnext.map( ( item: AudioListItemPropType ) => {
+            return <AudioListItem  {...item}/>
+          })
+        }
+        </div>
+      </section> : <></>
+      }
+
+      {
         audioPlayer.queue.length > 0 ? 
         <section>
           <div className="queue_list_header">
-            <span className="aside_section_title">Up next</span>
+            <span className="aside_section_title">Queue</span>
             <button onClick={() => dispatch(clearQueue())}>Clear</button>
           </div>
         

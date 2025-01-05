@@ -56,7 +56,7 @@ function BottomMediaBar(props){
       httpclient.get(`http://127.0.0.1:5000/history?filter=audio&&id=${auth.user.id}`)
       .then( response => {
         dispatch(setAudioHistory(response.data))
-        console.log(response.data)
+        // console.log(response.data)
       })
   }, [auth.user, audioPlayer.nowPlaying])
 
