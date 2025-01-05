@@ -585,9 +585,9 @@ def handleSearchQuery():
 
             for colletion in collections:
 
-                if( colletion == 'featuredvideos'):
+                if( colletion == 'featuredvideos' or colletion == 'features' ):
                     continue
-                
+
                 for item in collectionQueries[colletion]():
                     print( item )
 
@@ -641,9 +641,7 @@ def handleSearchQuery():
     }
 
     
-    print( searchResult )
-
-    return jsonify(filter[filterQuery]())
+    return jsonify( filter[filterQuery]() )
 
 @app.route('/browse', methods=['GET'])
 
