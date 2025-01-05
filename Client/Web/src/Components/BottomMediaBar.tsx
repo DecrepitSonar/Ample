@@ -3,7 +3,7 @@ import { FaBackward, FaPlay, FaForward, FaPause } from "react-icons/fa"
 import { RootState, useAppDispatch } from '../utils/store'
 import { FaRepeat, FaShuffle } from "react-icons/fa6"
 import { useSelector } from "react-redux"
-import { playNext, setAudioHistory, togglePlayer } from "../utils/mediaPlayerSlice"
+import { playNext, populateAudioPlayer, setAudioHistory, togglePlayer } from "../utils/mediaPlayerSlice"
 import { useNavigate } from "react-router-dom"
 import { BiVolumeFull, BiVolumeLow, BiVolumeMute } from "react-icons/bi"
 import { LuListMinus } from "react-icons/lu"
@@ -79,7 +79,7 @@ function BottomMediaBar(props){
                   setVolume(e.currentTarget.volume)
                 } }
                 onEnded={() => {
-                  dispatch(playNext(null))
+                  audioPlayer.queue.length < 1 && audioPlayer.upnext.length < 1 ? dispatch(populateAudioPlayer()) :  dispatch(playNext(null))
                   // dispatch(togglePlayer(null))
                 }}
                 ref={audioPlayerElement}
@@ -99,7 +99,8 @@ function BottomMediaBar(props){
             <button><FaRepeat/></button>
             <button><FaBackward/></button>
             <button onClick={() => dispatch(togglePlayer(null))}>{audioPlayer.player.isPlaying ? <FaPause/> : <FaPlay/>   }</button>
-            <button onClick={() => dispatch(playNext(null))}><FaForward/></button>
+            <button onClick={() => {
+              audioPlayer.queue.length < 1 && audioPlayer.upnext.length < 1 ? dispatch(populateAudioPlayer()) : dispatch(playNext(null))}}><FaForward/></button>
             <button><FaShuffle/></button>
           </div>
           <div className="bottom_Mediabar_playerOptions">

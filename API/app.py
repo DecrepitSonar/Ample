@@ -563,6 +563,24 @@ def updateListeningHistory():
 
     return jsonify({}, 200)
 
+@app.route('/listen/random', methods=['GET'])
+def getRandomTrack(): 
+    print("random")
+
+    tracks = list(contentDb['tracks'].aggregate([{'$sample': {'size': 1}}]))
+
+    for item in tracks: 
+          track = {
+            'id': item['id'],
+            'title': item['title'],
+            'name': item['name'],
+            'imageURL': item['imageURL'],
+            'audioURL': item['audioURL'],
+            'albumId': item['albumId']
+        }
+        
+    return jsonify(track)
+
 @app.route('/search', methods=['GET'])
 def handleSearchQuery():
     print( list(request.args))
@@ -733,11 +751,6 @@ def handleSavedContent():
     print(request.args['filter'])
     
     return jsonify(200)
-
-# audio
-@app.route('/audio', methods=['GET'])
-def getAudioItem():
-    print( request.args['id'])
 
 if __name__ == "__main__":
     app.run(debug=True)

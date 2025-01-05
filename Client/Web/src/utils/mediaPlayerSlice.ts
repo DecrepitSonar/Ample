@@ -59,6 +59,17 @@ const playNextTrack = createAsyncThunk('mediaPlayer/playNextTrack', async (queue
     return
 })
 
+const populatePlayer = createAsyncThunk('mediaPlayer/playRandomTrack', async () => {
+    try{
+        const response = await httpclient.get('http://127.0.0.1:5000/listen/random')
+        return response.data
+    }
+    catch( error ){
+        console.log( error )
+    }
+
+})
+
 export const AudioPlayer = createSlice({
     name: 'audioPlayer',
     initialState,
@@ -137,7 +148,6 @@ export const AudioPlayer = createSlice({
 
             const player: HTMLAudioElement = document.getElementById('audioPlayer') as HTMLAudioElement
 
-            console.log( state.queue.length > 0  )
             if( state.upnext.length > 0){
                 
                 const upnext: [AudioListItemPropType] = [...state.upnext] as [AudioListItemPropType]
@@ -154,6 +164,8 @@ export const AudioPlayer = createSlice({
 
                 state.nowPlaying = track 
                 state.upnext = upnext
+
+                return 
             }
             else if ( state.queue.length > 0){
                 
@@ -176,8 +188,10 @@ export const AudioPlayer = createSlice({
 
                 state.nowPlaying = track 
                 state.queue = queue
+                
+                return
             }
-            console.log( null )
+            
         },
         setAudioHistory: (state, action) => {
             return state = {
@@ -222,6 +236,17 @@ export const AudioPlayer = createSlice({
 
             state.nowPlaying = action.payload
 
+        }),
+        builder.addCase(populatePlayer.fulfilled, (state: PlayerState, action: any) => {
+            console.log( action.payload)
+
+            const player: HTMLAudioElement = document.getElementById('audioPlayer') as HTMLAudioElement
+
+            player.src = 'https://prophile.nyc3.cdn.digitaloceanspaces.com/audio/' + action.payload.audioURL + '.mp3'
+            player.play()
+            state.player.isPlaying = true
+
+            state.nowPlaying = action.payload
         })
     }
 })
@@ -230,6 +255,7 @@ export const audioPlayer = AudioPlayer.reducer
 export const play = playTrack
 export const next = playNextTrack
 export const save = savedItem
+export const populateAudioPlayer = populatePlayer
 export const  {
     togglePlayer, 
     addToQueue, 
