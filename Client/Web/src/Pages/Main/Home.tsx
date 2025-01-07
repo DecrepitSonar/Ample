@@ -5,6 +5,7 @@ import AudioItem from "../../Components/AudioItem";
 import VideoItem from "../../Components/VideoItem";
 import UserAvi from "../../Components/UserAvi";
 import axios from "axios";
+import { BiChevronLeft, BiChevronRight } from "react-icons/bi";
 
 function Home() {
 
@@ -73,7 +74,10 @@ function Home() {
       </header>
       <div className="page_body">
       <section>
-        <span className="section_subheading">Podcast</span>
+      <div className="section_header">
+        <h3 className="section_subheading">Podcast</h3>
+        <h2 onClick={() => navigate('/')} >See more<i><BiChevronRight/></i> </h2>
+      </div>
         <div className="section_item_container">
             {
                 homeData ?
@@ -84,7 +88,11 @@ function Home() {
         </div>
       </section>
       <section>
-        <span className="section_subheading">Music</span>
+        <div className="section_header">
+          <h3 className="section_subheading">Music</h3>
+          <h2 onClick={() => navigate('/listen')} >See more<i><BiChevronRight/></i> </h2>
+        </div>
+          
         <div className="section_item_container">
         {
         homeData ? 
@@ -96,7 +104,9 @@ function Home() {
         </div>
       </section>
       <section>
-        <span className="section_subheading">Top Creators</span>
+        <div className="section_header">
+          <h3 className="section_subheading">Top Creators</h3>
+        </div>
         <div className="section_item_container">
             {
               homeData ?
@@ -108,7 +118,11 @@ function Home() {
         </div>
       </section>
       <section>
-        <span className="section_subheading">Music pVideos</span>
+        <div className="section_header">
+          <h3 className="section_subheading">Music Videos</h3>
+          <h2 onClick={() => navigate('#')} >See more<i><BiChevronRight/></i> </h2>
+        </div>
+        
         <div className="section_item_container">
             {
                 homeData ?

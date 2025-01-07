@@ -82,24 +82,15 @@ function Nav(){
           <Link to={'/'} 
           style={currentLocation[1] == '' ? activeLink : inActiveLink}
           > <FaHome/></Link>
-          <Link to={'/watch'} 
+          {/* <Link to={'/watch'} 
           style={currentLocation[1] == 'watch' ? activeLink : inActiveLink}
-          ><FaTv/></Link>
+          ><FaTv/></Link> */}
           <Link to={'/listen'} style={currentLocation[1] == 'listen' ? activeLink : inActiveLink}
           > <FaRegPlayCircle/></Link>
           <Link to={'/browse'}
           style={currentLocation[1] == 'browse' ? activeLink : inActiveLink}><PiMagnifyingGlass/></Link>
         </div>
 
-        {/* {
-          auth.isLoggedIn && (
-            <div className="nav_links">
-            <Link to={'http://localhost:5174/'} 
-            style={inActiveLink}
-            ><span > <FaHome/> Dashboard</span></Link>
-          </div>
-          )
-      } */}
         {/* <span className="nav_section_subtitle">Live</span>
         <div className="nav_section_live_collection">
 

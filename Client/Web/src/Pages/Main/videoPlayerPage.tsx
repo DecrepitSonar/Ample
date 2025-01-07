@@ -11,6 +11,7 @@ import AsideVideoCollection from "../../Components/AsideVideoCollection";
 import { useSelector } from "react-redux";
 import { RootState, useAppDispatch } from "../../utils/store";
 import { togglePlayer } from "../../utils/mediaPlayerSlice";
+import { BiBookmarkAlt } from "react-icons/bi";
 
 type videPlayerPageData = {
     video: VideoItemPropType,
@@ -244,6 +245,7 @@ function VideoPlayerPage(){
                             <button><FaThumbsUp/> 231</button>
                             <button><FaThumbsDown/> 132 </button>
                             <button><BsShareFill/></button>
+                            <button><BiBookmarkAlt/></button>
                             <button><HiEllipsisHorizontal/></button>
                         </div>
                     </div>

@@ -10,7 +10,7 @@ import VideoItem from '../../Components/VideoItem'
 import httpclient from '../../httpclient'
 import { RootState } from '../../utils/store'
 import { Dispatch } from '@reduxjs/toolkit'
-import { BiChevronLeft, BiListUl } from 'react-icons/bi'
+import { BiChevronLeft, BiChevronRight, BiListUl } from 'react-icons/bi'
 
 type ProfileDataType = {
   head: userAuthType, 
@@ -46,8 +46,8 @@ const  UserProfileHome = ({props, setNavState }) => {
             props.watchHistory.length > 0 ? 
             <section>
               <div className="section_header">
-                <span className="section_subheading">Watch again</span>
-                <span onClick={() => setNavState('Watch_history')}>See all</span>
+                <h3 className="section_subheading">Watch again</h3>
+                <h2 onClick={() => setNavState('Watch_history')} >See all<i><BiChevronRight/></i> </h2>
               </div>
                 <div className="profile_section_item_container">
                     {
@@ -63,8 +63,8 @@ const  UserProfileHome = ({props, setNavState }) => {
           props.watchHistory.length > 0 ? 
             <section>
               <div className="section_header">
-                <span className="section_subheading">Recent Plays</span>
-                <span onClick={() => setNavState('audio_history')}>See all</span>
+                <h3 className="section_subheading">Recent Plays</h3>
+                <h2 onClick={() => setNavState('audio_history')} >See all<i><BiChevronRight/></i> </h2>
               </div>
               <div className="profile_section_item_container">
               {
@@ -82,8 +82,8 @@ const  UserProfileHome = ({props, setNavState }) => {
           props.savedAudio.length > 0 ? 
             <section>
               <div className="section_header">
-              <span className="section_subheading">Saved</span>
-              <span onClick={() => setNavState('saved_audio')}>See all</span>
+                <h3 className="section_subheading">Saved</h3>
+                <h2 onClick={() => setNavState('saved_audio')} >See all<i><BiChevronRight/></i> </h2>
               </div>
               <div className="profile_section_item_container">
               {
@@ -100,8 +100,8 @@ const  UserProfileHome = ({props, setNavState }) => {
           props.savedAudio.length > 0 ? 
             <section>
               <div className="section_header">
-              <span className="section_subheading">Saved Vidoes</span>
-              <span onClick={() => setNavState('saved_videos')}>See all</span>
+                <h3 className="section_subheading">Saved Videos</h3>
+                <h2 onClick={() => setNavState('saved_videos')} >See all<i><BiChevronRight/></i> </h2>
               </div>
               <div className="profile_section_item_container">
               </div>
@@ -111,7 +111,7 @@ const  UserProfileHome = ({props, setNavState }) => {
 
         <section>
           <div className="section_header">
-            <span className="section_subheading">Following</span>
+            <h3 className="section_subheading">Following</h3>
             <span onClick={() => setNavState('following')}>See all</span>
           </div>
         </section>
