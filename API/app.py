@@ -1,5 +1,7 @@
 import os
 import uuid 
+import random
+import string
 
 from flask import Flask, request, abort, jsonify, session, make_response, redirect, g
 from config import ApplicationConfig
@@ -189,28 +191,6 @@ def updateUserSettings():
 
     return jsonify({}), 200
 
-# migrating mondo db object into psl db 
-@app.route('/migrate', methods=['GET'])
-# def migrateTrack():
-#     tracks = contentDb['tracks'].find().limit(1)
-#     for item in list(tracks ):D
-#         track = {
-#             'id': item['id'],
-#             'tracknum':item['trackNum'], 
-#             'genre': item['genre'], 
-#             'title': item['title'], 
-#             'author': item['name'], 
-#             'imageurl': item['imageURL'], 
-#             'audiourl': item['audioURL'], 
-#             'albumid': item['albumId'],
-#             'playcount': item['playCount'],
-#             'authorid': item['artistId']
-#         }
-#         databse.postAudioTrack(track)
-#     return jsonify({})
-
-def migrateUsers():
-    users = contentDb['artists'].find({})
 
 # Content
 @app.route('/', methods=['GET'])
@@ -285,6 +265,7 @@ def home():
         'imageURL': 1
     }).limit(7)
 
+    print( databse.getCreators())
     for item in list(artists):
         content['artists'].append({
             'id': item['id'],
@@ -751,6 +732,53 @@ def handleSavedContent():
     print(request.args['filter'])
     
     return jsonify(200)
+
+
+
+
+@app.route('/migrate/audio', methods=['GET'])
+def migrateTrack():
+    tracks = contentDb['tracks'].find()
+    for item in list(tracks ):
+        track = {
+            'track_number':item['trackNum'], 
+            'title': item['title'], 
+            'author': item['name'], 
+            'image_url': item['imageURL'], 
+            'audio_url': item['audioURL'], 
+            'album_id': item['albumId'],
+            'play_count': item['playCount'],
+            'author_id': item['artistId'],
+            'type': "audio",
+            'genre': item['genre']
+        }
+        databse.postAudioTrack(track)
+    return jsonify({})
+
+@app.route('/migrate/users', methods=['GET'])
+def migrateUsers():
+
+    def random_char(char_num):
+       return ''.join(random.choice(string.ascii_letters) for _ in range(char_num))
+
+    users = contentDb['artists'].find({})
+
+    for item in list(users ):
+
+        user = {
+            'type': item['type'].lower(), 
+            'username': item['name'],
+            'image_url': item['imageURL'],
+            'email': random_char(7)+"@gmail.com",
+            'password': 'none'
+        }
+        
+        databse.addUser(user)
+
+        # print( user )
+
+    return jsonify({})
+
 
 if __name__ == "__main__":
     app.run(debug=True)

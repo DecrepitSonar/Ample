@@ -160,9 +160,10 @@ class Database:
             INSERT INTO users(
                 id, 
                 join_date, 
-                user_type
+                user_type,
+                verified
             )
-            VALUES (DEFAULT, DEFAULT, DEFAULT) RETURNING id;
+            VALUES (DEFAULT, DEFAULT, DEFAULT, DEFAULT) RETURNING id;
         """
 
         if self.conn.closed: 
@@ -512,7 +513,31 @@ class Database:
 
             self.conn.close()
             return user       
-    
+
+    def getCreators(self):
+
+        if self.conn.closed: 
+            self.__init__()
+
+        sql = """ 
+            SELECT * FROM users
+            INNER JOIN accounts on users.id = accounts.user_id
+            WHERE user_type = 'artist'
+            LIMIT 1
+            RETURNING id, username, image_url
+        """
+
+        try:
+            with self.conn.cursor() as cursor:
+                cursor.execute(sql)
+                result = cursor.fetchall()
+                print( result )
+        except(self.conn.DatabaseError, Exception) as error: 
+            print( error)
+
+        finally: 
+            return
+        
     # WATCH HISTORY
     def getUserWatchHistory(self, user_id, limit):
         
@@ -707,8 +732,6 @@ class Database:
             self.conn.close() 
             return result
 
-
-
     def postAudioTrack(self, item):
 
         if self.conn.closed: 
@@ -717,43 +740,125 @@ class Database:
         sql = ''' 
         INSERT INTO audio ( 
         id,
-        tracknum, 
+        track_number, 
         genre, 
         title, 
         author, 
-        imageurl, 
-        audiourl, 
-        albumid,
-        playcount,
-        authorid )
+        image_url, 
+        audio_url, 
+        album_id,
+        play_count,
+        author_id,
+        type )
 
-        VALUES ( %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
+        VALUES ( DEFAULT, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
         '''
 
         try: 
             with self.conn.cursor() as cursor: 
                 print( item )
                 cursor.execute(sql, (
-                    item['id'],
-                    item['tracknum'],
+                    item['track_number'],
                     item['genre'],
                     item['title'],
                     item['author'],
-                    item['imageurl'],
-                    item['audiourl'],
-                    item['albumid'],
-                    item['playcount'],
-                    item['authorid']
-                    ))
+                    item['image_url'],
+                    item['audio_url'],
+                    item['album_id'],
+                    item['play_count'],
+                    item['author_id'],
+                    item['type'] ))
                 
-                self.conn.commit()
+                self.conn.commit() 
+                print( cursor.statusmessage )
+                
 
         except ( self.conn.DatabaseError, Exception) as error:
             print( error )
-            self.conn.close()
+            # self.conn.close()
             return
-        finally: 
+        finally:
             self.conn.close()
             return
 
         
+# For user migration purposes 
+    def addUser(self, user ):
+
+        print( """ Check if user exists """ )
+
+        if self.getUserByEmail(user['email']) is not None:
+            return None
+    
+            # return {
+             #     'error': {
+            #     'message': "User already exists " ,
+            #    'Code': 'EMAIlLERR'}
+            # }
+        
+        accountSQL = """ 
+            INSERT INTO accounts( 
+            id,
+            username, 
+            avi_image_url, 
+            email, 
+            header_image,
+            user_id,
+            password
+        )
+        
+            VALUES (DEFAULT, %s, %s, %s, %s, %s, %s) RETURNING user_id;
+        """
+
+        userSQL = """ 
+            INSERT INTO users(
+                id, 
+                join_date, 
+                verified,
+                user_type
+            )
+
+            VALUES (DEFAULT, DEFAULT, DEFAULT, '%s') RETURNING id;
+        """ %user['type']
+
+        if self.conn.closed: 
+            self.__init__()
+
+        print( user )
+        try:
+            
+            print( 'creating user')
+            with self.conn.cursor() as cursor:
+            
+                cursor.execute(userSQL)
+                print(cursor.statusmessage)
+
+                rows = cursor.fetchone()
+                print( rows )
+
+                if rows: 
+                    userId = rows[0]
+                    print( rows[0])
+
+                    cursor.execute(accountSQL, (
+                        user['username'],
+                        user['image_url'],
+                        user['email'], 
+                        'https://prophile.nyc3.cdn.digitaloceanspaces.com/images/5172658.jpg',
+                        userId,
+                        user['password'],
+                    ))
+                    
+                    print(cursor.statusmessage)
+
+                    return userId 
+                        
+        except (self.conn.DatabaseError, Exception) as error: 
+            print( error )
+            return error
+        
+        finally:
+            self.conn.commit()
+            self.conn.close()
+            return 
+    
