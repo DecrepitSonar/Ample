@@ -97,51 +97,51 @@ def getUserProfile():
         'savedAudio': []    
     }
     
-    watchHistory = databse.getUserWatchHistory(userId, 4)
+    # watchHistory = databse.getUserWatchHistory(userId, 4)
 
-    for item in watchHistory: 
-        id =  item[0]
+    # for item in watchHistory: 
+    #     id =  item[0]
 
-        video = contentDb['videos'].find_one({'id': id}, {'_id': 0,
-                                                            'id': 1,
-                                                            'title': 1,
-                                                            'artistImageURL': 1,
-                                                            'imageURL': 1,
-                                                            'views': 1,
-                                                            'artist': 1,
-                                                            'videoURL': 1,
-                                                            'artistId': 1})
+    #     video = contentDb['videos'].find_one({'id': id}, {'_id': 0,
+    #                                                         'id': 1,
+    #                                                         'title': 1,
+    #                                                         'artistImageURL': 1,
+    #                                                         'imageURL': 1,
+    #                                                         'views': 1,
+    #                                                         'artist': 1,
+    #                                                         'videoURL': 1,
+    #                                                         'artistId': 1})
 
-        profileData['watchHistory'].append({
-            'id': video['id'],
-            'title': video['title'],
-            'author': video['artist'],
-            'views': video['views'],
-            'posterURL': video['imageURL'],
-            'imageURL': video['artistImageURL'],
-            'contentURL': video['videoURL']
-        })
+    #     profileData['watchHistory'].append({
+    #         'id': video['id'],
+    #         'title': video['title'],
+    #         'author': video['artist'],
+    #         'views': video['views'],
+    #         'posterURL': video['imageURL'],
+    #         'imageURL': video['artistImageURL'],
+    #         'contentURL': video['videoURL']
+    #     })
 
-    audioHistory = databse.getUserAudioHistory(userId, 8)
+    # audioHistory = databse.getUserAudioHistory(userId, 8)
 
-    for item in audioHistory: 
-        id = item[0]
+    # for item in audioHistory: 
+    #     id = item[0]
         
         
-        item = contentDb['tracks'].find_one({'id': id}, {'_id': 0})
+    #     item = contentDb['tracks'].find_one({'id': id}, {'_id': 0})
 
 
-        if item is None:
-            return jsonify(profileData) 
+    #     if item is None:
+    #         return jsonify(profileData) 
     
-        profileData['audioHistory'].append({
-            'id': item['id'],
-            'title': item['title'],
-            'name': item['name'],
-            'imageURL': item['imageURL'],
-            'audioURL': item['audioURL'],
-            'albumId': item['albumId']
-        })
+    #     profileData['audioHistory'].append({
+    #         'id': item['id'],
+    #         'title': item['title'],
+    #         'name': item['name'],
+    #         'imageURL': item['imageURL'],
+    #         'audioURL': item['audioURL'],
+    #         'albumId': item['albumId']
+    #     })
 
     savedAudio = databse.getSavedAudio(userId)
 
@@ -408,7 +408,6 @@ def getPlaylist():
 def getVideo():
     videoId = request.args['videoId']
     user_id = request.args['id']
-    print( user_id )
     
     video = contentDb['videos'].find_one({'id': videoId}, {'_id': 0,
                                                            'id': 1,
@@ -429,7 +428,10 @@ def getVideo():
                                                             'artist': 1,
                                                             'videoURL': 1,
                                                             'artistId': 1}))
+    comments = databse.getCommentsByVideoId(videoId)
+    print( comments )
     # print('Recommended ', recommendedVideos)
+    
     pageContent = {
         'video': {
             'id': video['id'],
@@ -439,6 +441,7 @@ def getVideo():
             'imageURL': video['artistImageURL'],
             'views': video['views']
         }, 
+        'comments': comments,
         'recommendedVideos': recommendedVideos
     }
 
@@ -448,6 +451,14 @@ def getVideo():
     # print( pageContent)
 
     return jsonify(pageContent)
+
+@app.route('/video/comment', methods=['POST'])
+def postComment(): 
+    
+    result = databse.postComment( request.json )
+    # print( result )
+
+    return jsonify({}, 200)
 
 @app.route('/listen', methods=['GET'])
 def getAudioPageContent():
@@ -725,7 +736,10 @@ def handleSavedContent():
         
         if albumid is not None: 
             
-            databse.saveAudioItem(user_id, request.json['id'])
+            id = request.json['id']
+            # print( data )
+
+            databse.saveAudioItem(user_id, id)
 
             return jsonify(200)
     

@@ -21,10 +21,9 @@ def register_user():
 
     try: 
         result = databse.create_user(email, hashed_password)
-        print( "result", result ) 
-        return result
     
     finally:
+        print( result )
         if result is None: 
             return {
                 'error': {
@@ -32,7 +31,7 @@ def register_user():
                 'Code': 'EMAIlLERR'}
             }
         
-        return jsonify({'id': result }),200
+        return jsonify({},200)
     
 @auth.route('/validate', methods=['GET'])
 def confirmUserSession():

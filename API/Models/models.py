@@ -4,67 +4,8 @@ from config import ApplicationConfig
 import psycopg2
 from flask_bcrypt import Bcrypt
 
-# from sqlalchemy import create_engine
-
-# def initDb():
-#     engine = create_engine('postgresql+psycopg2://postgres:12358132121@127.0.0.1:5432/ample')
-
-#     if not engine:
-#         return 0
-#     return 
-
-# db = SQLAlchemy()
-
 def get_uuid():
     return uuid4().hex
-
-
-# class User(db.Model):
-#     __tablename__ = 'Users',
-#     id = db.Column(db.String(32), primary_key=True, unique=True, default=get_uuid)
-#     username = db.Column(db.String(32), unique=True, default=f'DefaultUser')
-#     email = db.Column(db.String(345), unique=True)
-#     password = db.Column(db.Text, nullable=False)
-#     imageURL = db.Column(db.Text, default='https://prophile.nyc3.cdn.digitaloceanspaces.com/images/1222ac938383d8c2708b08ee85c1b3d491797171.jpg')
-#     headerPosterURL = db.Column(db.Text, default='https://prophile.nyc3.cdn.digit 
-#         print( columns )
-
-#         user = User.getUserById(data['id'])
-
-#         print( user )
-#         # handle error if user not found
-
-#         for column in columns:
-#             print('column:',data[column])
-#             setattr(user, column, data[column])
-
-#         db.session.commit()
-            
-
-#     def getUserById(id):
-#         return db.session.execute(db.select(User).filter_by(id=id)).scalar_one()
-    
-#     def getUserByEmail(email):
-#         return db.session.execute(db.select(User).filter_by(email=email)).scalar_one()
-    
-#     def getUserByUsername(username):
-#         return db.session.execute(db.select(User).filter_by(username=username)).first()
-    
-#     def getUserByToken(token):
-#         query = db.session.execute(db.select(User).filter_by(sessionId=token)).scalar_one()
-#         if not query:
-#             return None
-        
-#         return query
-        
-# class UserSessions(db.Model):
-#     _tablename_ = 'Sessions',
-#     id = db.Column(db.String(32), primary_key=True, unique=True, default=get_uuid)
-
-#     # def validateSession(sessionId)
-#     # def getSession(sessionId)
-
-#     db.session.commit()
 
 class Database:
 
@@ -142,28 +83,31 @@ class Database:
         """ Creating New user"""
         print( """ Creating New user""" )
         
-        accountSQL = """ 
-            INSERT INTO accounts( 
+        userSql = """ 
+            INSERT INTO users ( 
             id,
             username, 
             avi_image_url, 
             email, 
             header_image,
-            user_id,
-            password
+            password,
+            join_date, 
+            user_type,
+            verified
         )
         
-            VALUES (DEFAULT, %s, %s, %s, %s, %s, %s) RETURNING user_id;
-        """
+            VALUES (
+                DEFAULT, 
+                %s, 
+                DEFAULT, 
+                %s, 
+                DEFAULT, 
+                %s, 
+                DEFAULT,
+                DEFAULT,
+                DEFAULT
+            ) 
 
-        userSQL = """ 
-            INSERT INTO users(
-                id, 
-                join_date, 
-                user_type,
-                verified
-            )
-            VALUES (DEFAULT, DEFAULT, DEFAULT, DEFAULT) RETURNING id;
         """
 
         if self.conn.closed: 
@@ -175,24 +119,12 @@ class Database:
             print( 'creating user')
             with self.conn.cursor() as cursor:
             
-                cursor.execute(userSQL)
 
-                rows = cursor.fetchone()
-
-                if rows: 
-                    userId = rows[0]
-                    print( rows[0])
-
-                    cursor.execute(accountSQL, (
-                        'defaultUser',
-                        'https://prophile.nyc3.digitaloceanspaces.com/images/053117.jpg',
-                        email, 
-                        'https://prophile.nyc3.cdn.digitaloceanspaces.com/images/5172658.jpg',
-                        userId,
-                        password,
-                    ))
-
-                    return userId 
+                cursor.execute(userSql, (
+                    'defaultUser',
+                    email, 
+                    password,
+                ))
                         
         except (self.conn.DatabaseError, Exception) as error: 
             print( error )
@@ -201,7 +133,7 @@ class Database:
         finally:
                 self.conn.commit()
                 self.conn.close()
-                return userId   
+                return cursor.statusmessage
     
     # User Sessions
     def createUserSession(self, data):
@@ -354,6 +286,33 @@ class Database:
         
     # Save video items
 
+    # comments
+    def postComment(self, comment): 
+        print( comment)
+
+        if self.conn.closed: 
+            self.__init__()
+
+        SQL = """
+            INSERT INTO video_comments ( id, username, user_id, imageurl, video_id, comment, date_created, time_created )
+            VALUES ( DEFAULT, %s, %s, %s, %s, %s, DEFAULT, DEFAULT)
+        """
+
+        try:
+            with self.conn.cursor() as cursor: 
+                cursor.execute(SQL, (comment['username'], comment['user_id'], comment['imageurl'], comment['video_id'],comment['comment']))
+                print( cursor.statusmessage )
+                
+        except(self.conn.DatabaseError, Exception) as error: 
+            print( error )
+            return None
+        
+        finally: 
+            self.conn.commit()
+            self.conn.close()
+
+            return cursor.statusmessage 
+    
     # GET 
     def getUserById(self, id):
 
@@ -361,7 +320,7 @@ class Database:
             self.__init__()
 
         sql = """SELECT * FROM users WHERE id = '%s' """ %id
-        user_account = """ SELECT  user_id, username, avi_image_url, email, header_image, verified  FROM accounts """
+        user_account = """ SELECT  id, username, avi_image_url, email, header_image, verified  FROM users """
 
         try: 
             with self.conn.cursor() as cursor: 
@@ -376,7 +335,7 @@ class Database:
                 # print( '3:', cursor.statusmessage )
                 # print( cursor.query)
                 result = cursor.fetchone()
-                # print( result )
+                print( result )
 
                 if result is not None: 
 
@@ -413,8 +372,8 @@ class Database:
             self.__init__()
 
         sql = """ 
-        SELECT user_id, username, avi_image_url, email, header_image, verified, password 
-        FROM accounts 
+        SELECT id, username, avi_image_url, email, header_image, verified, password 
+        FROM users 
         WHERE email LIKE '%s' """ %email
 
         try: 
@@ -501,7 +460,7 @@ class Database:
         try: 
             with self.conn.cursor() as cursor:
                 cursor.execute(sql)
-                # print( '1:', cursor.statusmessage )
+                print( '1:', cursor.statusmessage )
                 result = cursor.fetchone()[0]
 
                 user = self.getUserById(result)
@@ -664,7 +623,33 @@ class Database:
 
         finally: 
             return result
-    # UPDATE 
+    
+    # GET COMMENTS 
+    def getCommentsByVideoId(self, video_id):
+
+        if self.conn.closed: 
+            self.__init__()
+
+        SQL = """
+            SELECT id FROM video_comments
+            WHERE video_id = '%s'
+            ORDER BY time_created 
+        """ %video_id
+
+        try: 
+            with self.conn.cursor() as cursor: 
+                cursor.execute(SQL)
+
+                result = cursor.fetchall()
+        except(self.conn.Database, Exception) as error:
+                print( error)
+        
+        finally: 
+            self.conn.close()
+
+            return result
+    
+    # UPDATE USER
     def updateUsername(self, data):
 
         if self.conn.closed:
@@ -693,7 +678,7 @@ class Database:
         finally:
             return updated_rows
     
-    # UPDATE
+    # UPDATE SESSIONS
     def updateUserSession(self, session):
 
         if self.conn.closed:
@@ -797,29 +782,20 @@ class Database:
             # }
         
         accountSQL = """ 
-            INSERT INTO accounts( 
+            INSERT INTO users( 
             id,
             username, 
             avi_image_url, 
             email, 
             header_image,
-            user_id,
-            password
+            password,
+            join_date, 
+            verified,
+            user_type
         )
         
             VALUES (DEFAULT, %s, %s, %s, %s, %s, %s) RETURNING user_id;
         """
-
-        userSQL = """ 
-            INSERT INTO users(
-                id, 
-                join_date, 
-                verified,
-                user_type
-            )
-
-            VALUES (DEFAULT, DEFAULT, DEFAULT, '%s') RETURNING id;
-        """ %user['type']
 
         if self.conn.closed: 
             self.__init__()
