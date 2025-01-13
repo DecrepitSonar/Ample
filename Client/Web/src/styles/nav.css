@@ -95,20 +95,16 @@ nav{
   }
   .nav_links a,
   .nav_avi_container a{
-    /* color: #aaa; */
-    /* width: 150px; */
-    /* list-style-type: none; */
-    /* border: 1px solid #C6A168; */
     border: .5px solid rgba(198, 161, 104,.2);
     color: rgba(198, 161, 104,.8);
     padding: 10px;
-    margin: 5px 0px;
+    /* margin: 5px 0px; */
     font-size: 1.2rem;
-    text-decoration: none;
+    /* text-decoration: none; */
     border-radius: 5px;
-    display: inline-block;
+    /* display: inline-block; */
     /* color: #C6A168 */
-    max-height: 25px;
+    /* max-height: 25px; */
   }
   .nav_links a:hover{
     border: .5px solid rgba(198, 161, 104,.5);

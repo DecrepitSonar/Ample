@@ -12,6 +12,7 @@ import { useSelector } from 'react-redux'
 import { addToQueue, next, play, addToPlayNext, save, togglePlayer } from '../../utils/mediaPlayerSlice'
 import { RootState, useAppDispatch } from '../../utils/store'
 import { RiPlayList2Line } from 'react-icons/ri'
+import httpclient from '../../httpclient'
 
 type TrackPropType = {
   id: string, 
@@ -66,7 +67,6 @@ export default function PlaylistDetail() {
   const [playListITem, setPlayyListItem ] = useState<PlaylistPageDataType>()
   const params = useParams()
   const dispatch = useAppDispatch()
-  const navigate = useNavigate()
 
   const audioPlayer = useSelector( (state: RootState) => state.audioPlayer)
 
@@ -162,7 +162,7 @@ export default function PlaylistDetail() {
             </section> : null
           }
           {
-            playListITem?.relatedFetures ? 
+            playListITem?.relatedFetures &&
             <section>
             <span className="section_subheading">Fetured in</span>
             <div className="playlist_section_item_container">
@@ -173,10 +173,10 @@ export default function PlaylistDetail() {
                 
               }
             </div>
-            </section> : null
+            </section>
           }
           {
-            playListITem?.relatedVideos.length > 0 ? 
+            playListITem?.relatedVideos.length > 0 && 
 
             <section>
             <span className="section_subheading">Videos from {playListITem?.head.author.username}</span>
@@ -187,7 +187,7 @@ export default function PlaylistDetail() {
                   })  
                 }
             </div>
-            </section> : null
+            </section> 
           }
               
         </div>

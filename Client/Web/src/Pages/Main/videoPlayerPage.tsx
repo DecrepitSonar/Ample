@@ -12,6 +12,8 @@ import { useSelector } from "react-redux";
 import { RootState, useAppDispatch } from "../../utils/store";
 import { togglePlayer } from "../../utils/mediaPlayerSlice";
 import { BiBookmarkAlt } from "react-icons/bi";
+import httpclient from "../../httpclient";
+import { auth } from "../../utils/Authslice";
 
 type videPlayerPageData = {
     video: VideoItemPropType,
@@ -54,6 +56,31 @@ function VideoPlayerPage(){
         })
     },[])
 
+    const handleCommentPost = (e) => {
+      e.preventDefault()
+       
+      const target = e.target as typeof e.target & { comment: {value: String} } 
+      
+      const data = {
+        'user_id': user.id, 
+        'username': user.username, 
+        'imageurl': user.imageURL,
+        'comment': target.comment.value,
+        'video_id': content?.video.id
+      }
+
+      console.log( data )
+
+      try{
+        const response = httpclient.post('http://127.0.0.1:5000/video/comment', data) 
+        console.log( response )
+      }
+      catch( error) {
+        console.log( error )
+      }
+      
+    }
+    
     const Videos = [
         {
           "title": "Alternate Ending - Episode 606",
@@ -253,9 +280,9 @@ function VideoPlayerPage(){
                 <div className="commentSection">
                   <div className="comment_form_container">
                     <span>Comments</span>
-                    <form action="#">
-                      <div className="form_avi"/>
-                      <input type="text" placeholder="Add a comment..." />
+                    <form action="#" onSubmit={(e) => handleCommentPost(e)}>
+                      <img className="form_avi" src={user.imageURL}/>
+                      <input type="text" placeholder="Add a comment..." name="comment"/>
                       <button>Post</button>
                     </form>
                     <div className="comments_collection_container">
