@@ -430,7 +430,22 @@ def getVideo():
                                                             'artistId': 1}))
     comments = databse.getCommentsByVideoId(videoId)
     print( comments )
-    # print('Recommended ', recommendedVideos)
+
+    video_comments = []
+
+    if comments is not None: 
+
+        for x in comments: 
+
+            (id, imageurl, username, date_created, comment ) = x
+            
+            video_comments.append({
+                "id": id, 
+                "imageURL": imageurl, 
+                "username": username,
+                "comment": comment, 
+                "date_created": date_created
+            })
     
     pageContent = {
         'video': {
@@ -441,12 +456,12 @@ def getVideo():
             'imageURL': video['artistImageURL'],
             'views': video['views']
         }, 
-        'comments': comments,
+        'comments': video_comments,
         'recommendedVideos': recommendedVideos
     }
 
     if user_id != 'undefined': 
-        databse.addWatchHistoryItem(videoId, user_id)
+       - databse.addWatchHistoryItem(videoId, user_id)
 
     # print( pageContent)
 
@@ -456,7 +471,7 @@ def getVideo():
 def postComment(): 
     
     result = databse.postComment( request.json )
-    # print( result )
+    print( result )
 
     return jsonify({}, 200)
 

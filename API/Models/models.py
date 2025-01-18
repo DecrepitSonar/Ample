@@ -335,7 +335,7 @@ class Database:
                 # print( '3:', cursor.statusmessage )
                 # print( cursor.query)
                 result = cursor.fetchone()
-                print( result )
+                # print( result )
 
                 if result is not None: 
 
@@ -381,7 +381,7 @@ class Database:
                 cursor.execute(sql)
                 
                 results = cursor.fetchone()
-                print( results )
+                # print( results )
 
                 if results is not None: 
                 
@@ -460,7 +460,7 @@ class Database:
         try: 
             with self.conn.cursor() as cursor:
                 cursor.execute(sql)
-                print( '1:', cursor.statusmessage )
+                # print( '1:', cursor.statusmessage )
                 result = cursor.fetchone()[0]
 
                 user = self.getUserById(result)
@@ -490,7 +490,7 @@ class Database:
             with self.conn.cursor() as cursor:
                 cursor.execute(sql)
                 result = cursor.fetchall()
-                print( result )
+                # print( result )
         except(self.conn.DatabaseError, Exception) as error: 
             print( error)
 
@@ -564,7 +564,7 @@ class Database:
                 result = cursor.fetchall()
 
         except(self.conn.DatabaseError, Exception) as error: 
-            print( error )
+            print( )
 
         finally: 
             self.conn.close()
@@ -631,22 +631,22 @@ class Database:
             self.__init__()
 
         SQL = """
-            SELECT id FROM video_comments
+            SELECT id, imageurl, username, date_created, comment
+            FROM video_comments
             WHERE video_id = '%s'
-            ORDER BY time_created 
+            ORDER BY date_created
         """ %video_id
-
         try: 
             with self.conn.cursor() as cursor: 
                 cursor.execute(SQL)
-
                 result = cursor.fetchall()
+
         except(self.conn.Database, Exception) as error:
                 print( error)
         
         finally: 
             self.conn.close()
-
+        
             return result
     
     # UPDATE USER

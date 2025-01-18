@@ -17,6 +17,7 @@ import { auth } from "../../utils/Authslice";
 
 type videPlayerPageData = {
     video: VideoItemPropType,
+    comments?: [],
     recommendedVideos?: [],
 }
 type CommentPropType = {
@@ -28,13 +29,13 @@ type CommentPropType = {
 function CommentComponent(props: CommentPropType){
   return(
     <div className="comment_item_container">
-      <div className="comment_avi"/>
+      <img src={`${props.imageURL}`} className="comment_avi"/>
       <div className="comment_content_container">
         <div className="comment_header">
           <span>{props.username}</span>
-          <span>date</span>
+          <span>{props.postDate}</span>
         </div>
-        <p> Lorem, ipsum dolor sit amet consectetur adipisicing elit. Voluptas nihil non velit sint ipsam qui ducimus facere et quod amet assumenda iusto explicabo rerum illum, autem dicta ipsa alias harum!</p>
+        <p> {props.comment}</p>
       </div>
     </div>
   )
@@ -73,7 +74,7 @@ function VideoPlayerPage(){
 
       try{
         const response = httpclient.post('http://127.0.0.1:5000/video/comment', data) 
-        console.log( response )
+        setContent( response.data )
       }
       catch( error) {
         console.log( error )
@@ -287,9 +288,12 @@ function VideoPlayerPage(){
                     </form>
                     <div className="comments_collection_container">
                       {
-                        comments.map( (item) => {
-                          return <CommentComponent {...item}/>
-                        })
+                        content?.comments?.length > 1 ? 
+                          content?.comments.map( (item) => {
+                            return <CommentComponent {...item}/>
+                          })
+                          :
+                          <> No comments </>
                       }
                     </div>
 
