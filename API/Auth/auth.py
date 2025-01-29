@@ -2,6 +2,7 @@ from flask import Blueprint, current_app
 from flask import Flask, request, abort, jsonify, session, make_response, redirect
 from Models.models import Database as db
 from flask_bcrypt import Bcrypt
+from contentDb import BucketManager
 
 import uuid 
 
@@ -11,6 +12,7 @@ databse = db()
 uuid = uuid.uuid4()
 # server_session = Session(auth)
 bcrypt = Bcrypt()
+bucketmanager = BucketManager()
 
 @auth.route('/register', methods=['POST'])
 def register_user():
@@ -21,15 +23,19 @@ def register_user():
 
     try: 
         result = databse.create_user(email, hashed_password)
-    
+        print( result )
+
     finally:
         print( result )
+        
         if result is None: 
             return {
                 'error': {
                     'message': "User already exists " ,
                 'Code': 'EMAIlLERR'}
             }
+        
+        bucketmanager.create_bucket(result)
         
         return jsonify({},200)
     

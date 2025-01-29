@@ -75,7 +75,7 @@ class Database:
         if self.getUserByEmail(email) is not None:
             return None
             # return {
-             #     'error': {
+            #      'error': {
             #     'message': "User already exists " ,
             #    'Code': 'EMAIlLERR'}
             # }
@@ -85,16 +85,16 @@ class Database:
         
         userSql = """ 
             INSERT INTO users ( 
-            id,
-            username, 
-            avi_image_url, 
-            email, 
-            header_image,
-            password,
-            join_date, 
-            user_type,
-            verified
-        )
+                id,
+                username, 
+                avi_image_url, 
+                email, 
+                header_image,
+                password,
+                join_date, 
+                user_type,
+                verified
+            )
         
             VALUES (
                 DEFAULT, 
@@ -108,6 +108,8 @@ class Database:
                 DEFAULT
             ) 
 
+            RETURNING id ;
+
         """
 
         if self.conn.closed: 
@@ -119,13 +121,18 @@ class Database:
             print( 'creating user')
             with self.conn.cursor() as cursor:
             
-
                 cursor.execute(userSql, (
-                    'defaultUser',
-                    email, 
-                    password,
+                'defaultUser',
+                email, 
+                password
                 ))
-                        
+
+                row = cursor.fetchone()
+        
+                if row: 
+                    result =  row[0]
+
+
         except (self.conn.DatabaseError, Exception) as error: 
             print( error )
             return error
@@ -133,7 +140,7 @@ class Database:
         finally:
                 self.conn.commit()
                 self.conn.close()
-                return cursor.statusmessage
+                return result 
     
     # User Sessions
     def createUserSession(self, data):
@@ -414,7 +421,7 @@ class Database:
         finally: 
             self.conn.close()
             return results 
-    def getUserByUsername(self, username):
+    def dgetUserByUsername(self, username):
 
         if self.conn.closed: 
             self.__init__()
@@ -650,33 +657,42 @@ class Database:
             return result
     
     # UPDATE USER
-    def updateUsername(self, data):
-
-        if self.conn.closed:
-            self.__init__()
+    def updateAccountSettings(self, data, id ):
         
-        print( 'data', data)
+        if self.conn.closed:
+                self.__init__()
 
-        sql = ''' UPDATE users
+        updateUsername = '''
+            UPDATE users
             SET username = %s
-            WHERE id = %s '''
+            WHERE id = %s 
+        '''
 
-        # if self.getUserById(data['id']) is not None:
+        updateheader = ''' 
+            UPDATE users
+            SET header_image = %s
+            WHERE id = %s '''
+        
+        updateAvi = ''' 
+            UPDATE users
+            SET avi_image_url = %s
+            WHERE id = %s ''',
 
         try:
             with self.conn.cursor() as cursor:
-                cursor.execute(sql, (data['username'], data['id']))
-                updated_rows = cursor.rowcount
-                print( 'updated_rows', updated_rows)
-
-            self.conn.commit()
+                    cursor.execute(updateUsername, (data['username'], id))
+                    cursor.execute(updateheader,(data['headerImage'], id))
+                    cursor.execute(updateAvi, (data['userImage'], id))
 
         except (Exception, self.conn.DatabaseError) as error:
             print('error', error )
             return
 
         finally:
+            self.conn.commit()
+            updated_rows = cursor.rowcount
             return updated_rows
+    
     
     # UPDATE SESSIONS
     def updateUserSession(self, session):

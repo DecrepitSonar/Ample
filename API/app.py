@@ -5,7 +5,7 @@ import string
 
 from flask import Flask, request, abort, jsonify, session, make_response, redirect, g
 from config import ApplicationConfig
-from contentDb import contentDb
+from contentDb import contentDb, BucketManager
 from flask_bcrypt import Bcrypt
 from Models.models import Database as db
 from flask_session import Session 
@@ -30,7 +30,6 @@ with app.app_context():
     uuid = uuid.uuid4()
     server_session = Session(app)
     bcrypt = Bcrypt(app)
-
 
 @app.route('/whoami', methods=['GET'])
 def getCurrentUser():
@@ -167,29 +166,39 @@ def getUserProfile():
     response = jsonify(profileData) 
     return response 
 
-@app.route('/updateSettings', methods=['PUT'])
-def updateUserSettings(): 
+@app.route('/settings/account', methods=['post'])
+def updateAccountSettings(): 
+    
+    user_id = databse.getUserBySession(request.cookies['xrftoken'])['id']    
 
-    print( 'updateing user with request',request )
-    file = request.files['imageURL']
+    uploader = BucketManager()
 
-    # Check if filename is empty
-    # if empty theres no uploaded file
-    if( file.filename == ''):
-        return redirect( request.url)
-    else:
-        # Save file to fs or CDN
+    # print( request.files)
+    for filename in request.files:    
+        # Save file to fs or CDN25
+        # print( filename)
+        file = request.files[filename] 
         file.save(os.path.join(app.config['UPLOAD_FOLDER'], file.filename))
 
-    user = databse.getUserByUsername(request.form['username'])
+        upload_result = uploader.upload_file(file.filename, user_id )
 
-    if(user is not None):
-        return jsonify({'error': 'Username not available'}),200
-    
-    user = databse.updateUsername(request.form)
-    
+        # print( upload_result )
 
+    data = {
+        'username': request.form['username'],
+        'headerImage': 'https://' + user_id + '.nyc3.digitaloceanspaces.com/' + request.files['headerImage'].filename ,
+        'userImage': 'https://'+ user_id + ' nyc3.digitaloceanspaces.com/' + request.files['userImage'].filename
+    }
+
+    print( data )
+
+    change_result = databse.updateAccountSettings(data, user_id)
+    print( change_result)
+
+    # if change_result == 1: 
     return jsonify({}), 200
+    
+    # return jsonify({}, 404)
 
 
 # Content
