@@ -8,9 +8,9 @@ const initialState: storeSettingsType = {
 }
 
 
-const updateSettings = createAsyncThunk("settting/update", async (data: FormData) => {
+const updateSettings = createAsyncThunk("settings", async (data: FormData) => {
 
-    return await httpclient.put("http://127.0.0.1:5000/updateSettings", data)
+    return await httpclient.post("http://127.0.0.1:5000/settings/account", data )
     .then( response => { return response })
 })
 

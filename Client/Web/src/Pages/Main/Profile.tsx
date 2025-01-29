@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { BaseSyntheticEvent, SyntheticEvent, useRef, useState } from 'react'
 import { useSelector } from 'react-redux'
 import { RootState, useAppDispatch } from '../../utils/store'
 import { IoCardSharp, IoHome, IoPerson } from 'react-icons/io5'
@@ -13,54 +13,137 @@ import ProfileHome from './ProfileHome'
 import { AudioListItemPropType } from '../../utils/ObjectTypes'
 import AudioListItem from '../../Components/AudioListItem'
 import AudioItem from '../../Components/AudioItem'
+import httpclient from '../../httpclient'
+import { updatePreferences } from '../../utils/settingsSlice'
 
 function AccountSettings(){
+  
   const user = useSelector( (state: RootState) => state.auth.user)
+  const imgRef = useRef<HTMLImageElement>(null)
+  const headerImgRef = useRef<HTMLImageElement>(null)
+
+  const [ profileImageFile, setFile ] = useState<Blob>()
+  const [ headerFile, setHeaderFile ] = useState<Blob>()
+  const [ username, setUsername ] = useState('')
+
+  const dispatch = useAppDispatch()
+  
+  const handleSeletedImage = (e: React.SyntheticEvent) => {
+    
+    // console.log( e )
+    const reader = new FileReader()
+
+    const input_name = e.currentTarget.name
+
+    // const blob = new Blob([JSON.stringify(e.currentTarget.files[0])], { type: 'application/json'})
+
+    if( input_name === 'profile-header-image' ){
+
+      setHeaderFile(e.currentTarget.files[0])
+
+      reader.onload =(e: ProgressEvent<FileReader>) => {
+        headerImgRef.current.src = e.target?.result
+      }
+
+      reader.readAsDataURL(e.currentTarget.files[0])
+
+      return
+    }
+
+    setFile(e.currentTarget.files[0])
+
+    reader.onload =(e: ProgressEvent<FileReader>) => {
+      imgRef.current.src = e.target?.result
+    }
+
+    reader.readAsDataURL(e.currentTarget.files[0])
+  }
+
+  const handleSubmit =  async ( e: React.SyntheticEvent ) => {
+    e.preventDefault()
+    console.log( 'run')
+    
+    // const formData = {
+    //   profileImage: profileImageFile, 
+    //   headerImage: headerFile, 
+    //   username: username
+    // }
+
+    
+    // console.log(blob )
+    // console.log(typeof(profileImageFile) )
+
+    const formData = new FormData()
+    formData.append('username', username)
+    formData.append('headerImage', headerFile)
+    formData.append('userImage', profileImageFile)
+
+    try{
+          await dispatch( updatePreferences(formData) )
+          .then( response => { dispatch(validate()) })
+    }   
+    catch( error ){ console.log( error ) }
+    
+  }
+
   return(
     <>
     <div className='settings_content_section'>
       <h1>Account</h1>
-      <section>
-        <span>EDIT AVI IMAGE</span>
-        <div className='section_input_content'>
+      <form action=""method='put' onSubmit={(e: React.SyntheticEvent) => handleSubmit(e)} >
+        <section>
+          <span>EDIT AVI IMAGE</span>
+          <div className='section_input_content'>
 
-          <label className='custom_upload_buttom'>
-            <RiImageCircleFill/>
-            <input type="file" className='settings'/>
-          </label>
+            <label className='custom_upload_buttom'>
+              <input className=""
+              type="file" 
+              name='profile-image' 
+              onChange={(e: React.SyntheticEvent) => handleSeletedImage(e)}/>
+              <RiImageCircleFill/>
+            </label>
 
-          <img className='imageInputPreview' 
-          src={user.imageURL}/>
+            <img className='imageInputPreview' 
+            src={user.imageURL}
+            ref={imgRef} />
 
-        </div>
-      </section>
-      <section>
-        <span>EDIT BANNER IMAGE</span>
-        <div className='section_input_content'>
-
-          <label className='custom_upload_buttom'>
-            <RiImageCircleFill/>
-            <input type="file" className='settings'/>
-          </label>
-
-          <img className='settings_banner_preview' 
-          src={user.headerPosterURL}/>
-          
-        </div>
-      </section>
-      <section>
-        <div className='section_input_content section_inputs'>
-          <div className="settings_input_container">
-            <label className="form_password_label">USERNAME</label>
-            <input
-            className="auth_form_password_input"
-            type="text"
-            name="username"
-            placeholder={user.username}/>
           </div>
-          </div>
+        </section>
+        <section> 
+          <span>EDIT BANNER IMAGE</span>
+          <div className='section_input_content'>
 
-        <div className='section_input_content section_inputs'>
+            <label className='custom_upload_buttom'>
+              <input className=""type="file" name='profile-header-image' onChange={(e: React.SyntheticEvent) => handleSeletedImage(e)}/>
+              <RiImageCircleFill/>
+            </label>
+
+            <img className='settings_banner_preview' 
+            ref={headerImgRef}
+            src={user.headerPosterURL}/>
+            
+          </div>
+        </section>
+        <section>
+          <div className='section_input_content section_inputs'>
+            <div className="settings_input_container">
+              <label className="form_password_label">USERNAME</label>
+              <input
+              className="auth_form_password_input"
+              type="text"
+              name="username"
+              onChange={(e) => setUsername(e.currentTarget.value)}
+              placeholder={user.username}/>
+            </div>
+            </div>
+
+          <button className='submit_button_solid' type='submit'>Update</button>
+        </section>
+      </form>
+
+      {/* <h1>Security</h1>
+
+      <div className='section_input_content section_inputs'>
           <div className="settings_input_container">
             <label className="form_password_label">EMAIL</label>
             <input
@@ -70,10 +153,7 @@ function AccountSettings(){
             placeholder={"email212@email.com"}/>
           </div>
         </div>
-        <button className='submit_button_solid'>Update</button>
-      </section>
 
-      <h1>Security</h1>
     <section>
         <div className='section_input_content section_inputs'>
           <div className="settings_input_container">
@@ -97,7 +177,7 @@ function AccountSettings(){
           </div>
         </div>
         <button className='submit_button_solid'>Update</button>
-      </section>
+      </section> */}
 
       <section>
         <h1>Creators</h1>
