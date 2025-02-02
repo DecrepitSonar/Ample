@@ -78,8 +78,8 @@
     /* margin-bottom: 20px; */
 }
 .profile_avi{
-    height: 200px; 
-    width: 200px; 
+    height: 170px; 
+    width: 170px; 
     /* border: 1px solid red; */
     border-radius: 50%;
     background-color: #ddd;
@@ -215,7 +215,7 @@
   gap: 10px;
 }
 .label_username{
-  font-size: 5em;  
+  font-size: 3em;  
 }
 .follower_count_container{
   display: flex;
