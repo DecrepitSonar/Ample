@@ -676,16 +676,18 @@ class Database:
         updateAvi = ''' 
             UPDATE users
             SET avi_image_url = %s
-            WHERE id = %s ''',
+            WHERE id = %s '''
+
 
         try:
             with self.conn.cursor() as cursor:
                     cursor.execute(updateUsername, (data['username'], id))
                     cursor.execute(updateheader,(data['headerImage'], id))
                     cursor.execute(updateAvi, (data['userImage'], id))
+                    
 
         except (Exception, self.conn.DatabaseError) as error:
-            print('error', error )
+            print('dberror', error )
             return
 
         finally:

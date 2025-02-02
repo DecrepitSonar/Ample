@@ -187,13 +187,13 @@ def updateAccountSettings():
     data = {
         'username': request.form['username'],
         'headerImage': 'https://' + user_id + '.nyc3.digitaloceanspaces.com/' + request.files['headerImage'].filename ,
-        'userImage': 'https://'+ user_id + ' nyc3.digitaloceanspaces.com/' + request.files['userImage'].filename
+        'userImage': 'https://'+ user_id + '.nyc3.digitaloceanspaces.com/' + request.files['userImage'].filename
     }
 
-    print( data )
+    # print( data )
 
     change_result = databse.updateAccountSettings(data, user_id)
-    print( change_result)
+    # print( change_result)
 
     # if change_result == 1: 
     return jsonify({}), 200
