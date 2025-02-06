@@ -202,9 +202,48 @@ def updateAccountSettings():
 
 
 # Content
+@app.route('/api/', methods=['GET'])
+def homePage(): 
+    content = [
+        {
+            'id': '', 
+            'type': '',
+            'tagline': '', 
+            'items': []
+        },
+    ]
+
+    featuredVideos = contentDb['featuredvideos'].find({'type': 'Featured Video'},
+                                                      {
+                                                          "_id": 0, 
+                                                          "id": 1, 
+                                                          "title": 1, 
+                                                          "artist": 1, 
+                                                          'videoURL':1})
+    
+    for item in list(featuredVideos):
+        featured = {
+            {
+                'id': uuid, 
+                'type': 'Featured',
+                'tagline': 'Discover', 
+                'items': []
+            }
+        }
+        featured['items'].append(
+            {
+                'id': item['id'],
+                'title': item['title'],
+                'author': item['artist'],
+                'contentURL': item['videoURL']
+            }
+        )
+
+
 @app.route('/', methods=['GET'])
 def home():
 
+    print( request.user_agent )
     content = {
         'featured': [],
         'podcasts': [],

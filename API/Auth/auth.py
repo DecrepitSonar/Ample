@@ -90,16 +90,14 @@ def validateUser():
 def login_user():
 
     print('Authenticating user')
-    print( request.headers['User-Agent'] )
-    print( request.method)
     
     if request.method == 'POST':
             
-        if( request.headers['User-Agent'] == 'Ample/1 CFNetwork/1568.100.1 Darwin/24.0.0'):
-            user = databse.getUserByUsername(request.json['username'])
+        if len(request.json['username'].split('@')) > 1 : 
+            data = databse.getUserByEmail(request.json['username'].lower())
+        else: 
+            data = databse.getUserByUsername(request.json['username'].lower())
 
-        data = databse.getUserByEmail(request.json['email'])
-        print( data )
         if data is None:
             print("user not found")
             return jsonify(

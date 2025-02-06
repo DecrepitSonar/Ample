@@ -421,16 +421,15 @@ class Database:
         finally: 
             self.conn.close()
             return results 
-    def dgetUserByUsername(self, username):
+    def getUserByUsername(self, username):
 
         if self.conn.closed: 
             self.__init__()
 
-        print( 'SQL: SELECT id FROM users WHERE  username LIKE ', username)
         sql = """ 
             SELECT username 
             FROM users 
-            WHERE username = '%s'  
+            WHERE username = %s  
             """ %username
         
 

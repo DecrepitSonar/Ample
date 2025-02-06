@@ -71,7 +71,7 @@ input:is(:-webkit-autofill, :autofill) {
 }
 .Login_form_sign_up {
   background-color: inherit;
-  border: 1px solid #c6a168;
+  border: 1px solid rgb(198, 161, 104);
   color: #c6a168;
   text-align: center;
 }
@@ -163,14 +163,12 @@ form a {
   grid-column-end: 13;
   grid-row-start: 12;
   grid-row-end: 13;
-  padding: 10px 40px;
+  padding: 10px 30px;
   position: relative;
   bottom: 0px;
   color: #ddd;
   display: grid;
   grid-template-columns: repeat(12, auto);
-
-  /* justify-content: space-between; */
 }
 .bottom_Mediabar_progressbar_container{
   background-color: rgba(198, 161, 104, .5);
