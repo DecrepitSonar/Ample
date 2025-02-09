@@ -91,6 +91,7 @@ def login_user():
 
     print('Authenticating user')
     
+    print( request.is_json)
     if request.method == 'POST':
             
         if len(request.json['username'].split('@')) > 1 : 
