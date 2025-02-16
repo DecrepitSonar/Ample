@@ -76,14 +76,11 @@ def confirmUserSession():
 @auth.route('/validate', methods=['POST'])
 def validateUser():
 
-    user = databse.getUserByEmail(email)
-    email = request.json['email']
+    user = databse.getUserByEmail(request.json['email'])
 
     if user == None: 
-        print( "User is none")
         return jsonify({}, 404)
-    
-    print( "User found")
+
     return jsonify(user)
     
 @auth.route('/login', methods=['POST', 'GET'])
@@ -91,15 +88,16 @@ def login_user():
 
     print('Authenticating user')
     
-    print( request.is_json)
     if request.method == 'POST':
-            
-        if len(request.json['username'].split('@')) > 1 : 
-            data = databse.getUserByEmail(request.json['username'].lower())
-        else: 
-            data = databse.getUserByUsername(request.json['username'].lower())
+        
+        print("Key error ", list(request.json)[0])
 
-        if data is None:
+        if list(request.json)[0] == 'username' : 
+            user = databse.getUserByUsername(request.json['username'].lower())
+        else: 
+            user = databse.getUserByEmail(request.json['email'].lower())
+
+        if user is None:
             print("user not found")
             return jsonify(
                 {
@@ -109,30 +107,12 @@ def login_user():
                     }
                 }
             ), 401
-        
-        print( data )
-        
-        user = data['user']
-        password = data['password']
-
-        print('Authenticating web client')
-
-        request_password = request.json['password']
-        
-        print( bcrypt.check_password_hash(password, request_password) )
     
-
-        if bcrypt.check_password_hash(password, request_password):
-
-        #     # Create and save sessionId
-            sessionId = str(uuid)
-            databse.createUserSession({
-                'id': user['id'],
-                'sessionId': sessionId
-            })
+        if databse.validatePassword(request.json):
+            # Create and save sessionId
+            databse.createUserSession( user['id'])
 
             result = jsonify(user)
-            print( result )
             response = make_response(result)
             response.set_cookie("xrftoken", sessionId, httponly=True, secure=True, samesite='None')
             
@@ -141,9 +121,7 @@ def login_user():
             print("failed")
             response = jsonify({"error": "Unauthorized"}), 401
     
-    # return response 
-    # response.headers.add('Access-Control-Allow-Origin', '*')
-    return response
+    return response 
 
 @auth.route('/logout', methods=['DELETE'])
 def logout():

@@ -66,7 +66,7 @@ class Database:
     
     # CREATE 
 
-    # User
+    # CREATE USER
     def create_user(self, email, password):
             
         """ Check if user exists """        
@@ -142,8 +142,8 @@ class Database:
                 self.conn.close()
                 return result 
     
-    # User Sessions
-    def createUserSession(self, data):
+    # USER SESSIONS
+    def createUserSession(self, id):
         
         print( data,'\n' )
         if self.conn.closed:
@@ -156,7 +156,7 @@ class Database:
 
         try: 
             with self.conn.cursor() as cursor:
-                cursor.execute(sql, (data['sessionId'], data['id']))
+                cursor.execute(sql, (get_uuid(), id))
                 self.conn.commit()
 
         except( Exception, self.conn.DatabaseError) as error:
@@ -166,7 +166,7 @@ class Database:
             self.conn.close
             return
     
-    # Watch History
+    # ADD TO WATCH HISTORY
     def addWatchHistoryItem(self, video_id, user_id):
         
         print( user_id)
@@ -206,7 +206,7 @@ class Database:
 
             return
     
-    # Listening History
+    # ADD TO LISTENIING HISTORY
     def addAudioHistoryItem( self, id, user_id):
 
         print( id, user_id )
@@ -255,12 +255,19 @@ class Database:
             self.conn.close()
             return 
     
-    # Save audio items
-    def saveAudioItem(self, user_id, id):
+    # SAVE AUDIO 
+    def saveAudioItem(self, user_id, data):
 
         if self.conn.closed:
             self.__init__()
 
+        print( data )
+
+        insert = """
+            UPDATE users 
+            SET saved = to_jsonb(%s)]'::jsonb
+            WHERE id = %s
+        """
         sql = """
             INSERT INTO saved_audio ( id, user_id, audio_id, date_created, time_created )
             VALUES ( DEFAULT, %s, %s, DEFAULT, DEFAULT)
@@ -273,16 +280,16 @@ class Database:
 
         try: 
             with self.conn.cursor() as cursor: 
-                cursor.execute(check_if_item_exist)
-                result = cursor.fetchone()
-                print( cursor.statusmessage)
+                # cursor.execute(check_if_item_exist)
+                # result = cursor.fetchone()
+                # print( cursor.statusmessage)
                  
-                if result is not None: 
-                    return 
+                # if result is not None: 
+                #     return 
                 
-                cursor.execute(sql, (user_id, id))
-                print( cursor.statusmessage )
-                self.conn.commit()
+                cursor.execute(insert, (data, user_id))
+                print( cursor.query )
+                # self.conn.commit()
 
         except(self.conn.DatabaseError, Exception) as error:
             print( error )
@@ -290,10 +297,8 @@ class Database:
         finally: 
             self.conn.close()
             return 
-        
-    # Save video items
-
-    # comments
+    
+    # VIDEO COMMENTS
     def postComment(self, comment): 
         print( comment)
 
@@ -320,7 +325,58 @@ class Database:
 
             return cursor.statusmessage 
     
-    # GET 
+    # AUDIO TRACK
+    def postAudioTrack(self, item):
+
+        if self.conn.closed: 
+            self.__init__()
+
+        sql = ''' 
+        INSERT INTO audio ( 
+        id,
+        track_number, 
+        genre, 
+        title, 
+        author, 
+        image_url, 
+        audio_url, 
+        album_id,
+        play_count,
+        author_id,
+        type )
+
+        VALUES ( DEFAULT, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
+        '''
+
+        try: 
+            with self.conn.cursor() as cursor: 
+                print( item )
+                cursor.execute(sql, (
+                    item['track_number'],
+                    item['genre'],
+                    item['title'],
+                    item['author'],
+                    item['image_url'],
+                    item['audio_url'],
+                    item['album_id'],
+                    item['play_count'],
+                    item['author_id'],
+                    item['type'] ))
+                
+                self.conn.commit() 
+                print( cursor.statusmessage )
+                
+
+        except ( self.conn.DatabaseError, Exception) as error:
+            print( error )
+            # self.conn.close()
+            return
+        finally:
+            self.conn.close()
+            return
+    # GET -------------------------------------------
+    
+    # USER
     def getUserById(self, id):
 
         if self.conn.closed:
@@ -379,7 +435,14 @@ class Database:
             self.__init__()
 
         sql = """ 
-        SELECT id, username, avi_image_url, email, header_image, verified, password 
+        SELECT json_build_object(
+        'id',id, 
+        'username',username, 
+        'avi_image_url', avi_image_url, 
+        'email', email, 
+        'header_image',header_image, 
+        'verified', verified )
+
         FROM users 
         WHERE email LIKE '%s' """ %email
 
@@ -387,32 +450,7 @@ class Database:
             with self.conn.cursor() as cursor: 
                 cursor.execute(sql)
                 
-                results = cursor.fetchone()
-                # print( results )
-
-                if results is not None: 
-                
-                    (
-                        id,
-                        username,
-                        avi_image_url,
-                        email,
-                        header_image,
-                        verified,
-                        password 
-                    ) = results
-
-                    results = {
-                        "user" : {
-                            "id": id,
-                            "username": username,
-                            "email": email,
-                            "imageURL": avi_image_url,
-                            "headerPosterURL": header_image,
-                            'verified': verified
-                        },
-                        "password": password
-                    }
+                results = cursor.fetchone()[0]
 
         except (self.conn.DatabaseError, Exception) as error: 
             print( '\n Error', error , '\n' )
@@ -421,6 +459,7 @@ class Database:
         finally: 
             self.conn.close()
             return results 
+        
     def getUserByUsername(self, username):
 
         if self.conn.closed: 
@@ -450,12 +489,13 @@ class Database:
             self.conn.close()
             return results
     def getUserBySession(self, sessionId):
+        
         if self.conn.close:
             self.__init__()
 
         sql = '''
             with rows as (
-                SELECT * 
+                SELECT user_id
                 FROM user_sessions
                 WHERE sessions_key = '%s' )
                 
@@ -478,7 +518,40 @@ class Database:
 
             self.conn.close()
             return user       
+    def validatePassword(self, data):
+        
+        print( data )
+        if self.conn.closed: 
+            self.__init__()
 
+        if list(data)[0] == 'username':
+            sql = """"
+                SELECT password
+                FROM users
+                WHERE username = %s
+            """ %data['username']
+        else: 
+            sql = """
+                SELECT password
+                FROM users
+                WHERE email = '%s'
+            """ %data['email']
+
+        try: 
+            with self.conn.cursor() as cursor: 
+
+                cursor.execute(sql)
+                result = cursor.fetchone()[0]
+                
+                result = Bcrypt().check_password_hash(result, data['password'])
+
+        except( self.conn.DatabaseError, Exception) as error: 
+            print( error )
+        
+        finally: 
+            return result
+
+            
     def getCreators(self):
 
         if self.conn.closed: 
@@ -576,7 +649,7 @@ class Database:
             self.conn.close()
             return result
 
-    # PROFILE 
+    # USER PROFILE 
     def getUserProfile(self, user_id):
 
         print( user_id )
@@ -607,7 +680,7 @@ class Database:
         finally: 
             return user
         
-    # Get saved content
+    # SAVED CONTENT
     def getSavedAudio(self, user_id):
         
         if self.conn.close:
@@ -630,7 +703,7 @@ class Database:
         finally: 
             return result
     
-    # GET COMMENTS 
+    # VIDEO COMMENTS COMMENTS 
     def getCommentsByVideoId(self, video_id):
 
         if self.conn.closed: 
@@ -655,6 +728,24 @@ class Database:
         
             return result
     
+    def getUserSettings(self, user_id):
+
+        if self.conn.closed: 
+            self.__init__(self)
+
+        sql = """
+
+        """
+        try: 
+            with self.conn.cursor() as cursor: 
+                print( "'")
+
+        except(self.conn.DatabaseError, Exception) as error: 
+            print( error )
+
+        return
+
+    #UPDATE -------------------------------------------
     # UPDATE USER
     def updateAccountSettings(self, data, id ):
         
@@ -694,7 +785,6 @@ class Database:
             updated_rows = cursor.rowcount
             return updated_rows
     
-    
     # UPDATE SESSIONS
     def updateUserSession(self, session):
 
@@ -705,6 +795,8 @@ class Database:
             insert sessions,
             SET id = '%s', sessionId = '%s'
         '''   
+    
+    # DELETE -------------------------------------------
     def deleteUserSession(self, sessionId):
         
         if self.conn.closed:
@@ -733,56 +825,6 @@ class Database:
         finally:
             self.conn.close() 
             return result
-
-    def postAudioTrack(self, item):
-
-        if self.conn.closed: 
-            self.__init__()
-
-        sql = ''' 
-        INSERT INTO audio ( 
-        id,
-        track_number, 
-        genre, 
-        title, 
-        author, 
-        image_url, 
-        audio_url, 
-        album_id,
-        play_count,
-        author_id,
-        type )
-
-        VALUES ( DEFAULT, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
-        '''
-
-        try: 
-            with self.conn.cursor() as cursor: 
-                print( item )
-                cursor.execute(sql, (
-                    item['track_number'],
-                    item['genre'],
-                    item['title'],
-                    item['author'],
-                    item['image_url'],
-                    item['audio_url'],
-                    item['album_id'],
-                    item['play_count'],
-                    item['author_id'],
-                    item['type'] ))
-                
-                self.conn.commit() 
-                print( cursor.statusmessage )
-                
-
-        except ( self.conn.DatabaseError, Exception) as error:
-            print( error )
-            # self.conn.close()
-            return
-        finally:
-            self.conn.close()
-            return
-
         
 # For user migration purposes 
     def addUser(self, user ):

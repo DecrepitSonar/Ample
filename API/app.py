@@ -58,7 +58,6 @@ def getCurrentUser():
         "type": user.type
     }), 200
 
-
 @app.route('/user', methods=['GET'])
 def getUser():
     userId = request.args['id']
@@ -166,9 +165,9 @@ def getUserProfile():
     response = jsonify(profileData) 
     return response 
 
-@app.route('/settings/account', methods=['post'])
+@app.route('/settings', methods=['POST'])
 def updateAccountSettings(): 
-    
+
     user_id = databse.getUserBySession(request.cookies['xrftoken'])['id']    
 
     uploader = BucketManager()
@@ -197,29 +196,42 @@ def updateAccountSettings():
 
     # if change_result == 1: 
     return jsonify({}), 200
-    
-    # return jsonify({}, 404)
 
+@app.route('/settings', methods=['GET'])
+def getPaymentBalance():
+
+    print( "you have no credit yet. try paying for something brokie" )
+    return jsonify({}, 200)
 
 # Content
-@app.route('/api/', methods=['GET'])
-def homePage(): 
+@app.route('/', methods=['GET'])
+def home():
 
-    data = []
+    # print( request.user_agent )
+    content = []
+
+    # content = {
+    #     'featured': [],
+    #     'podcasts': [],
+    #     'music': [],
+    #     'artists': [],
+    #     'videos': []
+    # }
 
     featuredVideos = contentDb['featuredvideos'].find(
-        {'type': 'Featured Video'},
+        {
+            'type': 'Featured Video'
+        },
         {
             "_id": 0, 
             "id": 1, 
             "title": 1, 
             "artist": 1, 
-            'videoURL':1, 
-            'imageURL':1
+            'imageURL': 1,
+            'videoURL':1
         }
     )
-    
-    # print( list(featuredVideos) )
+
     featuredContent = {
         'id': uuid, 
         'type': 'Featured',
@@ -228,113 +240,43 @@ def homePage():
     }
 
     for item in list(featuredVideos):
+
         featuredContent['items'].append(
-        {
-            'id': item['id'],
-            'type': '',
-            'title': item['title'],
-            'artist': item['artist'],
-            'videoURL': item['videoURL'],
-            'posterImage': item['imageURL']
-        }
-    )
-
-    trendingMusic = {
-        'id': uuid, 
-        'type': 'Trending',
-        'tagline': 'Music', 
-        'items': []
-    }
-
-    trending = contentDb['tracks'].find({},{'_id': 0}).limit(12).sort('playCount')
-
-    for item in list(trending):
-        trendingMusic['items'].append({
-            'id': item['id'],
-            'type': 'Trending',
-            'title': item['title'],
-            'artist': item['name'],
-            'imageURL': item['imageURL'],
-            'audioURL': item['audioURL'],
-            'albumId': item['albumId']
-        })
-    
-    featuredMusic = {
-        'id': uuid, 
-        'type': 'Music',
-        'tagline': 'Music', 
-        'items': []
-    }
-    music = contentDb['albums'].find({},{
-        "_id":0,
-        'id': 1,
-        'title': 1, 
-        'name': 1,
-        'imageURL': 1
-    }).limit(7)
-
-
-    for item in list(music): 
-        featuredMusic['items'].append({
-            'id': item['id'],
-            'type': 'Music',
-            'title': item['title'],
-            'artist': item['name'],
-            'imageURL': item['imageURL']
-        })
-
-    print(featuredContent)
-    data.append( featuredContent)
-    data.append( trendingMusic)
-    data.append( featuredMusic)
-
-    return jsonify(data)
-
-
-@app.route('/', methods=['GET'])
-def home():
-
-    print( request.user_agent )
-    content = {
-        'featured': [],
-        'podcasts': [],
-        'music': [],
-        'artists': [],
-        'videos': []
-    }
-
-    featuredVideos = contentDb['featuredvideos'].find({'type': 'Featured Video'},
-                                                      {
-                                                          "_id": 0, 
-                                                          "id": 1, 
-                                                          "title": 1, 
-                                                          "artist": 1, 
-                                                          'videoURL':1})
-    
-    for item in list(featuredVideos):
-
-        content['featured'].append(
             {
                 'id': item['id'],
+                "type": 'video',
                 'title': item['title'],
                 'author': item['artist'],
+                'posterImage': item['imageURL'],
                 'contentURL': item['videoURL']
             }
         )
+    
+    content.append(featuredContent)
 
-    podcastVideos = contentDb['videos'].find({'type': 'podcast'},
-                                            {
-                                                "_id": 0, 
-                                                "id": 1, 
-                                                "title": 1, 
-                                                'artistImageURL': 1, 
-                                                "posterURL": 1, 
-                                                "artist": 1 })
+    podcasts = {
+        'id': uuid, 
+        'type': 'Podcast',
+        'tagline': 'Podcasts', 
+        'items': []
+    }
     
-    
+    podcastVideos = contentDb['videos'].find(
+        {
+            'type': 'podcast'
+        },
+        {
+            "_id": 0, 
+            "id": 1, 
+            "title": 1, 
+            'artistImageURL': 1, 
+            "posterURL": 1, 
+            "artist": 1 
+        }
+    )
     
     for item in list(podcastVideos):
-        content['podcasts'].append({
+        podcasts['items'].append({
             'id': item['id'],
             'title': item['title'],
             'author': item['artist'],
@@ -342,6 +284,15 @@ def home():
             'posterURL': item['posterURL']
         })
     
+    content.append(podcasts)
+
+    musicContent = {
+        'id': uuid, 
+        'type': 'Music',
+        'tagline': 'Music', 
+        'items': []
+    }
+
     music = contentDb['albums'].find({},{
         "_id":0,
         'id': 1,
@@ -352,12 +303,21 @@ def home():
 
 
     for item in list(music): 
-        content['music'].append({
+        musicContent['items'].append({
             'id': item['id'],
             'title': item['title'],
             'author': item['name'],
             'imageURL': item['imageURL']
         })
+
+    content.append(musicContent)
+
+    trendingArtists = {
+        'id': uuid, 
+        'type': 'Artists',
+        'tagline': 'Trending Artists', 
+        'items': []
+    }
 
     artists = contentDb['artists'].find({},{
         '_id': 0,
@@ -366,36 +326,57 @@ def home():
         'imageURL': 1
     }).limit(7)
 
-    print( databse.getCreators())
+    # print( databse.getCreators())
+    
     for item in list(artists):
-        content['artists'].append({
+        trendingArtists['items'].append({
             'id': item['id'],
             'username': item['name'],
             'imageURL': item['imageURL']
-        })
-
-    for item in list(contentDb['videos'].find({'type': 'music'},
-                                              {
-                                                '_id': 0,
-                                                'id': 1,
-                                                'title': 1,
-                                                'artistImageURL': 1,
-                                                'imageURL': 1,
-                                                'views': 1,
-                                                'artist': 1}).limit(4)): 
+    })
         
-        content['videos'].append({
+    content.append(trendingArtists)
+
+
+    musicVideos = {
+        'id': uuid, 
+        'type': 'Music Videos',
+        'tagline': 'Trending Artists', 
+        'items': []
+    }
+    
+    for item in list(contentDb['videos'].find(
+        {
+            'type': 'music'
+        },
+        {
+            '_id': 0,
+            'id': 1,
+            'title': 1,
+            'artistImageURL': 1,
+            'imageURL': 1,
+            'views': 1,
+            'artist': 1
+        }
+    ).limit(4)):
+        
+        musicVideos['items'].append({
             'id': item['id'],
             'title': item['title'],
             'author': item['artist'],
             'imageURL': item['artistImageURL'],
             'posterURL': item['imageURL']
         })
+    
+    content.append(musicVideos)
+
+    print( content )
 
     return jsonify( content )
 
 @app.route('/playlist', methods=['GET'])
 def getPlaylist():
+
     playlistId =  request.args['id']
 
     content = {
@@ -459,7 +440,17 @@ def getPlaylist():
     }
 
     for item in list(tracks): 
-        content['head']['tracks'].append(item)
+        content['head']['tracks'].append(
+            {
+                'id': item['id'],
+                'title': item['title'],
+                'author': item['name'],
+                'audioURL': item['audioURL'],
+                'artistId': item['artistId'],
+                'imageURL': item['imageURL'],
+                'albumId': item['albumId'],
+            }
+        )
 
     albums = contentDb['albums'].find({'artistId': author['id']},
                                       {
@@ -499,7 +490,7 @@ def getPlaylist():
             # 'views': video['views']
         })
 
-    # print( content)
+    print( content)
 
     return jsonify(content)
 
@@ -561,8 +552,8 @@ def getVideo():
         'recommendedVideos': recommendedVideos
     }
 
-    if user_id != 'undefined': 
-       - databse.addWatchHistoryItem(videoId, user_id)
+    # if user_id != 'undefined': 
+    #    - databse.addWatchHistoryItem(videoId, user_id)
 
     # print( pageContent)
 
@@ -855,7 +846,7 @@ def handleSavedContent():
             id = request.json['id']
             # print( data )
 
-            databse.saveAudioItem(user_id, id)
+            databse.saveAudioItem(user_id, request.json)
 
             return jsonify(200)
     
