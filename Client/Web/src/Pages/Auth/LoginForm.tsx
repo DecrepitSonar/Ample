@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useSelector } from "react-redux"
 import { authState, login } from '../../utils/Authslice'
+import { setSavedTracks } from "../../utils/mediaPlayerSlice";
 import {useAppDispatch } from "../../utils/store"
 import { redirect, useNavigate } from "react-router-dom"
 import { AuthValues } from "../../utils/ObjectFormats";
@@ -43,7 +44,8 @@ function LoginForm() {
       })
       
       const response = await dispatch(login(formdata))
-      console.log( 'response', response)
+      console.log( 'response', response.payload)
+      dispatch(setSavedTracks(response.payload.data.media.tracks))
 
       navigate('/')
 

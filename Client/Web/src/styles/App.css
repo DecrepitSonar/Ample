@@ -377,10 +377,11 @@ form a {
 .header_video_detail span:nth-child(2){
   font-weight: bold;
 }
-.page_body section{
+section{
   border-bottom: 1px solid rgb(221, 221, 221, .05);
-  max-width: 95%;
-  margin: 50px auto;
+  max-width: 90%;
+  margin: 50px auto 0;
+  padding-bottom: 40px;
 }
 .header_progress_bar_container{
   height: 1px; 
@@ -430,16 +431,11 @@ form a {
   border: 0;
 }
 .section_subheading{
-  /* border: 1px solid #ddd; */
-  /* color: #c6a168; */
   font-size: 2em;
 }
 .section_item_container{
-  /* border: 1px solid red; */
   display: flex;
   justify-content: space-between;
-  margin: 20px 0;
-  padding: 20px 0;
 }
 .large_user_avi{
   /* width: 100px;  */

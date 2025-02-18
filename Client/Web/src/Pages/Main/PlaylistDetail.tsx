@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import { HiEllipsisHorizontal } from 'react-icons/hi2'
-import { BiHeart } from 'react-icons/bi'
+import { BiHeart, BiSolidHeart } from 'react-icons/bi'
 import { FaPause, FaPauseCircle, FaPlayCircle } from 'react-icons/fa'
 import UserAvi from '../../Components/UserAvi'
 import { AudioItemPropType, UserAviPropType, VideoItemPropType } from '../../utils/ObjectTypes'
@@ -24,7 +24,9 @@ function PlaylistItem(props: TrackPropType){
 
   const audioPlayer = useSelector( (state: RootState) => state.audioPlayer)
   const dispatch = useAppDispatch()
-
+  const isSaved = () => {
+    return audioPlayer.savedTracks.find(item => item.id == props.id) != undefined
+  }
   const activeTrackStyle = {
     backgroundColor: 'rgba(198, 161, 104,.2)',
   }
@@ -41,7 +43,7 @@ function PlaylistItem(props: TrackPropType){
         </div>
       </div>
       <div className="track_buttons">
-        <button onClick={() => dispatch(save(props))}><BiHeart/></button>
+        { isSaved() ? <button style={{"color":"rgba(198, 161, 104,.8)"}} onClick={() => dispatch(save(props))}> <BiSolidHeart/> </button> : <button onClick={() => dispatch(save(props))}> <BiHeart/></button> }
         <button onClick={(e) =>  dispatch(addToQueue(props)) }><RiPlayList2Line/></button>
         <button className='optionsBtn'><HiEllipsisHorizontal/></button>
       </div>
@@ -153,7 +155,7 @@ export default function PlaylistDetail() {
             <section>
               <span className="section_subheading">Albums from { playListITem.head.playlist.author}</span>
               <div className="playlist_section_item_container">
-                {
+                { 
                   playListITem.albums.map( (item, count) => {
                       return <AudioItem key={count} {...item}/>
                   })

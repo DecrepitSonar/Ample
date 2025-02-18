@@ -12,7 +12,8 @@ type PlayerState = {
     player: {
         isPlaying: boolean
     },
-    audioHistory: [AudioListItemPropType]
+    audioHistory: [AudioListItemPropType],
+    savedTracks: [AudioListItemPropType]
 }
 const initialState: PlayerState = {
     nowPlaying: <AudioListItemPropType>({}),
@@ -21,7 +22,8 @@ const initialState: PlayerState = {
     player: {
         isPlaying: false
     },
-    audioHistory: []
+    audioHistory: [],
+    savedTracks: []
 } 
 
 const playTrack = createAsyncThunk('mediaPlayer/playTrack',  async (track: AudioListItemPropType ) => {     
@@ -44,7 +46,7 @@ const savedItem = createAsyncThunk('mediaPlayer/savedItem', async (track: AudioL
     catch( error ){
         console.log( error )
     }
-    return 
+    return  track
 })
 
 const playNextTrack = createAsyncThunk('mediaPlayer/playNextTrack', async (queue: [AudioListItemPropType]) => {
@@ -200,7 +202,11 @@ export const AudioPlayer = createSlice({
         },
         clearQueue: ( state ) => {
             state.queue = []
-        }
+        },
+        setSavedTracks: (state, action ) => {
+            console.log( 'settings media', action.payload)
+            state.savedTracks  = action.payload
+        },
     },
     extraReducers: (builder: any) => {
         builder.addCase(playTrack.fulfilled, (state: PlayerState, action: any) => {
@@ -248,6 +254,10 @@ export const AudioPlayer = createSlice({
 
             state.nowPlaying = action.payload
         })
+        builder.addCase(savedItem.fulfilled, (state: PlayerState, action: any) => {
+            state.savedTracks.push(action.payload)
+
+        })
     }
 })
 
@@ -262,4 +272,5 @@ export const  {
     playNext, 
     setAudioHistory, 
     addToPlayNext, 
-    clearQueue } = AudioPlayer.actions
+    clearQueue,
+    setSavedTracks } = AudioPlayer.actions

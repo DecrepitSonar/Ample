@@ -3,12 +3,14 @@ import { auth } from './Authslice'
 import { useDispatch } from 'react-redux'
 import { settings } from './settingsSlice'
 import { audioPlayer } from './mediaPlayerSlice'
+import { library } from './librarySlice'
 
 export const store = configureStore({
     reducer: { 
         auth, 
         settings,
-        audioPlayer 
+        audioPlayer,
+        library
     }
 })
 

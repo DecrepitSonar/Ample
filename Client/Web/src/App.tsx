@@ -22,6 +22,7 @@ import PlaylistDetail from "./Pages/Main/PlaylistDetail";
 import VideoPlayerPage from "./Pages/Main/videoPlayerPage";
 import DashboardWrapper from "./Pages/Dashboard/DashboardWrapper";
 import CreatorProfile from './Pages/Main/CreatorProfile'
+import { setSavedTracks } from "./utils/mediaPlayerSlice";
 
 
 function Dash(){
@@ -44,21 +45,12 @@ function App() {
       }  
 
       try{
-        await dispatch(validate())
-        .then( response => {
-          // if( response.data.error){
-          //   throw response.data.error
-          // }
-        })
-        // .catch( error => {
-        //   console.log( error )
-        // })
-        // .finally(() => {
-        //   setUser(Response.data)
-        // })
+        const response = await dispatch(validate())
+        await dispatch(setSavedTracks(response.payload.data.media.tracks))
+        console.log( response.payload.data.media.tracks )
       }
       catch( err ){
-        // console.log( err )
+        console.log( err )
       }
 
     })()

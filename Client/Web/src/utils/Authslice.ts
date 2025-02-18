@@ -2,6 +2,7 @@ import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import httpclient  from '../httpclient'
 import { AuthValues } from "./ObjectFormats";
 import { LoginFormType, stateAuthType, userAuthType } from "./ObjectTypes";
+import { setSavedTracks } from "./mediaPlayerSlice";
 
 const initialState: stateAuthType = {
     isLoggedIn: window.localStorage.getItem('user') ? true : false  , 
@@ -15,9 +16,8 @@ const validateUser = createAsyncThunk('auth/validateUser', async () => {
         .then( response => {
 
             if (!response.data.error){
-                window.localStorage.setItem('user', JSON.stringify(response.data)) 
+                window.localStorage.setItem('user', JSON.stringify(response.data.user)) 
             } 
-
             return response 
         })
         .catch( response => {
@@ -63,9 +63,10 @@ export const authSlice = createSlice({
             console.log( 'fullfilled')
             state.isLoggedIn = true 
             console.log( action.payload.data)
-            state.user = action.payload.data
+            const user = action.payload.data.user
+            state.user = user
 
-            window.localStorage.setItem('user', JSON.stringify(action.payload.data))
+            window.localStorage.setItem('user', JSON.stringify(user))
         })
         builder.addCase( handleLogin.rejected, (state: any, action: any) => {
             console.log( "rejected" )

@@ -1,4 +1,4 @@
-import React, { BaseSyntheticEvent, SyntheticEvent, useRef, useState } from 'react'
+import React, { BaseSyntheticEvent, SyntheticEvent, useEffect, useRef, useState } from 'react'
 import { useSelector } from 'react-redux'
 import { RootState, useAppDispatch } from '../../utils/store'
 import { IoCardSharp, IoHome, IoPerson } from 'react-icons/io5'
@@ -14,7 +14,7 @@ import { AudioListItemPropType } from '../../utils/ObjectTypes'
 import AudioListItem from '../../Components/AudioListItem'
 import AudioItem from '../../Components/AudioItem'
 import httpclient from '../../httpclient'
-import { updatePreferences } from '../../utils/settingsSlice'
+import { getSettings, updatePreferences } from '../../utils/settingsSlice'
 
 function AccountSettings(){
   
@@ -203,6 +203,7 @@ function AccountSettings(){
 function PaymentSettings(){
 
   const history = useSelector( (state: RootState) => state.audioPlayer.audioHistory)
+
   return(
     <div className='settings_content_section'>
       <h1>Payments</h1>
@@ -211,12 +212,12 @@ function PaymentSettings(){
         <div className='settings_content_item_container' >
           <div className='settings_content_item'>
             <h1>999</h1>
-            <span>Token</span>
+            <span>Tokens</span>
           </div>
         </div>
       </section>
 
-      <section>
+      {/* <section>
         <h1>Cards</h1>
         <div className='wallet_settings_content_item_container' >
           <div className='wallet_card_icon_container'>
@@ -291,15 +292,17 @@ function PaymentSettings(){
         </div>
         <button className='wallet_add_card'>Add Card</button>
         <button className='submit_button_solid'>update</button>
-      </section>
+      </section> */}
 
       <section>
         <h1>History</h1>
         <div className='wallet_settings_content_item_container'>
           <table className='wallet_settings_purchase_history'>
               <tr>
-                <th>ITEM</th>
-                <th>AMOUNT</th>
+                <th>Item</th>
+                <th>Type</th>
+                <th>Duration</th>
+                <th>Amount</th>
               </tr>
               
             <tbody>
@@ -308,6 +311,8 @@ function PaymentSettings(){
                   
                   return <tr>
                 <td> <AudioListItem {...item} /></td>
+                <td> Track</td>
+                <td> 0</td>
                 <td>-1k</td>
               </tr>
                 })
@@ -384,6 +389,14 @@ function SettingsPageWrapper(){
 
 export default function Profile() {
     const auth = useSelector( ( state: RootState ) => state.auth )
+
+    const payments = useSelector( (state: RootState) => state.settings.paymentSettings)
+
+    const dispatch = useAppDispatch() 
+  
+    useEffect(() => {
+      dispatch(getSettings())
+    })
 
   return (
     <>

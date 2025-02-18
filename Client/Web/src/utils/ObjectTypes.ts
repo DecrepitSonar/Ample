@@ -74,13 +74,12 @@ export type userUpdateDataType = {
     headerPosterURL?: Blob
 }
 
-export type userSettingsType = {
-    username: string, 
-    imageURL: string,
-    headerPosterURL: string,
+export type PaymentSettings = {
+    credits: Number,
+    paymentHistory: [AudioListItemPropType]
 }
 export type storeSettingsType = {
-    userSettings: userSettingsType,
+    paymentSettings: PaymentSettings,
 }
 export type HomePageDataType = {
     featured: [VideoItemPropType],
@@ -89,3 +88,13 @@ export type HomePageDataType = {
     artists: [UserAviPropType],
     videos: [VideoItemPropType]
   }
+
+export type SectionDataType<T> = {
+    id: string, 
+    tagline: string,
+    type: string,
+    items: [T]
+}
+
+
+

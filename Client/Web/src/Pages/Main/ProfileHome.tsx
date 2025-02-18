@@ -21,6 +21,8 @@ type ProfileDataType = {
 
 const  UserProfileHome = ({props, setNavState }) => {
 
+  const library = useSelector((state: RootState) => state.audioPlayer)
+
   return(
     <>
         <header className='profile_header' style={{'backgroundImage': `url(${props.head.headerPosterURL})`}}>
@@ -79,7 +81,7 @@ const  UserProfileHome = ({props, setNavState }) => {
         }
 
         {
-          props.savedAudio.length > 0 ? 
+          library.savedTracks.length > 0 ? 
             <section>
               <div className="section_header">
                 <h3 className="section_subheading">Saved</h3>
@@ -87,7 +89,7 @@ const  UserProfileHome = ({props, setNavState }) => {
               </div>
               <div className="profile_section_item_container">
               {
-                  props.savedAudio.map( item => {
+                  library.savedTracks.map( item => {
                       return <AudioItem key={item.id} {...item}/>
                   })
                   

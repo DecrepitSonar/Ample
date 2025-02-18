@@ -39,23 +39,22 @@ nav{
     padding: 10px;
   }
   .nav_auth_button_container{
-    /* padding: 20px; */
-    width: 250px;
+    /* width: 250px; */
     display: flex;
-    justify-content: space-between;
+    justify-content: flex-end;
     align-items: center;
   }s
-  .nav_auth_button_container button{
-    padding: 5px 20px;
-    text-wrap: nowrap;
-    width: 100px;
-    margin: 5px;
+  .nav_auth_button_container > button{
+    padding: 5px 100px;
+    width: 200px;
     border-radius: 5px;
   }
   .nav_auth_button_container button:nth-child(1){
     background-color: rgba(198, 161, 104,.8);
     border: 1px solid rgba(198, 161, 104,.8);
     color: #fff;
+    padding: 10px;border-radius: 5px;
+    margin: 0px 20px;
   }
   .nav_auth_button_container button:nth-child(1):hover,
   .nav_auth_button_container button:nth-child(2):hover{
@@ -64,9 +63,10 @@ nav{
   }
   .nav_auth_button_container button:nth-child(2){
     border: 1px solid rgba(198, 161, 104,.8);
-    /* border: 0; */
     color: #C6A168;
     background-color: transparent;
+    border-radius: 5px;
+    padding: 10px 20px;
   }
   .nav_avi{
     height: 30px; 
