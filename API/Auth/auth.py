@@ -4,26 +4,16 @@ from Models.models import Database as db
 from flask_bcrypt import Bcrypt
 from contentDb import BucketManager
 
-import uuid 
-
 auth = Blueprint('auth', __name__)
 
 databse = db()
-uuid = uuid.uuid4()
-# server_session = Session(auth)
-bcrypt = Bcrypt()
 bucketmanager = BucketManager()
 
 @auth.route('/register', methods=['POST'])
 def register_user():
-    
-    email = request.json['email']
-    password = request.json['password']
-    hashed_password = bcrypt.generate_password_hash(password).decode('utf-8')
 
     try: 
-        result = databse.create_user(email, hashed_password)
-        print( result )
+        result = databse.create_user(request.json)
 
     finally:
         print( result )
@@ -57,8 +47,17 @@ def confirmUserSession():
 
     user = databse.getUserBySession(token)
 
-    print( "4:",user )
+    userdata = {
+        'user': user, 
+        'media': {
+            'tracks': databse.getSavedAudio(user['id'])
+            # 'albums': db.getSavedAlbums(user['id'])
+            # 'playlists': db.getSavedPlaylists(user['id'])
+            # 'videos': db.getSavedVideos(user['id'])
+        }
+    }
 
+    # print( "4:",user )
 
     if not user: 
         return jsonify({'error': "invalid session key"})
@@ -71,17 +70,27 @@ def confirmUserSession():
 
     # # print( response )
     # return response
-    return jsonify(user)
+    return jsonify(userdata)
 
 @auth.route('/validate', methods=['POST'])
 def validateUser():
 
     user = databse.getUserByEmail(request.json['email'])
 
+    userdata = {
+        'user': user, 
+        'media': {
+            'tracks': databse.getSavedAudio(user['id'])
+            # 'albums': db.getSavedAlbums(user['id'])
+            # 'playlists': db.getSavedPlaylists(user['id'])
+            # 'videos': db.getSavedVideos(user['id'])
+        }
+    }
+
     if user == None: 
         return jsonify({}, 404)
 
-    return jsonify(user)
+    return jsonify(userdata)
     
 @auth.route('/login', methods=['POST', 'GET'])
 def login_user():
@@ -110,9 +119,22 @@ def login_user():
     
         if databse.validatePassword(request.json):
             # Create and save sessionId
-            databse.createUserSession( user['id'])
+            sessionId = databse.createUserSession( user['id'])
 
-            result = jsonify(user)
+            userdata = {
+                'user': user, 
+                'media': {
+                    'tracks': databse.getSavedAudio(user['id'])
+                    # 'albums': db.getSavedAlbums(user['id'])
+                    # 'playlists': db.getSavedPlaylists(user['id'])
+                    # 'videos': db.getSavedVideos(user['id'])
+                }
+            }
+
+            print( userdata )
+
+            result = jsonify(userdata)
+            print( sessionId)
             response = make_response(result)
             response.set_cookie("xrftoken", sessionId, httponly=True, secure=True, samesite='None')
             

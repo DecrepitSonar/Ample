@@ -1,3 +1,4 @@
+import json
 from flask_sqlalchemy import SQLAlchemy
 from uuid import uuid4
 from config import ApplicationConfig
@@ -67,46 +68,27 @@ class Database:
     # CREATE 
 
     # CREATE USER
-    def create_user(self, email, password):
+    def create_user(self, data):
             
         """ Check if user exists """        
         print( """ Check if user exists """ )
+        print(data)
 
-        if self.getUserByEmail(email) is not None:
+        if self.getUserByEmail(data['email']) is not None:
             return None
-            # return {
-            #      'error': {
-            #     'message': "User already exists " ,
-            #    'Code': 'EMAIlLERR'}
-            # }
+
+        hashed_password = Bcrypt().generate_password_hash(data['password']).decode('utf-8')
 
         """ Creating New user"""
         print( """ Creating New user""" )
         
         userSql = """ 
             INSERT INTO users ( 
-                id,
                 username, 
-                avi_image_url, 
                 email, 
-                header_image,
-                password,
-                join_date, 
-                user_type,
-                verified
+                password
             )
-        
-            VALUES (
-                DEFAULT, 
-                %s, 
-                DEFAULT, 
-                %s, 
-                DEFAULT, 
-                %s, 
-                DEFAULT,
-                DEFAULT,
-                DEFAULT
-            ) 
+            VALUES (%s, %s, %s ) 
 
             RETURNING id ;
 
@@ -122,16 +104,15 @@ class Database:
             with self.conn.cursor() as cursor:
             
                 cursor.execute(userSql, (
-                'defaultUser',
-                email, 
-                password
+                    'defaultUser',
+                    data['email'], 
+                    hashed_password
                 ))
 
                 row = cursor.fetchone()
         
                 if row: 
                     result =  row[0]
-
 
         except (self.conn.DatabaseError, Exception) as error: 
             print( error )
@@ -144,8 +125,6 @@ class Database:
     
     # USER SESSIONS
     def createUserSession(self, id):
-        
-        print( data,'\n' )
         if self.conn.closed:
             self.__init__()
 
@@ -156,7 +135,10 @@ class Database:
 
         try: 
             with self.conn.cursor() as cursor:
-                cursor.execute(sql, (get_uuid(), id))
+                session = get_uuid()
+                print( session )
+                cursor.execute(sql, (session, id))
+                print( cursor.statusmessage )
                 self.conn.commit()
 
         except( Exception, self.conn.DatabaseError) as error:
@@ -164,7 +146,7 @@ class Database:
 
         finally: 
             self.conn.close
-            return
+            return session
     
     # ADD TO WATCH HISTORY
     def addWatchHistoryItem(self, video_id, user_id):
@@ -260,39 +242,46 @@ class Database:
 
         if self.conn.closed:
             self.__init__()
-
-        print( data )
-
+        
+        data = json.dumps(data)
+        
         insert = """
             UPDATE users 
-            SET saved = to_jsonb(%s)]'::jsonb
+            SET saved = saved || %s
             WHERE id = %s
         """
-        sql = """
-            INSERT INTO saved_audio ( id, user_id, audio_id, date_created, time_created )
-            VALUES ( DEFAULT, %s, %s, DEFAULT, DEFAULT)
-        """
+        # check_if_item_exist = """
+        #     INSERT INTO saved_audio ( id, user_id, audio_id, date_created, time_created )
+        #     VALUES ( DEFAULT, %s, %s, DEFAULT, DEFAULT)
+        # """
 
         check_if_item_exist = """
-            SELECT * FROM saved_audio 
-            WHERE audio_id = '%s'
-        """ %id
+            SELECT 
+                jsonb_path_query(saved, '$.id') AS id, 
+                jsonb_path_query(saved, '$.title') AS title 
+            FROM users
+            WHERE id = '%s'
+        
+        """ %user_id
 
         try: 
             with self.conn.cursor() as cursor: 
-                # cursor.execute(check_if_item_exist)
-                # result = cursor.fetchone()
-                # print( cursor.statusmessage)
+                cursor.execute(check_if_item_exist) 
+                result = cursor.fetchone()
+                print( result)
+                # print( cursor.query)
+                print( cursor.statusmessage)
                  
                 # if result is not None: 
                 #     return 
                 
-                cursor.execute(insert, (data, user_id))
-                print( cursor.query )
+                # cursor.execute(insert, (data, user_id))
+                # # print( cursor.query )
+                # print( cursor.statusmessage)
                 # self.conn.commit()
 
         except(self.conn.DatabaseError, Exception) as error:
-            print( error )
+            print( 'DatabaseError', error )
 
         finally: 
             self.conn.close()
@@ -449,8 +438,13 @@ class Database:
         try: 
             with self.conn.cursor() as cursor: 
                 cursor.execute(sql)
-                
-                results = cursor.fetchone()[0]
+
+                rows = cursor.fetchone()
+                if rows is not None:
+                    result = rows[0]
+                    return result
+
+                result = None
 
         except (self.conn.DatabaseError, Exception) as error: 
             print( '\n Error', error , '\n' )
@@ -458,7 +452,7 @@ class Database:
         
         finally: 
             self.conn.close()
-            return results 
+            return result
         
     def getUserByUsername(self, username):
 
@@ -687,15 +681,16 @@ class Database:
             self.__init__()
 
         sql = """
-            SELECT audio_id 
-            FROM saved_audio
-            WHERE user_id = '%s'
+            SELECT saved::JSONB 
+            FROM users
+            WHERE id = '%s'
         """ %user_id
 
         try: 
             with self.conn.cursor() as cursor:
                 cursor.execute(sql)
-                result = cursor.fetchall()
+                result = cursor.fetchone()[0]
+                print( result )
 
         except( self.conn.DatabaseError, Exception) as error:
             print( error )

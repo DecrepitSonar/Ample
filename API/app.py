@@ -5,7 +5,7 @@ import string
 
 from flask import Flask, request, abort, jsonify, session, make_response, redirect, g
 from config import ApplicationConfig
-from contentDb import contentDb, BucketManager
+from contentDb import contentDb
 from flask_bcrypt import Bcrypt
 from Models.models import Database as db
 from flask_session import Session 
@@ -29,7 +29,6 @@ with app.app_context():
     databse = db()
     uuid = uuid.uuid4()
     server_session = Session(app)
-    bcrypt = Bcrypt(app)
 
 @app.route('/whoami', methods=['GET'])
 def getCurrentUser():
@@ -141,24 +140,24 @@ def getUserProfile():
     #         'albumId': item['albumId']
     #     })
 
-    savedAudio = databse.getSavedAudio(userId)
+    # savedAudio = databse.getSavedAudio(userId)
 
-    for item in savedAudio: 
-        id = item[0]
+    # for item in savedAudio: 
+    #     id = item[0]
         
-        item = contentDb['tracks'].find_one({'id': id}, {'_id': 0})
+    #     item = contentDb['tracks'].find_one({'id': id}, {'_id': 0})
 
-        if item is None:
-            return jsonify(profileData) 
+    #     if item is None:
+    #         return jsonify(profileData) 
     
-        profileData['savedAudio'].append({
-            'id': item['id'],
-            'title': item['title'],
-            'name': item['name'],
-            'imageURL': item['imageURL'],
-            'audioURL': item['audioURL'],
-            'albumId': item['albumId']
-        })
+    #     profileData['savedAudio'].append({
+    #         'id': item['id'],
+    #         'title': item['title'],
+    #         'name': item['name'],
+    #         'imageURL': item['imageURL'],
+    #         'audioURL': item['audioURL'],
+    #         'albumId': item['albumId']
+    #     })
 
         
 
