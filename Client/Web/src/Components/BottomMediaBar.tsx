@@ -66,8 +66,10 @@ function BottomMediaBar(props){
           <div className="bottom_Mediabar_progressbar_container">
             <div ref={progressbarRef}id='progressBar' className="bottom_Mediabar_progressbar"/>
           </div>
-          <div className="bottom_Mediabar_content_info_container" onClick={() => navigate(`/playlist/${audioPlayer.nowPlaying.albumId}`)}>
-            <img className="Mediabar_content_artwork" src={
+          <div className="bottom_Mediabar_content_info_container">
+            <img className="Mediabar_content_artwork" 
+            onClick={() => navigate(`/playlist/${audioPlayer.nowPlaying.albumId}`)}
+            src={
               audioPlayer.nowPlaying.imageURL != undefined ? 'https://prophile.nyc3.cdn.digitaloceanspaces.com/images/' + audioPlayer.nowPlaying.imageURL + '.jpg' : '/album.jpg'} />
             <div className="Mediabar_content_info">
               {
@@ -92,7 +94,7 @@ function BottomMediaBar(props){
               }
 
               <span>{audioPlayer.nowPlaying.title ? audioPlayer.nowPlaying.title : 'Title'}</span>
-              <span>{audioPlayer.nowPlaying.name ? audioPlayer.nowPlaying.name : 'Artist'}</span>
+              <span onClick={() => navigate(`/user/${audioPlayer.nowPlaying.id}`, {state: props, preventScrollReset: true})} >{audioPlayer.nowPlaying.name ? audioPlayer.nowPlaying.name : 'Artist'}</span>
             </div>
           </div>
           <div className="bottom_Mediabar_playercontrols">

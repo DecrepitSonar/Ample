@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react'
-
+import Trackstrip from '../../Components/TrackStrip'
 import AudioItem from '../../Components/AudioItem'
 import { HiEllipsisHorizontal } from 'react-icons/hi2'
 import { AudioItemPropType, AudioListItemPropType } from '../../utils/ObjectTypes'
@@ -7,21 +7,6 @@ import axios from 'axios'
 import { useNavigate } from 'react-router-dom'
 import { useAppDispatch } from '../../utils/store'
 import { play } from '../../utils/mediaPlayerSlice'
-
-function TrackStrip(props: AudioListItemPropType){
-    const dispatch = useAppDispatch()
-
-    return(
-        <div className='small_list_item_container' onClick={() => dispatch(play(props))}>
-            <img className='small_list_item_image' src={`https://prophile.nyc3.cdn.digitaloceanspaces.com/images/${props.imageURL}.jpg`}/>
-            <div className='small_list_item_detail_container'>
-                <span>{props.title}</span>
-                <span>{props.name}</span>
-            </div>
-            <button className='ellipsis_button'><HiEllipsisHorizontal/></button>
-        </div>
-    )
-}
 
 type listenPageDataType = {
     featured: [AudioItemPropType],
@@ -108,7 +93,7 @@ export default function Listen() {
             <div className="dual_list_collection">
 
                 {pageData?.trending.map( track => {
-                    return <TrackStrip {...track}/>
+                    return <Trackstrip {...track}/>
                 })}
 
             </div>

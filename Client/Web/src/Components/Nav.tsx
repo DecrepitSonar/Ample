@@ -14,41 +14,6 @@ function Nav(){
   // const [ loggedIn, setLogin ] = useState(false)
   const auth = useSelector( (state: RootState) => state.auth)
   
-  const liveUsers = [
-    {
-      username: 'belovedgarbage',
-      imageURL: 'Naima-Adams_Headshots_3588-1024x1024.webp'
-    },
-    {
-      username: 'kittenduck',
-      imageURL: ''
-    },
-    {
-      username: 'solemassage',
-      imageURL: 'pngtree-painterly-portrait-of-a-woman-wearing-colorful-clothing-image_2582517.jpg'
-    },
-    {
-      username: 'studentantelope',
-      imageURL: 'Rhymezlikedimez-NFT-Artist-profile.jpg'
-    },
-    {
-      username: 'teacorn',
-      imageURL: '284a6c6d9ebb4797d251d9c00bd9fc80.jpg'
-    },
-    {
-      username: 'feminineouch',
-      imageURL: 'femtouch.jpeg'
-    },
-    {
-      username: 'paramedicorganize',
-      imageURL: 'pramedicsorganized.jpeg'
-    },
-    {
-      username: 'screamused',
-      imageURL: 'Matthew+Charles+Web+Res.jpg'
-    }
-  ]
-  
   const [path, setPath] = useState('')
 
   const navigate = useNavigate()
@@ -76,7 +41,7 @@ function Nav(){
     return(
       <nav>
         <div className="nav_main">
-        <div className="logo">Alto</div>
+        <div className="logo">AVi</div>
 
         <div className="nav_links">
           <Link to={'/'} 

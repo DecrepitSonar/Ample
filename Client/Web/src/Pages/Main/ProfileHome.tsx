@@ -18,109 +18,6 @@ type ProfileDataType = {
   audioHistory: [AudioItemPropType],
   savedAudio: [AudioItemPropType],
 }
-
-const  UserProfileHome = ({props, setNavState }) => {
-
-  const library = useSelector((state: RootState) => state.audioPlayer)
-
-  return(
-    <>
-        <header className='profile_header' style={{'backgroundImage': `url(${props.head.headerPosterURL})`}}>
-            <div className="profile_header_overlay">
-              <div className='user_profile_header_detail_container'>
-                  <div className='profile_avi' style={{'backgroundImage': `url(${props.head.imageURL})`}}/>
-                  <div className='user_profile_header_detail'>
-                      <span className='label_username'>{props.head.username}</span>
-                      <div className='follower_count_container'> 
-                          <span>Following 2342 </span>
-                          <span>Followers 2342</span>
-                      </div>
-                      {/* { auth.user.id != props.id ?  */}
-                      {/* <button className='follow_button'>Follow</button>  */}
-                      {/* // <button className='following_button'>Following</button> */}
-                      {/* } */}
-                  </div>
-              </div>    
-            </div>
-        </header>
-        <div className="page_body">
-          {
-            props.watchHistory.length > 0 ? 
-            <section>
-              <div className="section_header">
-                <h3 className="section_subheading">Watch again</h3>
-                <h2 onClick={() => setNavState('Watch_history')} >See all<i><BiChevronRight/></i> </h2>
-              </div>
-                <div className="profile_section_item_container">
-                    {
-                        props.watchHistory.map( video => {
-                            return <VideoItem key={video.id} {...video}/>
-                        })
-                    }
-                </div>
-            </section> : <></>
-          }
-
-        {
-          props.watchHistory.length > 0 ? 
-            <section>
-              <div className="section_header">
-                <h3 className="section_subheading">Recent Plays</h3>
-                <h2 onClick={() => setNavState('audio_history')} >See all<i><BiChevronRight/></i> </h2>
-              </div>
-              <div className="profile_section_item_container">
-              {
-                  props.audioHistory.map( item => {
-                      return <AudioItem key={item.id} {...item}/>
-                  })
-                  
-              }
-              </div>
-          </section> 
-          :<></>
-        }
-
-        {
-          library.savedTracks.length > 0 ? 
-            <section>
-              <div className="section_header">
-                <h3 className="section_subheading">Saved</h3>
-                <h2 onClick={() => setNavState('saved_audio')} >See all<i><BiChevronRight/></i> </h2>
-              </div>
-              <div className="profile_section_item_container">
-              {
-                  library.savedTracks.map( item => {
-                      return <AudioItem key={item.id} {...item}/>
-                  })
-                  
-              }
-              </div>
-            </section> 
-          :<></>
-        }
-        {
-          props.savedAudio.length > 0 ? 
-            <section>
-              <div className="section_header">
-                <h3 className="section_subheading">Saved Videos</h3>
-                <h2 onClick={() => setNavState('saved_videos')} >See all<i><BiChevronRight/></i> </h2>
-              </div>
-              <div className="profile_section_item_container">
-              </div>
-            </section> 
-          :<></>
-        }
-
-        <section>
-          <div className="section_header">
-            <h3 className="section_subheading">Following</h3>
-            <span onClick={() => setNavState('following')}>See all</span>
-          </div>
-        </section>
-        </div>
-      </>
-  )
-}
 function UserProfileSavedVideos(props: {id: String}){
   return (
     <div className="page_body">
@@ -131,13 +28,17 @@ function UserProfileSavedVideos(props: {id: String}){
       <h2>Saved Videos</h2>
     </div>
   )}
-function UserProfileSavedAudio({id, setNavState}){ 
+function UserProfileSavedAudio({state, setNavState}){ 
+  
+  const savedTracks = useSelector( ( state: RootState) => state.audioPlayer.savedTracks) 
+
   return (
     <div className="page_body">
       <div className="section_header">
         <h3><i onClick={() => setNavState('/')}><BiChevronLeft/></i> Home</h3>
       </div>
       <h2>Saved Audio</h2>
+    .
     </div>
   )}
 function UserProfileFollowing({id, setNavState}){
@@ -216,24 +117,53 @@ function UserProfileAudioHistory({id, setNavState}){
 function UserProfile(props: ProfileDataType) {
 
     const head = props.head
-    const auth = useSelector( ( state: RootState) => state.auth)
-    const [ navState, setNavState ] = useState("/")
+    const userState = useSelector( ( state: RootState) => state)
+
+    const [ navState, setNavState ] = useState("All")
     
-    
-    return (
-      <>
-      {
-        {
-          'saved_videos': <UserProfileSavedVideos id={auth.user.id}/>,
-          'saved_audio': <UserProfileSavedAudio id={auth.user.id} setNavState={setNavState}/>,
-          'audio_history': <UserProfileAudioHistory id={auth.user.id} setNavState={setNavState}/>,
-          'Watch_history': <UserProfileWatchHistory id={auth.user.id} setNavState={setNavState}/>,
-          'following': <UserProfileFollowing id={auth.user.id} setNavState={setNavState} />
-        }[navState] || <UserProfileHome  props={props}  setNavState={setNavState}/>
-      }
+    const library = useSelector((state: RootState) => state.audioPlayer)
+
+  return(
+    <>
+        <header className='profile_header' style={{'backgroundImage': `url(${props.head.headerPosterURL})`}}>
+            <div className="profile_header_overlay">
+              <div className='user_profile_header_detail_container'>
+                  <div className='profile_avi' style={{'backgroundImage': `url(${props.head.imageURL})`}}/>
+                  <div className='user_profile_header_detail'>
+                      <span className='label_username'>{props.head.username}</span>
+                      <div className='follower_count_container'> 
+                          <span>Following 2342 </span>
+                          <span>Followers 2342</span>
+                      </div>
+                      {/* { auth.user.id != props.id ?  */}
+                      {/* <button className='follow_button'>Follow</button>  */}
+                      {/* // <button className='following_button'>Following</button> */}
+                      {/* } */}
+                  </div>
+              </div>    
+            </div>
+        </header>
+        <div className="page_body">
+          <div className="profile_content_filter">
+            <ul>
+              <li onClick={() => setNavState('All')} >All</li>
+              <li onClick={() => setNavState('Tracks')}>Tracks</li>
+              <li onClick={() => setNavState('Albums')}>Albums</li >
+              <li onClick={() => setNavState('Videos')}>Videos</li>
+              <li onClick={() => setNavState('Subscribtions')}>Following</li>
+            </ul>
+          </div>
+          <h1 className="page_body_heading">{navState}</h1>
+          <div className="page_body_content">
+            {
+              library.savedTracks.map( item => {
+              return <AudioItem {...item}/>
+              })  
+            }
+          </div>
+        </div>
       </>
-    )
-  }
+  )}
 
 export default function ProfileHome(props: {id: string}) {
 

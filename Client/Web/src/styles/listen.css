@@ -1,7 +1,7 @@
 .listen_page_container{
     
     /* margin: 50px; */
-    max-width: 85%;
+    max-width: 95%;
     margin: auto;
 }
 @media screen and (min-width: 1024) {
@@ -121,7 +121,7 @@
 .small_list_item_container{
     /* border: 1px solid red; */
     display: flex;
-    padding: 5px;
+    padding: 10px;
     gap: 5px;
     /* width: 50%; */
     position: relative;    

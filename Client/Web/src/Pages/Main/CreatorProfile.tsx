@@ -1,9 +1,13 @@
 import React, { useEffect, useState } from 'react'
 import axios from 'axios'
-import { userAuthType } from '../../utils/ObjectTypes'
+import { AudioItemPropType, userAuthType } from '../../utils/ObjectTypes'
 import { activeNavButtonStyle, inActiveButtonStyle } from '../../utils/computedSyles'
+import TrackStrip from '../../Components/TrackStrip'
 // import Home from './Home'
 import { useParams } from 'react-router-dom'
+import httpclient from '../../httpclient'
+import AudioItem from '../../Components/AudioItem'
+import { BiCheckCircle } from 'react-icons/bi'
 
 
 function Home() {
@@ -36,10 +40,26 @@ function Home() {
   )
   }
   
+type createorPropType = {
+    id: String, 
+    type: String
+    name: String
+    imageURL: String, 
+    isVerified: Boolean
+    joinDate: Date
+    subscribers: Number 
+}
+
+type profileData = {
+    creator: createorPropType
+    trending: [AudioItemPropType]
+    albums: [AudioItemPropType]
+    singles: [AudioItemPropType]
+}
 export default function CreatorProfile(){
 
     const [ navState, setNavState ] = useState("Home")
-    const [ profileData, setProfileData ] = useState<userAuthType>()
+    const [ profileData, setProfileData ] = useState<profileData>()
     const params = useParams()
 
     useEffect(() => {
@@ -47,18 +67,48 @@ export default function CreatorProfile(){
         console.log( params )
 
         if( params.id) {
-            axios.get(`http://127.0.0.1:5000/user-profile?id=${params.id}`)
+            httpclient.get(`http://127.0.0.1:5000/creator-profile?id=${params.id}`)
             .then( response => {
-            // setProfileData(response.data)
+                console.log( response.data )
+            setProfileData(response.data)
             // console.log( response.data)
             })
         }
     },[])
 
+    const handleSubscription =  (e) => {
+        console.log(profileData?.creator)
+    }
+
+    function formatNumber(x) {
+        return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+    }
     return(
         <div className='page_container'>
-        <header className='profile_header' style={{'backgroundImage': `url(${profileData && profileData.headerPosterURL})`}}>
-            <div className="profile_header_overlay"/>
+        <header className='creator_profile_header' 
+        style={{'backgroundImage': `url(https://prophile.nyc3.cdn.digitaloceanspaces.com/images/${profileData && profileData.creator.imageURL}.jpg)`}}>
+            <div className="creator_profile_header_overlay">
+
+                <section className='creator_profile_header_section'>                    
+                    <div className='featured_section'>    
+                        
+                                {
+                                    <div className='creator_profile_header_info'>   
+                                        <span>{profileData && profileData.creator.type} <i><BiCheckCircle/></i></span> 
+                                        <span className='profile_section_title'>{profileData &&  profileData.creator.name}</span>
+                                        <span>Subscribers: {profileData && formatNumber(profileData.creator.subscribers.toString())}</span>
+                                        <button onClick={(e) => handleSubscription(e)} className='follow_button'>Subscribe</button>
+                                    </div>
+                                } 
+                        
+                        <div className='profile_about_sub_section'>
+                            <span>About</span>
+                            <p>Lorem, ipsum dolor sit amet consectetur adipisicing elit. Illo magni reiciendis quasi possimus aspernatur. Reiciendis reprehenderit repudiandae alias eos ad optio! Consequuntur quo quod vel distinctio eius qui? Iusto, omnis.</p>
+                        </div>  
+                    </div>
+                </section>
+            </div>
+
             {/* <div className='profile_header_nav'>
                 <ul>
                     <li 
@@ -72,45 +122,47 @@ export default function CreatorProfile(){
                     onClick={(e: React.SyntheticEvent) => setNavState(e.currentTarget.innerHTML)}>Tracks</li>
                 </ul>
             </div> */}
-            <div className='profile_header_info_container'>
-                
-                    {
-                        profileData ?
-                            <>
-                                <div className='profile_header_info'>   
-                                    {/* <div> */}
-                                        <span>{profileData.type}</span> 
-                                        <span>{profileData.username}</span> 
-                                    {/* </div> */}
-                                    {/* <span>Subscribers {profileData.subscribers}</span> */}
-                                </div>
-                                <div className='profile_avi'style={{'backgroundImage': `url(https://prophile.nyc3.digitaloceanspaces.com/images/${profileData.imageURL}.jpg)`}}/>
-                            </> : <></>
-                    }
-            </div>
+            
         </header>
         <div className='page_body'>
-            <section>
-            <span className='profile_section_title'>Featured</span>
-            <div className='featured_section'>
-                <div className='h_video_item_container'>
-                    <div className='h_video_item_poster'></div>
-                    <div className='h_video_item_info'>
-                        <span>title</span>
-                        <span>Artist</span>
-                        <span>213123 views</span>
-                    </div>
-                </div>
+            {
+                profileData && 
                 
-                <div className='profile_about_sub_section'>
-                    <span>About</span>
-                    <p>Lorem, ipsum dolor sit amet consectetur adipisicing elit. Illo magni reiciendis quasi possimus aspernatur. Reiciendis reprehenderit repudiandae alias eos ad optio! Consequuntur quo quod vel distinctio eius qui? Iusto, omnis.</p>
-                </div>  
-            </div>
-        </section>
-        <section>
-    
-        </section>
+                <>
+                    <section>
+                        <h1>Trending Songs</h1>
+                        <div className="dual_list_collection">
+
+                            {profileData.trending.length > 0 && profileData.trending?.map( track => {
+                                return <TrackStrip {...track}/>
+                            })}
+
+                        </div>
+                    </section>
+
+                    <section>
+                        <h1>Albums</h1>
+                        <div className='h_list'>
+                            {
+                                profileData.albums.length > 0 && profileData.albums.map( item => {
+                                    return <AudioItem {... item} />
+                                })
+                            }
+                                
+                        </div>
+                    </section>
+                    <section>
+                        <h1>Singles</h1>
+                        <div className='h_list'>
+                            {
+                                profileData.singles.length > 0 && profileData.singles.map( item => {
+                                    return <AudioItem {... item} />
+                                })
+                            }  
+                        </div>
+                    </section>
+                </>
+            }
         </div>
     </div>
     )

@@ -23,7 +23,7 @@ const initialState: PlayerState = {
         isPlaying: false
     },
     audioHistory: [],
-    savedTracks: []
+    savedTracks: [<AudioListItemPropType>{}]
 } 
 
 const playTrack = createAsyncThunk('mediaPlayer/playTrack',  async (track: AudioListItemPropType ) => {     

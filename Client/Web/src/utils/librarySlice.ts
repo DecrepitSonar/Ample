@@ -6,8 +6,11 @@ import { storeSettingsType, PaymentSettings } from "./ObjectTypes";
 type LibraryStatePropType = {
     
 }
-const initialState: storeSettingsType = {
-    paymentSettings: <LibraryStatePropType>({})
+const initialState: LibraryStatePropType = {
+    watchHistory: [], 
+    audioHistory: [],
+    savedAudio: [],
+    library: []
 }
 
 export const librarySlice = createSlice({
