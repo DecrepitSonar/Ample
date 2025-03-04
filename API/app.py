@@ -89,9 +89,7 @@ def getUserProfile():
     # GET USER
     profileData = { 
         'head': user,
-        'watchHistory': [],
-        'audioHistory': [],
-        'savedAudio': []    
+        'library': []    
     }
     
     # watchHistory = databse.getUserWatchHistory(userId, 4)
@@ -163,6 +161,58 @@ def getUserProfile():
 
     response = jsonify(profileData) 
     return response 
+
+@app.route('/creator-profile', methods=['GET'])
+def getArtistProfile():
+    
+    id =  request.args['id']
+    print( id )
+
+    data = {
+        'creator': {},
+        'trending': [],
+        'albums': [],
+        'singles': []
+
+    }
+
+    creator = contentDb['artists'].find_one({'id': id }, {'__v': 0, '_id': 0})
+    data['creator'] = creator
+
+    trending = contentDb['tracks'].find({'artistId': id},{'_id': 0}).limit(12).sort('playCount')
+    for item in list(trending):
+        data['trending'].append({
+            'id': item['id'],
+            'title': item['title'],
+            'name': item['name'],
+            'imageURL': item['imageURL'],
+            'audioURL': item['audioURL'],
+            'albumId': item['albumId']
+        })
+     
+    albums = contentDb['albums'].find({'type': 'Album', 'artistId': id},{'_id': 0}).sort('releaseDate').limit(7)
+
+    for item in list(albums):
+        data['albums'].append({
+            'id': item['id'],
+            'author': item['name'],
+            'title': item['title'],
+            'imageURL': item['imageURL'],
+        })
+
+    singles = contentDb['albums'].find({'type': 'Single', 'artistId': id},{'_id': 0}).sort('releaseDate').limit(7)
+
+    for item in list(albums):
+        data['albums'].append({
+            'id': item['id'],
+            'author': item['name'],
+            'title': item['title'],
+            'imageURL': item['imageURL'],
+        })
+
+    print( data ) 
+
+    return jsonify(data)
 
 @app.route('/settings', methods=['POST'])
 def updateAccountSettings(): 
@@ -841,12 +891,7 @@ def handleSavedContent():
         albumid =  request.json['albumId'] 
         
         if albumid is not None: 
-            
-            id = request.json['id']
-            # print( data )
-
-            databse.saveAudioItem(user_id, request.json)
-
+            databse.saveAudioItem(user_id, request)
             return jsonify(200)
     
     print(request.args['filter'])

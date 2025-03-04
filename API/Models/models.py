@@ -1,5 +1,6 @@
 import json
 from flask_sqlalchemy import SQLAlchemy
+from flask import request
 from uuid import uuid4
 from config import ApplicationConfig
 import psycopg2
@@ -238,52 +239,54 @@ class Database:
             return 
     
     # SAVE AUDIO 
-    def saveAudioItem(self, user_id, data):
+    def saveAudioItem(self, user_id, id):
 
         if self.conn.closed:
             self.__init__()
         
-        data = json.dumps(data)
-        
+        data = json.dumps(request.json)
+
         insert = """
-            UPDATE users 
+            UPDATE users
             SET saved = saved || %s
             WHERE id = %s
-        """
+        """ 
+        
         # check_if_item_exist = """
         #     INSERT INTO saved_audio ( id, user_id, audio_id, date_created, time_created )
         #     VALUES ( DEFAULT, %s, %s, DEFAULT, DEFAULT)
         # """
 
         check_if_item_exist = """
-            SELECT 
-                jsonb_path_query(saved, '$.id') AS id, 
-                jsonb_path_query(saved, '$.title') AS title 
+            SELECT saved @> %s
             FROM users
             WHERE id = '%s'
+        """ 
+
         
-        """ %user_id
+        # @> '{"id": "351325a660b25474456af5c9a5606c4e" }'
 
         try: 
             with self.conn.cursor() as cursor: 
-                cursor.execute(check_if_item_exist) 
-                result = cursor.fetchone()
-                print( result)
+                # cursor.execute(check_if_item_exist, (data, user_id)) 
+                # result = cursor.fetchone()[0]
+                # print( result )
+
                 # print( cursor.query)
-                print( cursor.statusmessage)
+                # print( cursor.statusmessage)
                  
                 # if result is not None: 
-                #     return 
-                
-                # cursor.execute(insert, (data, user_id))
-                # # print( cursor.query )
-                # print( cursor.statusmessage)
-                # self.conn.commit()
+                    cursor.execute(insert, (data, user_id ))
+                    print( cursor.query )
+                    # print( cursor.statusmessage)
+                    
+                    # return 
 
         except(self.conn.DatabaseError, Exception) as error:
             print( 'DatabaseError', error )
 
         finally: 
+            self.conn.commit()
             self.conn.close()
             return 
     
@@ -655,7 +658,7 @@ class Database:
             
                 SELECT * 
                 FROM users
-                WHERE id = '%s'
+                WHERE id = %s::uuid
         
         """ %user_id
         try: 
@@ -697,6 +700,9 @@ class Database:
 
         finally: 
             return result
+    
+    #  def getSavedLibaryItems()
+    # def saveItemToLibary()
     
     # VIDEO COMMENTS COMMENTS 
     def getCommentsByVideoId(self, video_id):
