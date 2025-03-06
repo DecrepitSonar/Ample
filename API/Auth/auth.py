@@ -19,11 +19,10 @@ def register_user():
         print( result )
         
         if result is None: 
-            return {
-                'error': {
-                    'message': "User already exists " ,
-                'Code': 'EMAIlLERR'}
-            }
+            return jsonify({'err': "User already exists " ,'Code': 'EMAIlLERR'})
+        
+        databse.createUserLibrary(result)
+        databse.createPaymentSettings(result)
         
         bucketmanager.create_bucket(result)
         
@@ -49,12 +48,7 @@ def confirmUserSession():
 
     userdata = {
         'user': user, 
-        'media': {
-            'tracks': databse.getSavedAudio(user['id'])
-            # 'albums': db.getSavedAlbums(user['id'])
-            # 'playlists': db.getSavedPlaylists(user['id'])
-            # 'videos': db.getSavedVideos(user['id'])
-        }
+        'library': databse.getAllLibraryItems(user['id'])
     }
 
     # print( "4:",user )
@@ -70,6 +64,8 @@ def confirmUserSession():
 
     # # print( response )
     # return response
+
+    print( userdata)
     return jsonify(userdata)
 
 @auth.route('/validate', methods=['POST'])
@@ -79,12 +75,7 @@ def validateUser():
 
     userdata = {
         'user': user, 
-        'media': {
-            'tracks': databse.getSavedAudio(user['id'])
-            # 'albums': db.getSavedAlbums(user['id'])
-            # 'playlists': db.getSavedPlaylists(user['id'])
-            # 'videos': db.getSavedVideos(user['id'])
-        }
+        'library': databse.getAllLibraryItems(user['id'])
     }
 
     if user == None: 
@@ -98,8 +89,6 @@ def login_user():
     print('Authenticating user')
     
     if request.method == 'POST':
-        
-        print("Key error ", list(request.json)[0])
 
         if list(request.json)[0] == 'username' : 
             user = databse.getUserByUsername(request.json['username'].lower())
@@ -123,12 +112,7 @@ def login_user():
 
             userdata = {
                 'user': user, 
-                'media': {
-                    'tracks': databse.getSavedAudio(user['id'])
-                    # 'albums': db.getSavedAlbums(user['id'])
-                    # 'playlists': db.getSavedPlaylists(user['id'])
-                    # 'videos': db.getSavedVideos(user['id'])
-                }
+                'library': databse.getAllLibraryItems(user['id'])
             }
 
             print( userdata )

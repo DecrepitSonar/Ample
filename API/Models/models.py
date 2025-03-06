@@ -91,9 +91,9 @@ class Database:
             )
             VALUES (%s, %s, %s ) 
 
-            RETURNING id ;
-
+            RETURNING id;
         """
+
 
         if self.conn.closed: 
             print( 'initializing db connectino ')
@@ -123,6 +123,84 @@ class Database:
                 self.conn.commit()
                 self.conn.close()
                 return result 
+    
+    def createPaymentSettings(self, user_id):
+
+        paymentSettings = """ 
+            INSERT INTO payments ( user_id)
+            VALUES( '%s' )
+        """ %user_id
+
+        print( 'creating user payment settings ')
+        if self.conn.closed: 
+            self.__init__()
+
+        try:
+            
+            with self.conn.cursor() as cursor:
+                cursor.execute(paymentSettings)
+
+        except (self.conn.DatabaseError, Exception) as error: 
+            print( error )
+            return error
+        
+        finally:
+                self.conn.commit()
+                self.conn.close()
+                return 
+        
+    # LIBRARY 
+    def createUserLibrary(self, user_id):
+
+        createLibrary = """ 
+            INSERT INTO library( user_id)
+            VALUES ( '%s' )
+        """ %user_id
+
+        print( 'creating user library ')
+        if self.conn.closed: 
+            self.__init__()
+
+        try:
+            
+            print( 'creating user')
+            with self.conn.cursor() as cursor:
+                cursor.execute(createLibrary)
+                print( cursor.statusmessage)
+
+        except (self.conn.DatabaseError, Exception) as error: 
+            print( error )
+            return error
+        
+        finally:
+                self.conn.commit()
+                self.conn.close()
+                return 
+
+    def saveItemToLibary(self, item, user_id):
+        if self.conn.closed:
+            self.__init__()
+
+        insert = """
+            UPDATE library
+            SET data = data || %s
+            WHERE user_id = %s
+        """
+        
+        item = json.dumps(item)
+
+        try: 
+            with self.conn.cursor() as cursor:
+                cursor.execute(insert, (item, user_id))
+                print( cursor.statusmessage )
+
+        except( Exception, self.conn.DatabaseError) as error:
+            print( error )
+
+        finally: 
+            self.conn.close
+            self.conn.commit()
+            return
     
     # USER SESSIONS
     def createUserSession(self, id):
@@ -247,7 +325,7 @@ class Database:
         data = json.dumps(request.json)
 
         insert = """
-            UPDATE users
+            UPDATE library
             SET saved = saved || %s
             WHERE id = %s
         """ 
@@ -547,8 +625,7 @@ class Database:
         
         finally: 
             return result
-
-            
+        
     def getCreators(self):
 
         if self.conn.closed: 
@@ -678,15 +755,15 @@ class Database:
             return user
         
     # SAVED CONTENT
-    def getSavedAudio(self, user_id):
+    def getAllLibraryItems(self, user_id):
         
         if self.conn.close:
             self.__init__()
 
         sql = """
-            SELECT saved::JSONB 
-            FROM users
-            WHERE id = '%s'
+            SELECT data::JSONB 
+            FROM library
+            WHERE user_id = '%s'
         """ %user_id
 
         try: 
@@ -701,8 +778,7 @@ class Database:
         finally: 
             return result
     
-    #  def getSavedLibaryItems()
-    # def saveItemToLibary()
+    # def getSavedLibaryItems()
     
     # VIDEO COMMENTS COMMENTS 
     def getCommentsByVideoId(self, video_id):
@@ -826,7 +902,8 @@ class Database:
         finally:
             self.conn.close() 
             return result
-        
+    # def deleteITemFromLibrary()
+
 # For user migration purposes 
     def addUser(self, user ):
 

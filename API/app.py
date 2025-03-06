@@ -89,76 +89,9 @@ def getUserProfile():
     # GET USER
     profileData = { 
         'head': user,
-        'library': []    
+        'library': databse.getAllLibraryItems(userId)    
     }
-    
-    # watchHistory = databse.getUserWatchHistory(userId, 4)
-
-    # for item in watchHistory: 
-    #     id =  item[0]
-
-    #     video = contentDb['videos'].find_one({'id': id}, {'_id': 0,
-    #                                                         'id': 1,
-    #                                                         'title': 1,
-    #                                                         'artistImageURL': 1,
-    #                                                         'imageURL': 1,
-    #                                                         'views': 1,
-    #                                                         'artist': 1,
-    #                                                         'videoURL': 1,
-    #                                                         'artistId': 1})
-
-    #     profileData['watchHistory'].append({
-    #         'id': video['id'],
-    #         'title': video['title'],
-    #         'author': video['artist'],
-    #         'views': video['views'],
-    #         'posterURL': video['imageURL'],
-    #         'imageURL': video['artistImageURL'],
-    #         'contentURL': video['videoURL']
-    #     })
-
-    # audioHistory = databse.getUserAudioHistory(userId, 8)
-
-    # for item in audioHistory: 
-    #     id = item[0]
         
-        
-    #     item = contentDb['tracks'].find_one({'id': id}, {'_id': 0})
-
-
-    #     if item is None:
-    #         return jsonify(profileData) 
-    
-    #     profileData['audioHistory'].append({
-    #         'id': item['id'],
-    #         'title': item['title'],
-    #         'name': item['name'],
-    #         'imageURL': item['imageURL'],
-    #         'audioURL': item['audioURL'],
-    #         'albumId': item['albumId']
-    #     })
-
-    # savedAudio = databse.getSavedAudio(userId)
-
-    # for item in savedAudio: 
-    #     id = item[0]
-        
-    #     item = contentDb['tracks'].find_one({'id': id}, {'_id': 0})
-
-    #     if item is None:
-    #         return jsonify(profileData) 
-    
-    #     profileData['savedAudio'].append({
-    #         'id': item['id'],
-    #         'title': item['title'],
-    #         'name': item['name'],
-    #         'imageURL': item['imageURL'],
-    #         'audioURL': item['audioURL'],
-    #         'albumId': item['albumId']
-    #     })
-
-        
-
     response = jsonify(profileData) 
     return response 
 
@@ -887,12 +820,8 @@ def handleSavedContent():
     user_id = databse.getUserBySession(request.cookies['xrftoken'])['id']
 
     if( request.method == 'POST'):
-        
-        albumid =  request.json['albumId'] 
-        
-        if albumid is not None: 
-            databse.saveAudioItem(user_id, request)
-            return jsonify(200)
+        databse.saveItemToLibary(request.json, user_id)
+        return jsonify(200)
     
     print(request.args['filter'])
     
