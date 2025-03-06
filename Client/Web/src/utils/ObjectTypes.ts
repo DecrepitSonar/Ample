@@ -1,3 +1,6 @@
+export type LibraryStatePropType = {
+    library: [AudioListItemPropType | UserAviPropType]
+}
 export type userAuthType = {
     id: string,
     username: string,

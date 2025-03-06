@@ -359,7 +359,7 @@ form a {
   /* border: 1px solid red; */
   position: absolute;
   right: 100px;
-  bottom: 50px;
+  bottom: 60px;
   display: flex;
   flex-direction: column;
   gap: 5px;
@@ -440,7 +440,7 @@ section{
 .large_user_avi{
   /* width: 100px;  */
   /* border: 1px solid red; */
-  padding: 10px 0;
+  /* padding: 10px 0; */
   text-align: center;
   color: #ddd;
   display: flex;
@@ -450,11 +450,11 @@ section{
 
 }
 .user_avi{
-  height: 170px; 
-  width: 170px; 
+  height: 160px; 
+  width: 160px; 
   /* border: 1px solid #ddd;  */
   border-radius: 50%;;
-  margin-bottom: 10px;
+  /* margin-bottom: 10px; */
   /* background-position: center; */
   /* background-size: cover; */
   object-fit: cover;

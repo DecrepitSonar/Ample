@@ -8,6 +8,8 @@ import { useParams } from 'react-router-dom'
 import httpclient from '../../httpclient'
 import AudioItem from '../../Components/AudioItem'
 import { BiCheckCircle } from 'react-icons/bi'
+import { useSelector } from 'react-redux'
+import { RootState } from '@reduxjs/toolkit/query'
 
 
 function Home() {
@@ -62,26 +64,26 @@ export default function CreatorProfile(){
     const [ profileData, setProfileData ] = useState<profileData>()
     const params = useParams()
 
-    useEffect(() => {
+    const library = useSelector( (state: RootState) => state.library.library)
 
-        console.log( params )
+    useEffect(() => {
 
         if( params.id) {
             httpclient.get(`http://127.0.0.1:5000/creator-profile?id=${params.id}`)
-            .then( response => {
-                console.log( response.data )
-            setProfileData(response.data)
-            // console.log( response.data)
-            })
+            .then( response => { setProfileData(response.data) })
         }
     },[])
 
-    const handleSubscription =  (e) => {
-        console.log(profileData?.creator)
+    const handleSubscription = async (e) => {
+        await httpclient.post('http://127.0.0.1:5000/save', profileData?.creator)
     }
 
     function formatNumber(x) {
         return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+    }
+    
+    const followButton = () => {
+        return library.filter( item => item.id == profileData?.creator.id ? true : false)
     }
     return(
         <div className='page_container'>
@@ -91,16 +93,14 @@ export default function CreatorProfile(){
 
                 <section className='creator_profile_header_section'>                    
                     <div className='featured_section'>    
-                        
-                                {
+
                                     <div className='creator_profile_header_info'>   
                                         <span>{profileData && profileData.creator.type} <i><BiCheckCircle/></i></span> 
                                         <span className='profile_section_title'>{profileData &&  profileData.creator.name}</span>
                                         <span>Subscribers: {profileData && formatNumber(profileData.creator.subscribers.toString())}</span>
-                                        <button onClick={(e) => handleSubscription(e)} className='follow_button'>Subscribe</button>
+                                        <button className='follow_button' onClick={(e) => handleSubscription(e)}>Subscribe</button>
                                     </div>
-                                } 
-                        
+
                         <div className='profile_about_sub_section'>
                             <span>About</span>
                             <p>Lorem, ipsum dolor sit amet consectetur adipisicing elit. Illo magni reiciendis quasi possimus aspernatur. Reiciendis reprehenderit repudiandae alias eos ad optio! Consequuntur quo quod vel distinctio eius qui? Iusto, omnis.</p>
@@ -127,7 +127,6 @@ export default function CreatorProfile(){
         <div className='page_body'>
             {
                 profileData && 
-                
                 <>
                     <section>
                         <h1>Trending Songs</h1>
@@ -140,27 +139,33 @@ export default function CreatorProfile(){
                         </div>
                     </section>
 
-                    <section>
-                        <h1>Albums</h1>
-                        <div className='h_list'>
-                            {
-                                profileData.albums.length > 0 && profileData.albums.map( item => {
-                                    return <AudioItem {... item} />
-                                })
-                            }
-                                
-                        </div>
-                    </section>
-                    <section>
-                        <h1>Singles</h1>
-                        <div className='h_list'>
-                            {
-                                profileData.singles.length > 0 && profileData.singles.map( item => {
-                                    return <AudioItem {... item} />
-                                })
-                            }  
-                        </div>
-                    </section>
+                    {
+                        profileData.albums.length > 0 &&
+                        <section>
+                            <h1>Albums</h1>
+                            <div className='h_list'>
+                                {
+                                    profileData.albums.map( item => {
+                                        return <AudioItem {... item} />
+                                    })
+                                }
+                                    
+                            </div>
+                        </section>
+                    }
+                    {
+                        profileData.singles.length > 0 && 
+                        <section>
+                            <h1>Singles</h1>
+                            <div className='h_list'>
+                                {
+                                    profileData.singles.map( item => {
+                                        return <AudioItem {... item} />
+                                    })
+                                }  
+                            </div>
+                        </section>
+                    }
                 </>
             }
         </div>

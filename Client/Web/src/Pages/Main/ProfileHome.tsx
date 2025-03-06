@@ -8,16 +8,16 @@ import { useSelector } from 'react-redux'
 import AudioItem from '../../Components/AudioItem'
 import VideoItem from '../../Components/VideoItem'
 import httpclient from '../../httpclient'
-import { RootState } from '../../utils/store'
+import { RootState, useAppDispatch } from '../../utils/store'
 import { Dispatch } from '@reduxjs/toolkit'
 import { BiChevronLeft, BiChevronRight, BiListUl } from 'react-icons/bi'
+import { setLibraryItems } from '../../utils/librarySlice'
+import UserAvi from '../../Components/UserAvi'
 
 type ProfileDataType = {
   head: userAuthType, 
-  watchHistory: [VideoItemPropType],
-  audioHistory: [AudioItemPropType],
-  savedAudio: [AudioItemPropType],
-}
+  library: []
+}  
 function UserProfileSavedVideos(props: {id: String}){
   return (
     <div className="page_body">
@@ -121,16 +121,16 @@ function UserProfile(props: ProfileDataType) {
 
     const [ navState, setNavState ] = useState("All")
     
-    const library = useSelector((state: RootState) => state.audioPlayer)
+    const library = useSelector((state: RootState) => state.library.library)
 
   return(
     <>
-        <header className='profile_header' style={{'backgroundImage': `url(${props.head.headerPosterURL})`}}>
+        <header className='profile_header' style={{'backgroundImage': `url(${props.headerPosterURL})`}}>
             <div className="profile_header_overlay">
               <div className='user_profile_header_detail_container'>
-                  <div className='profile_avi' style={{'backgroundImage': `url(${props.head.imageURL})`}}/>
+                  <div className='profile_avi' style={{'backgroundImage': `url(${props.imageURL})`}}/>
                   <div className='user_profile_header_detail'>
-                      <span className='label_username'>{props.head.username}</span>
+                      <span className='label_username'>{props.username}</span>
                       <div className='follower_count_container'> 
                           <span>Following 2342 </span>
                           <span>Followers 2342</span>
@@ -156,9 +156,10 @@ function UserProfile(props: ProfileDataType) {
           <h1 className="page_body_heading">{navState}</h1>
           <div className="page_body_content">
             {
-              library.savedTracks.map( item => {
-              return <AudioItem {...item}/>
-              })  
+                library.map( item => {
+                  {
+                  return item.isVerified != undefined ? <UserAvi username={item.name} {...item}/> : <AudioItem {...item}/>}
+                })
             }
           </div>
         </div>
@@ -170,12 +171,14 @@ export default function ProfileHome(props: {id: string}) {
     const [ profileData, setProfileData ] = useState<ProfileDataType>()
 
     const params = useParams()
+    const dispatch = useAppDispatch()
 
     useEffect(() => {
         if( params.id) {
             httpclient.get(`http://127.0.0.1:5000/user-profile?id=${params.id}`)
             .then( response => {
-            setProfileData(response.data)
+              dispatch(setLibraryItems(response.data.library))
+              setProfileData(response.data.head)
             })
         }
     },[])

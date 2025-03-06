@@ -23,6 +23,7 @@ import VideoPlayerPage from "./Pages/Main/videoPlayerPage";
 import DashboardWrapper from "./Pages/Dashboard/DashboardWrapper";
 import CreatorProfile from './Pages/Main/CreatorProfile'
 import { setSavedTracks } from "./utils/mediaPlayerSlice";
+import { setLibraryItems } from "./utils/librarySlice";
 
 
 function Dash(){
@@ -46,8 +47,8 @@ function App() {
 
       try{
         const response = await dispatch(validate())
-        await dispatch(setSavedTracks(response.payload.data.media.tracks))
-        console.log( response.payload.data.media.tracks )
+        console.log( response )
+        await dispatch(setLibraryItems(response.payload.data.library))
       }
       catch( err ){
         console.log( err )

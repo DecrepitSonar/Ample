@@ -7,6 +7,8 @@ import { redirect, useNavigate } from "react-router-dom"
 import { AuthValues } from "../../utils/ObjectFormats";
 import { AuthErrorType, LoginFormType, RegistrationFormType } from "../../utils/ObjectTypes";
 import { invalidFormStyle } from "../../utils/computedSyles";
+import { setLibraryItems } from "../../utils/librarySlice";
+
 
 function LoginForm() {
 
@@ -45,7 +47,7 @@ function LoginForm() {
       
       const response = await dispatch(login(formdata))
       console.log( 'response', response.payload)
-      dispatch(setSavedTracks(response.payload.data.media.tracks))
+      dispatch(setLibraryItems(response.payload.data.library))
 
       navigate('/')
 

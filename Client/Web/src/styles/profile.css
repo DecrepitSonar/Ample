@@ -104,6 +104,7 @@
   flex-direction: column;
   display: flex;
   flex-direction: column;
+  gap: 5px;
 }
 .creator_profile_header_info span:first-child{
   display: flex;
@@ -306,15 +307,18 @@
   max-width: 100px;
   border-radius: 20px;
   padding: 5px 20px ;
-  margin-top: 20px;
+  /* margin-top: 20px; */
 }
 .follow_button{
   background-color: rgba(198, 161, 104,.8);
   color: #fff;
+  width: 200px;
+  border: 0;
 }
 
 .following_button{
-  background-color: transparent;
+  /* background-color: transparent; */
+  background-color: red;
   border: 1px solid rgb(198, 161, 104);
   color: rgb(198, 161, 104);
 }

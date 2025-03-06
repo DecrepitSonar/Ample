@@ -23,9 +23,11 @@ type TrackPropType = {
 function PlaylistItem(props: TrackPropType){
 
   const audioPlayer = useSelector( (state: RootState) => state.audioPlayer)
+  const library = useSelector( (state: RootState) => state.library.library
+)
   const dispatch = useAppDispatch()
   const isSaved = () => {
-    return audioPlayer.savedTracks != null ?   audioPlayer.savedTracks.find(item => item.id == props.id) != undefined : false
+    return library != null ?   library.find(item => item.id == props.id) != undefined : false
   }
   const activeTrackStyle = {
     backgroundColor: 'rgba(198, 161, 104,.2)',
