@@ -58,6 +58,32 @@ type profileData = {
     albums: [AudioItemPropType]
     singles: [AudioItemPropType]
 }
+const FollowButton = (props) => {
+    
+
+    const library = useSelector( (state: RootState) => state.library.library)
+
+
+    const handleSubscription = async () => {
+        await httpclient.post('http://127.0.0.1:5000/save', props)
+    }
+    
+    return(
+        <>
+            {
+                library.find(item =>  item.id == props.id )  ?
+                <button 
+                    onClick={() => handleSubscription()}
+                    className='following_button'>Subscribed</button> :
+                <button
+                    onClick={() => handleSubscription()}
+                    className='follow_button'>Subscribe</button>  
+            }
+        </>
+    )
+}
+
+
 export default function CreatorProfile(){
 
     const [ navState, setNavState ] = useState("Home")
@@ -65,7 +91,7 @@ export default function CreatorProfile(){
     const params = useParams()
 
     const library = useSelector( (state: RootState) => state.library.library)
-
+    
     useEffect(() => {
 
         if( params.id) {
@@ -74,23 +100,16 @@ export default function CreatorProfile(){
         }
     },[])
 
-    const handleSubscription = async (e) => {
-        await httpclient.post('http://127.0.0.1:5000/save', profileData?.creator)
-    }
-
     function formatNumber(x) {
         return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
     }
     
-    const followButton = () => {
-        return library.filter( item => item.id == profileData?.creator.id ? true : false)
-    }
     return(
         <div className='page_container'>
         <header className='creator_profile_header' 
         style={{'backgroundImage': `url(https://prophile.nyc3.cdn.digitaloceanspaces.com/images/${profileData && profileData.creator.imageURL}.jpg)`}}>
-            <div className="creator_profile_header_overlay">
-
+            <div className="creator_profile_header_overlay"> 
+                
                 <section className='creator_profile_header_section'>                    
                     <div className='featured_section'>    
 
@@ -98,7 +117,7 @@ export default function CreatorProfile(){
                                         <span>{profileData && profileData.creator.type} <i><BiCheckCircle/></i></span> 
                                         <span className='profile_section_title'>{profileData &&  profileData.creator.name}</span>
                                         <span>Subscribers: {profileData && formatNumber(profileData.creator.subscribers.toString())}</span>
-                                        <button className='follow_button' onClick={(e) => handleSubscription(e)}>Subscribe</button>
+                                        <FollowButton {...profileData?.creator}/>
                                     </div>
 
                         <div className='profile_about_sub_section'>

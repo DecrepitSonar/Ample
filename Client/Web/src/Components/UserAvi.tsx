@@ -19,7 +19,7 @@ export default function UserAvi(props:UserAviPropType) {
         <img src={`https://prophile.nyc3.digitaloceanspaces.com/images/${props.imageURL}.jpg`}
           className="user_avi"
         />
-        <span>{props.username}</span>
+        <span>{props.username == undefined ? props.name : props.username}</span>
       </div>
     );
   }

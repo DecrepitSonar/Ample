@@ -554,6 +554,10 @@ font-weight: bold;
 .audio_item_info span:nth-child(2){
   font-size: .9rem;
 }
+.audio_item_info span:nth-child(3){
+  font-size: .8rem;
+  color: #707070;
+}
 
 .audio_list_item_container{
   display: flex;

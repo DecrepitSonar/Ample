@@ -118,10 +118,29 @@ function UserProfile(props: ProfileDataType) {
 
     const head = props.head
     const userState = useSelector( ( state: RootState) => state)
+    
+    const [libItems, setLibItems] = useState([])
 
     const [ navState, setNavState ] = useState("All")
     
-    const library = useSelector((state: RootState) => state.library.library)
+    const library = useSelector((state: RootState) => state.library)
+
+    // useEffect(() => {
+  
+    //     switch(navState){
+    //       case 'Tracks': 
+    //         library.map( item => item.type = 'Track' && setLibItems(item)) 
+    //         break;
+    //       case 'Album': 
+    //         library.map( item => item.type = 'Album' && setLibItems(item)) 
+    //         break;
+    //       case 'Artist':
+    //         library.map( item => item.type = 'Artist' && setLibItems(item)) 
+    //         break; 
+    //       default:
+    //         library.map( item => setLibItems(item)) 
+    //     }
+    // },[navState])
 
   return(
     <>
@@ -150,16 +169,25 @@ function UserProfile(props: ProfileDataType) {
               <li onClick={() => setNavState('Tracks')}>Tracks</li>
               <li onClick={() => setNavState('Albums')}>Albums</li >
               <li onClick={() => setNavState('Videos')}>Videos</li>
-              <li onClick={() => setNavState('Subscribtions')}>Following</li>
+              <li onClick={() => setNavState('Subscriptions')}>Subscribtions</li>
             </ul>
           </div>
           <h1 className="page_body_heading">{navState}</h1>
           <div className="page_body_content">
             {
-                library.map( item => {
-                  {
-                  return item.isVerified != undefined ? <UserAvi username={item.name} {...item}/> : <AudioItem {...item}/>}
-                })
+              {
+                'All': library.library.length > 0 ? library.library.map( item => item.type == 'Artist' ? <UserAvi username={item.name} {...item}/> : <AudioItem {...item}/> )
+                : <span className='empty_description'>You have nothing saved in your library</span>,
+                'Tracks': library.Tracks.length > 0 ? library.Tracks.map( item => <AudioItem {...item}/> ) 
+                : <span className='empty_description'>You have Saved Tracks</span>,
+                'Albums': library.Albums.length > 0 ? library.Albums.map( item => <AudioItem {...item}/> )
+                : <span className='empty_description'>You have Saved Albums</span>,
+                'Videos': library.Videos.length > 0 ?library.Videos.map( item =>  <VideoItem {...item}/> )
+                : <span className='empty_description'>You have Saved Videos</span>,
+                'Subscriptions': library.Subscriptions.length > 0 ?library.Subscriptions.map( item =>  <UserAvi username={item.name} {...item}/> )
+                : <span className='empty_description'>You are not subscribed to anyone</span>
+              }[navState]
+                
             }
           </div>
         </div>

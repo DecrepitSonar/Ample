@@ -59,6 +59,8 @@ const UserSearchResultSection = (props: searchResultProps) => {
 
     const handleSearchSelection = () => {   
         updateSearchHistory(handleSearchHistory(item))
+        navigate(`/user/${item.id}`, {state: item, preventScrollReset: true})
+        console.log(item)
     }
 
     return(
@@ -245,9 +247,9 @@ export default function Browse() {
                                     searchHistory.length > 1 ?
                                     searchHistory.map( item => { 
                                         return {
-                                            'Artist' : <UserAvi {...item as UserAviPropType} />,
-                                            'Album' : <AudioItem {...item as AudioItemPropType} />,
-                                            'Video' : <VideoItem {...item as VideoItemPropType} />,
+                                            'Artist' : <UserAvi username={ item.name } {...item} />,
+                                            'Album' : <AudioItem {...item } />,
+                                            'Video' : <VideoItem {...item } />,
                                         }[item.type]}
                                     )
                                     : <><span>No Recent Searches</span></>

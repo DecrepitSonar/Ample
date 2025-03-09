@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useState, useSyncExternalStore } from 'react'
 import { HiEllipsisHorizontal } from 'react-icons/hi2'
 import { BiHeart, BiSolidHeart } from 'react-icons/bi'
 import { FaPause, FaPauseCircle, FaPlayCircle } from 'react-icons/fa'
@@ -25,10 +25,8 @@ function PlaylistItem(props: TrackPropType){
   const audioPlayer = useSelector( (state: RootState) => state.audioPlayer)
   const library = useSelector( (state: RootState) => state.library.library
 )
-  const dispatch = useAppDispatch()
-  const isSaved = () => {
-    return library != null ?   library.find(item => item.id == props.id) != undefined : false
-  }
+  const dispatch = useAppDispatch(props)
+  
   const activeTrackStyle = {
     backgroundColor: 'rgba(198, 161, 104,.2)',
   }
@@ -45,7 +43,7 @@ function PlaylistItem(props: TrackPropType){
         </div>
       </div>
       <div className="track_buttons">
-        { isSaved() ? <button style={{"color":"rgba(198, 161, 104,.8)"}} onClick={() => dispatch(save(props))}> <BiSolidHeart/> </button> : <button onClick={() => dispatch(save(props))}> <BiHeart/></button> }
+        { props.isSaved ? <button style={{"color":"rgba(198, 161, 104,.8)"}} onClick={() => dispatch(save(props))}> <BiSolidHeart/> </button> : <button onClick={() => dispatch(save(props))}> <BiHeart/></button> }
         <button onClick={(e) =>  dispatch(addToQueue(props)) }><RiPlayList2Line/></button>
         <button className='optionsBtn'><HiEllipsisHorizontal/></button>
       </div>
@@ -73,6 +71,7 @@ export default function PlaylistDetail() {
   const dispatch = useAppDispatch()
 
   const audioPlayer = useSelector( (state: RootState) => state.audioPlayer)
+  const library = useSelector( (state: RootState) => state.library.library)
 
   useEffect(() => {
     axios.get(`http://127.0.0.1:5000/playlist?id=${params.id}`)
@@ -82,6 +81,11 @@ export default function PlaylistDetail() {
     })
 
   },[params])
+
+  const isSaved = (item) => {
+     console.log( item )
+    return library != undefined ? library.find(_ => _.id == item.id) != undefined : false
+  }
 
   return ( 
     <div className='page_container'>
@@ -111,7 +115,11 @@ export default function PlaylistDetail() {
                 }}>
                 {audioPlayer.nowPlaying.albumId == playListITem?.head.playlist.id && audioPlayer.player.isPlaying ? <FaPauseCircle/>: <FaPlayCircle/>} 
               </button>
-              <button><BiHeart/></button>
+              { 
+                playListITem != undefined &&
+                  isSaved(playListITem.head.playlist) ? 
+                  <button style={{"color":"rgba(198, 161, 104,.8)"}} onClick={() => dispatch(save(playListITem.head.playlist))}> <BiSolidHeart/> </button> : 
+                  <button onClick={() => dispatch(save(playListITem.head.playlist))}> <BiHeart/></button> }
               <button onClick={(() => dispatch(addToQueue(playListITem?.head.tracks)))}><RiPlayList2Line/></button>
               <button><HiEllipsisHorizontal/></button>
             </div>
@@ -131,7 +139,7 @@ export default function PlaylistDetail() {
                       </div>
                       {
                         playListITem?.head.tracks.map( (item, count) =>{
-                          return <PlaylistItem key={count} trackNum={count} {...item}/>
+                          return <PlaylistItem isSaved={isSaved(item)} key={count} trackNum={count} {...item}/>
                         } )
                       }
                     </div> : <></>

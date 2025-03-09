@@ -18,6 +18,7 @@ export default function AudioItem(props: AudioItemPropType){
         <div className="audio_item_info">
           <span>{props.title}</span>
           <span>{props.author != undefined ? props.author : props.name }</span>
+          <span>{props.author != undefined && props.type }</span>
         </div>
       </div>
     )
