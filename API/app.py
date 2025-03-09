@@ -378,20 +378,23 @@ def getPlaylist():
                                                 'title': 1,
                                                 'name': 1,
                                                 'imageURL': 1,
-                                                'artistId': 1})
+                                                'artistId': 1,
+                                                'type': 1})
     
     author = contentDb['artists'].find_one({'id': playlist['artistId']},
                                            {
                                                '_id': 0,
                                                'id': 1,
                                                'imageURL': 1,
-                                               'name': 1
+                                               'name': 1,
+                                               'type': 1
                                            })
     
     content['features'].append({
         'id': author['id'],
         'username': author['name'],
-        'imageURL': author['imageURL']
+        'imageURL': author['imageURL'],
+        'type': author['type']
     })
 
     tracks = contentDb['tracks'].find({'albumId': playlist['id']},
@@ -404,6 +407,7 @@ def getPlaylist():
                                           'artistId': 1,
                                           'imageURL': 1,
                                           'albumId':1,
+                                          'type': 1
                                       }).sort('trackNum')
 
 
@@ -413,6 +417,7 @@ def getPlaylist():
         'author': playlist['name'],
         'imageURL': playlist['imageURL'],
         'artistId': playlist['artistId'],
+        'type': playlist['type']
     } 
 
     content['head']['author'] = {
@@ -422,6 +427,7 @@ def getPlaylist():
     }
 
     for item in list(tracks): 
+        print( item )
         content['head']['tracks'].append(
             {
                 'id': item['id'],
@@ -431,6 +437,7 @@ def getPlaylist():
                 'artistId': item['artistId'],
                 'imageURL': item['imageURL'],
                 'albumId': item['albumId'],
+                'type': item['type']
             }
         )
 
@@ -440,7 +447,8 @@ def getPlaylist():
                                           'id': 1,
                                           'title': 1,
                                           'imageURL': 1,
-                                          'name': 1
+                                          'name': 1,
+                                          'type': 1
                                       })
     
     for item in list(albums): 
@@ -448,7 +456,8 @@ def getPlaylist():
             'id': item['id'],
             'title': item['title'],
             'imageURL': item['imageURL'],
-            'author': item['name']
+            'author': item['name'],
+            'type': item['type']
         })
 
     related = contentDb['videos'].find({'artistId': author['id']},{'_id': 0,
