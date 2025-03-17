@@ -2,7 +2,7 @@ from flask import Blueprint, current_app
 from flask import Flask, request, abort, jsonify, session, make_response, redirect
 from Models.models import Database as db
 from flask_bcrypt import Bcrypt
-from contentDb import BucketManager
+from Models.contentDb import BucketManager
 
 auth = Blueprint('auth', __name__)
 
@@ -16,7 +16,7 @@ def register_user():
         result = databse.create_user(request.json)
 
     finally:
-        print( result )
+        # print( result )
         
         if result is None: 
             return jsonify({'err': "User already exists " ,'Code': 'EMAIlLERR'})
@@ -31,8 +31,8 @@ def register_user():
 @auth.route('/validate', methods=['GET'])
 def confirmUserSession():
 
-    print('validating user')
-    print( len(list(request.cookies)))
+    # print('validating user')
+    # print( len(list(request.cookies)))
 
     if len(list(request.cookies)) == 0 : 
             print( 'invalid session key' )
@@ -40,7 +40,7 @@ def confirmUserSession():
 
     token = request.cookies['xrftoken']
 
-    print( token )
+    # print( token )
     if token == None: 
         return jsonify({'error': "invalid session key"})
 
@@ -65,7 +65,7 @@ def confirmUserSession():
     # # print( response )
     # return response
 
-    print( userdata)
+    # print( userdata)
     return jsonify(userdata)
 
 @auth.route('/validate', methods=['POST'])
@@ -86,7 +86,7 @@ def validateUser():
 @auth.route('/login', methods=['POST', 'GET'])
 def login_user():
 
-    print('Authenticating user')
+    # print('Authenticating user')
     
     if request.method == 'POST':
 
@@ -124,7 +124,7 @@ def login_user():
             
         else:
 
-            print("failed")
+            # print("failed")
             response = jsonify({"error": "Unauthorized"}), 401
     
     return response 
@@ -132,13 +132,13 @@ def login_user():
 @auth.route('/logout', methods=['DELETE'])
 def logout():
 
-    print( "logging out ")
-
+    # print( "logging out ")
+# 
     session = request.cookies['xrftoken']
-    print( session )
+    # print( session )
 
     result = databse.deleteUserSession(session)
-    print(result)
+    # print(result)
     if result == 0: 
         jsonify({"status": "failed"}), 404
 

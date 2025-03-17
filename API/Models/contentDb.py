@@ -22,6 +22,7 @@ class BucketManager:
                         aws_access_key_id=os.environ['aws_access_key_id'],
                         aws_secret_access_key=os.environ['aws_secret_access_key'])
 
+
     # Initiate multipart upload 
     def create_multiPart_upload(self): 
         
@@ -33,7 +34,17 @@ class BucketManager:
     
     # upload part
     def upload_file(self, file, id):
-        self.client.upload_file( ApplicationConfig.UPLOAD_FOLDER + file, id, file)
+        try:
+            self.client.upload_file( 
+                ApplicationConfig.UPLOAD_FOLDER + file, 
+                id, 
+                file, 
+                ExtraArgs={'ACL': 'public-read'}
+            )
+
+        except self.client._exceptions as e: 
+            print( e )
+
         return
 
     # create Bucket 
@@ -72,3 +83,20 @@ class BucketManager:
     # delete bucket
     def delete_bucket(self, user): 
         return
+class DBManager: 
+
+    def __init__(self):
+        pass
+    
+    # USER CONTENT
+    # def getUser;
+    # def getUserProfile:
+    # def getUserSettings:
+    # def getVideoWithId(id):
+    # def getCreatorProfile(id):
+
+    # PAGE CONTENT
+    # def getHomePageContent(userSessionKey):
+    # def getPlaylistItem(id):
+
+

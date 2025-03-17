@@ -166,7 +166,7 @@ class Database:
             print( 'creating user')
             with self.conn.cursor() as cursor:
                 cursor.execute(createLibrary)
-                print( cursor.statusmessage)
+                # print( cursor.statusmessage)
 
         except (self.conn.DatabaseError, Exception) as error: 
             print( error )
@@ -192,7 +192,7 @@ class Database:
         try: 
             with self.conn.cursor() as cursor:
                 cursor.execute(insert, (item, user_id))
-                print( cursor.statusmessage )
+                # print( cursor.statusmessage )
 
         except( Exception, self.conn.DatabaseError) as error:
             print( error )
@@ -270,7 +270,7 @@ class Database:
     # ADD TO LISTENIING HISTORY
     def addAudioHistoryItem( self, id, user_id):
 
-        print( id, user_id )
+        # print( id, user_id )
 
         if self.conn.closed:
             self.__init__()
@@ -301,12 +301,12 @@ class Database:
                 if result is not None:
                         
                     cursor.execute(update_audio_record)
-                    print( cursor.statusmessage )    
+                    # print( cursor.statusmessage )    
                     
                     return
 
                 cursor.execute(sql, ( id, user_id))
-                print( cursor.statusmessage )
+                # print( cursor.statusmessage )
         
         except( self.conn.DatabaseError, Exception) as error: 
             print( error )
@@ -340,9 +340,6 @@ class Database:
             FROM users
             WHERE id = '%s'
         """ 
-
-        
-        # @> '{"id": "351325a660b25474456af5c9a5606c4e" }'
 
         try: 
             with self.conn.cursor() as cursor: 
@@ -745,7 +742,7 @@ class Database:
                 # print( user )
 
                 user = self.getUserById(user_id)
-                print( user )
+                # print( user )
 
 
         except ( self.conn.DatabaseError, Exception) as error:
@@ -886,7 +883,7 @@ class Database:
             WHERE sessions_key = '%s'
         ''' %sessionId
         
-        print( sessionId)
+        # print( sessionId)
 
         try: 
             with self.conn.cursor() as cursor: 

@@ -5,7 +5,7 @@ import string
 
 from flask import Flask, request, abort, jsonify, session, make_response, redirect, g
 from config import ApplicationConfig
-from contentDb import contentDb
+from Models.contentDb import BucketManager, contentDb
 from flask_bcrypt import Bcrypt
 from Models.models import Database as db
 from flask_session import Session 
@@ -154,16 +154,13 @@ def updateAccountSettings():
 
     uploader = BucketManager()
 
-    # print( request.files)
+    print( request.files)
     for filename in request.files:    
-        # Save file to fs or CDN25
-        # print( filename)
+
         file = request.files[filename] 
         file.save(os.path.join(app.config['UPLOAD_FOLDER'], file.filename))
 
-        upload_result = uploader.upload_file(file.filename, user_id )
-
-        # print( upload_result )
+        uploader.upload_file(file.filename, user_id )
 
     data = {
         'username': request.form['username'],
@@ -171,12 +168,8 @@ def updateAccountSettings():
         'userImage': 'https://'+ user_id + '.nyc3.digitaloceanspaces.com/' + request.files['userImage'].filename
     }
 
-    # print( data )
+    databse.updateAccountSettings(data, user_id)
 
-    change_result = databse.updateAccountSettings(data, user_id)
-    # print( change_result)
-
-    # if change_result == 1: 
     return jsonify({}), 200
 
 @app.route('/settings', methods=['GET'])
@@ -236,37 +229,39 @@ def home():
     
     content.append(featuredContent)
 
-    podcasts = {
+    videos = {
         'id': uuid, 
-        'type': 'Podcast',
-        'tagline': 'Podcasts', 
+        'type': 'Videos',
+        'tagline': 'Videos', 
         'items': []
     }
     
-    podcastVideos = contentDb['videos'].find(
-        {
-            'type': 'podcast'
-        },
+    Videos = contentDb['videos'].find({},
         {
             "_id": 0, 
             "id": 1, 
             "title": 1, 
-            'artistImageURL': 1, 
+            "artistImageURL": 1,
             "posterURL": 1, 
-            "artist": 1 
+            "artist": 1,
+            "type": 1 
         }
-    )
+    ).limit(5)
     
-    for item in list(podcastVideos):
-        podcasts['items'].append({
+    
+    for item in list(Videos):
+        print(  'item', item, '\n',)
+        videos['items'].append({
             'id': item['id'],
             'title': item['title'],
             'author': item['artist'],
             'imageURL': item['artistImageURL'],
-            'posterURL': item['posterURL']
+            'posterURL': item['posterURL'],
+            'type': item['type']
         })
     
-    content.append(podcasts)
+
+    content.append(videos)
 
     musicContent = {
         'id': uuid, 
@@ -280,7 +275,8 @@ def home():
         'id': 1,
         'title': 1, 
         'name': 1,
-        'imageURL': 1
+        'imageURL': 1,
+        'type': 1
     }).limit(7)
 
 
@@ -289,7 +285,8 @@ def home():
             'id': item['id'],
             'title': item['title'],
             'author': item['name'],
-            'imageURL': item['imageURL']
+            'imageURL': item['imageURL'],
+            'type': item['type']
         })
 
     content.append(musicContent)
@@ -323,7 +320,7 @@ def home():
     musicVideos = {
         'id': uuid, 
         'type': 'Music Videos',
-        'tagline': 'Trending Artists', 
+        'tagline': 'Music Videos', 
         'items': []
     }
     
@@ -336,7 +333,7 @@ def home():
             'id': 1,
             'title': 1,
             'artistImageURL': 1,
-            'imageURL': 1,
+            'posterURL': 1,
             'views': 1,
             'artist': 1
         }
@@ -347,12 +344,13 @@ def home():
             'title': item['title'],
             'author': item['artist'],
             'imageURL': item['artistImageURL'],
-            'posterURL': item['imageURL']
+            'posterURL': item['posterURL']
         })
     
     content.append(musicVideos)
 
-    print( content )
+    for item in content:
+        print( '\n', item)
 
     return jsonify( content )
 
@@ -441,15 +439,7 @@ def getPlaylist():
             }
         )
 
-    albums = contentDb['albums'].find({'artistId': author['id']},
-                                      {
-                                          '_id': 0,
-                                          'id': 1,
-                                          'title': 1,
-                                          'imageURL': 1,
-                                          'name': 1,
-                                          'type': 1
-                                      })
+    albums = contentDb['albums'].find({'artistId': author['id']},{'_id': 0,})
     
     for item in list(albums): 
         content['albums'].append({
@@ -460,15 +450,7 @@ def getPlaylist():
             'type': item['type']
         })
 
-    related = contentDb['videos'].find({'artistId': author['id']},{'_id': 0,
-                                                                            'id': 1,
-                                                                            'title': 1,
-                                                                            'artistImageURL': 1,
-                                                                            'imageURL': 1,
-                                                                            'views': 1,
-                                                                            'artist': 1,
-                                                                            'videoURL': 1,
-                                                                            'artistId': 1})
+    related = contentDb['videos'].find({'artistId': author['id']},{'_id': 0})
     
     for item in list(related): 
         # print( item, '\n' )
@@ -582,7 +564,15 @@ def getAudioPageContent():
             'imageURL': item['imageURL'],
         })
 
-    newMusic = contentDb['albums'].find({'type': 'Album'},{'_id': 0}).sort('releaseDate').limit(7)
+    newMusic = contentDb['albums'].find(
+        {'type': 'Album'},
+        {'_id': 0, 
+         'id': 1,
+         'name': 1,
+         'title': 1,
+         'imageURL': 1,
+         'type': 1
+         }).sort('releaseDate').limit(7)
 
     for item in list(newMusic):
         content['new'].append({
@@ -590,7 +580,7 @@ def getAudioPageContent():
             'author': item['name'],
             'title': item['title'],
             'imageURL': item['imageURL'],
-            
+            'type': item['type']
         })
 
     trending = contentDb['tracks'].find({},{'_id': 0}).limit(12).sort('playCount')
@@ -604,14 +594,16 @@ def getAudioPageContent():
             'albumId': item['albumId']
         })
 
-    alternativeGenre = contentDb['albums'].find({'genre': 'Alternative','type':'Album'}).limit(7).sort('releaseDate')
+    alternativeGenre = contentDb['albums'].find({'genre': 'Alternative','type':'Album'},
+            {'_id': 0}).limit(7).sort('releaseDate')
 
     for item in list(alternativeGenre):
         content['genres']['alternative'].append({
             'id': item['id'],
             'title': item['title'],
             'author': item['name'],
-            'imageURL': item['imageURL']
+            'imageURL': item['imageURL'],
+            'type': item['type']
         })
 
     rnb = contentDb['albums'].find({'genre': 'RnB','type':'Album'}).limit(7).sort('releaseDate')
@@ -620,7 +612,8 @@ def getAudioPageContent():
             'id': item['id'],
             'title': item['title'],
             'author': item['name'],
-            'imageURL': item['imageURL']
+            'imageURL': item['imageURL'],
+            'type': item['type']
         })
 
     hiphop = contentDb['albums'].find({'genre': 'Hip-Hop', 'type':'Album'}).limit(7).sort('releaseDate')
@@ -629,7 +622,8 @@ def getAudioPageContent():
             'id': item['id'],
             'title': item['title'],
             'author': item['name'],
-            'imageURL': item['imageURL']
+            'imageURL': item['imageURL'],
+            'type': item['type']
         })
     
     playlists = contentDb['albums'].find({'type':'playlist'},{'_id': 0}).limit(7).sort('datePosted')
@@ -637,7 +631,8 @@ def getAudioPageContent():
         content['playlists'].append({
             'id': item['id'],
             'title': item['title'],
-            'imageURL': item['imageURL']
+            'imageURL': item['imageURL'],
+            'type': item['type']
         })
 
     print( content['featured'])
