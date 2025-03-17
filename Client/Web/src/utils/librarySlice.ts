@@ -13,6 +13,10 @@ const initialState: LibraryStatePropType = {
 
 }
 
+const subscribe = createAsyncThunk('library/subscriptions', async (props) => {
+    await httpclient.post('http://127.0.0.1:5000/save', props)
+})
+
 const saveItem = createAsyncThunk('library/saveItem', async (item: AudioListItemPropType ) => {
     try{
         await httpclient.post(`http://127.0.0.1:5000/save`, item)
@@ -27,34 +31,40 @@ export const librarySlice = createSlice({
     initialState,
     reducers: {
         setLibraryItems: (state, action) =>{
-            action.payload.map( item => {
+
+            state.library = action.payload
+            
+            state.library.map( item => {
                 switch( item.type){
                     case 'Artist':
-                        state.Subscriptions.push( item)
+                        if (state.Subscriptions.find( storedItem => item.id == storedItem.id)) return 
+                        state.Subscriptions.push( item )
                         break;
                     case 'Track':
-                        state.Tracks.push( item)
+                        if (state.Tracks.find( storedItem => item.id == storedItem.id)) return 
+                        state.Tracks.push( item )
                         break;
                     case 'Album':
-                        state.Albums.push( item)
+                        if (state.Albums.find( storedItem => item.id == storedItem.id)) return 
+                        state.Albums.push( item )
                         break;
                     case 'Video':
-                        state.Videos.push( item)
+                        if (state.Videos.find( storedItem => item.id == storedItem.id)) return
+                        state.Videos.push( item )
                         break;
                     default: 
                         return
                 }
             })
-            state.library = action.payload
             console.log( state.library)
         }
     },
     extraReducers: ( builder: any ) => {
-        builder.addCase(saveItem.fulfilled, ( state: LibraryStatePropType, action: any) => {
-            
-        })
+        builder.addCase(saveItem.fulfilled, ( state: LibraryStatePropType, action: any) => {}),
+        builder.addCase(subscribe.fulfilled, (state: LibraryStatePropType, action: any) => {})
     }
 })
 
 export const library = librarySlice.reducer
+export const handleSubscription = subscribe
 export const { setLibraryItems } = librarySlice.actions

@@ -26,7 +26,8 @@ export type AudioListItemPropType = {
     name: string, 
     imageURL: string,
     audioURL?: string,
-    albumId?: string
+    albumId?: string,
+    type: string?
 }
 
 export type MediumUserListItemPropType = {
@@ -49,13 +50,16 @@ export type VideoItemPropType = {
     posterURL?: string,
     imageURL?: string,
     contentURL?: string,
+    type: string
 
 }
 export type AudioItemPropType = {
+    name: ReactNode
     id: string,
     title: string, 
     author: string,
-    imageURL:string
+    imageURL:string,
+    type: string
 }
 
 export type LoginFormType = {

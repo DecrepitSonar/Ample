@@ -36,15 +36,15 @@ function PageHeader(props: SectionDataType<VideoItemPropType>){
           </div>
 
           {/* Floating video Progressbar */}
-          <div className="header_progress_bar_container">
+          {/* <div className="header_progress_bar_container">
               <div className="header_progress_bar"></div>
-            </div>
-
-          {/* Pagination buttons */}
-          <div className="pagination_container">
+            </div> */}
+        </div>
+        {/* Pagination buttons */}
+        {/* <div className="pagination_container">
             <div className="pagination_dots">
               { 
-                props ? 
+                props &&
                   props.items?.map( (item: VideoItemPropType, index) => {
                     return <div 
                     style={headerIndex == index ? { 'backgroundColor': "#C6A168"}: {}}
@@ -52,11 +52,9 @@ function PageHeader(props: SectionDataType<VideoItemPropType>){
                     onClick={(e) => updateHeaderIndex(index)}
                     className="pagination_dot"/>
                   })
-                : null
               } 
             </div>
-          </div>
-        </div>
+          </div> */}
       </header>
     </>
 }
@@ -82,19 +80,23 @@ function Home() {
         homeData?.map((item: SectionDataType<T>) => {
           return {
               "Featured": <PageHeader {...item}/>,
-              "Podcast": <section>
-                <div className="section_header">
-                  <h3 className="section_subheading">{item.tagline}</h3>
-                  <h2 onClick={() => navigate('/')} >See more<i><BiChevronRight/></i> </h2>
-                </div>
-                  <div className="section_item_container ">
+              "Videos":
+                <section>
+                  <div className="section_header">
+                    <h3 className="section_subheading">{item.tagline}</h3>
+                    <h2 onClick={() => navigate('#')} >See more<i><BiChevronRight/></i> </h2>
+                  </div>
+
+                  <div className="section_item_container">
                       {
                           item &&
-                          item.items.map( item => {
-                            return <VideoItem key={item.id} {...item}/>})
+                          item.items.map( video => {
+                            return <VideoItem key={video.id} {...video}/>
+                        })
                       }
                   </div>
                 </section>,
+
               "Music":
               <section>
                 <div className="section_header">
@@ -106,7 +108,8 @@ function Home() {
                 {
                 item &&
                     item.items.map( item => {
-                        return <AudioItem {...item}/>
+                        console.log(item)
+                        return <AudioItem key={item.id} {...item}/>
                     })}
                 </div>
               </section>,
@@ -148,5 +151,3 @@ function Home() {
 }
 
 export default Home;
-
-//   <UserAvi/>

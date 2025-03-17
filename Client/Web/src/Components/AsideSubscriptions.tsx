@@ -7,54 +7,7 @@ import UnauthorizedAside from "./UnauthorizedAside";
 export default function AsideSubscriptions() {
 
     const auth = useSelector( ( state: RootState) => state.auth)
-  
-    const Subscriptions = [
-      {
-        "artist": "Anderson .Paak",
-        "imageURL": "andersonpaak.jpg"
-      },
-      {
-        "artist": "NxWorries",
-        "imageURL": "yeslawd.jpg"
-      },
-  
-      {
-        "artist": "Knowledge",
-        "imageURL": "knx.jpg"
-      },
-      {
-        "artist": "Knowledge",
-        "imageURL": "knx.jpg"
-      },
-      {
-        "artist": "Knowledge",
-        "imageURL": "knx.jpg"
-      },
-      {
-        "artist": "Knowledge",
-        "imageURL": "knx.jpg"
-      },
-      {
-        "artist": "Knowledge",
-        "imageURL": "knx.jpg"
-      },
-      {
-        "artist": "Knowledge",
-        "imageURL": "knx.jpg"
-      },
-      {
-        "artist": "Knowledge",
-        "imageURL": "knx.jpg"
-      },
-      {
-        "artist": "Knowledge",
-        "imageURL": "knx.jpg"
-      },
-      {
-        "artist": "Knowledge",
-        "imageURL": "knx.jpg"
-      },
-    ]
+    const Subscriptions = useSelector( ( state: RootState )=> state.library.Subscriptions)
     return(
       auth.isLoggedIn ?
       <section>

@@ -13,6 +13,7 @@ import { Dispatch } from '@reduxjs/toolkit'
 import { BiChevronLeft, BiChevronRight, BiListUl } from 'react-icons/bi'
 import { setLibraryItems } from '../../utils/librarySlice'
 import UserAvi from '../../Components/UserAvi'
+import { BsArrowUp } from 'react-icons/bs'
 
 type ProfileDataType = {
   head: userAuthType, 
@@ -125,23 +126,6 @@ function UserProfile(props: ProfileDataType) {
     
     const library = useSelector((state: RootState) => state.library)
 
-    // useEffect(() => {
-  
-    //     switch(navState){
-    //       case 'Tracks': 
-    //         library.map( item => item.type = 'Track' && setLibItems(item)) 
-    //         break;
-    //       case 'Album': 
-    //         library.map( item => item.type = 'Album' && setLibItems(item)) 
-    //         break;
-    //       case 'Artist':
-    //         library.map( item => item.type = 'Artist' && setLibItems(item)) 
-    //         break; 
-    //       default:
-    //         library.map( item => setLibItems(item)) 
-    //     }
-    // },[navState])
-
   return(
     <>
         <header className='profile_header' style={{'backgroundImage': `url(${props.headerPosterURL})`}}>
@@ -187,9 +171,9 @@ function UserProfile(props: ProfileDataType) {
                 'Subscriptions': library.Subscriptions.length > 0 ?library.Subscriptions.map( item =>  <UserAvi username={item.name} {...item}/> )
                 : <span className='empty_description'>You are not subscribed to anyone</span>
               }[navState]
-                
             }
           </div>
+          <div style={ {'display': 'block'}} className="scroll_to_top_button"><i><BsArrowUp/></i></div>
         </div>
       </>
   )}

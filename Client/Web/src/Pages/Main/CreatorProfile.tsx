@@ -9,7 +9,8 @@ import httpclient from '../../httpclient'
 import AudioItem from '../../Components/AudioItem'
 import { BiCheckCircle } from 'react-icons/bi'
 import { useSelector } from 'react-redux'
-import { RootState } from '@reduxjs/toolkit/query'
+import { RootState } from '../utils/store'
+import { handleSubscription } from '../../utils/librarySlice'
 
 
 function Home() {
@@ -62,16 +63,17 @@ const FollowButton = (props) => {
     
 
     const library = useSelector( (state: RootState) => state.library.library)
+    const [isSubscribed, setIsSubscribed ] = useState<Boolean>(false)
+    
+    useEffect(() => {
+        library.find(item =>  item.id == props.id ) && setIsSubscribed(true)
 
-
-    const handleSubscription = async () => {
-        await httpclient.post('http://127.0.0.1:5000/save', props)
-    }
+    },[library])
     
     return(
         <>
             {
-                library.find(item =>  item.id == props.id )  ?
+                isSubscribed  ?
                 <button 
                     onClick={() => handleSubscription()}
                     className='following_button'>Subscribed</button> :
@@ -152,7 +154,7 @@ export default function CreatorProfile(){
                         <div className="dual_list_collection">
 
                             {profileData.trending.length > 0 && profileData.trending?.map( track => {
-                                return <TrackStrip {...track}/>
+                                return <TrackStrip key={track.id} {...track}/>
                             })}
 
                         </div>
@@ -165,7 +167,7 @@ export default function CreatorProfile(){
                             <div className='h_list'>
                                 {
                                     profileData.albums.map( item => {
-                                        return <AudioItem {... item} />
+                                        return <AudioItem key={item.id} {... item} />
                                     })
                                 }
                                     
@@ -179,7 +181,7 @@ export default function CreatorProfile(){
                             <div className='h_list'>
                                 {
                                     profileData.singles.map( item => {
-                                        return <AudioItem {... item} />
+                                        return <AudioItem key={item.id} {... item} />
                                     })
                                 }  
                             </div>

@@ -25,7 +25,7 @@ function PlaylistItem(props: TrackPropType){
   const audioPlayer = useSelector( (state: RootState) => state.audioPlayer)
   const library = useSelector( (state: RootState) => state.library.library
 )
-  const dispatch = useAppDispatch(props)
+  const dispatch = useAppDispatch()
   
   const activeTrackStyle = {
     backgroundColor: 'rgba(198, 161, 104,.2)',
@@ -81,6 +81,10 @@ export default function PlaylistDetail() {
     })
 
   },[params])
+  
+  useEffect(() => {
+
+  },[])
 
   const isSaved = (item) => {
      console.log( item )

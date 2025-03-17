@@ -10,8 +10,7 @@ export default function UserAvi(props:UserAviPropType) {
         backgroundImage: `url('${ props.imageURL})`
     }
   
-    useEffect(()=> {
-    },[])
+    useEffect(()=> {},[])
   
     return (
       <div className="large_user_avi"

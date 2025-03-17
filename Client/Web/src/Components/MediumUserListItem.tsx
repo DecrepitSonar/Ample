@@ -6,11 +6,12 @@ export default function MediumUserListItem(props:MediumUserListItemPropType){
 
     const navigate = useNavigate()
     return(
-      <div className="medium_user_list_item_container" onClick={() => navigate(`/profile/${props.id}`)}>
+      <div className="medium_user_list_item_container" onClick={() => navigate(`/user/${props.id}`, {state: props, preventScrollReset: true})}>
+        
         <div className="medium_user_list_item">
-          <img className="medium_user_list_item_image" src={props.imageURL}/>
+          <img className="medium_user_list_item_image" src={`https://prophile.nyc3.cdn.digitaloceanspaces.com/images/${props.imageURL}.jpg`}/>
           <div className="medium_user_list_item_info">
-            <span>{props.title}</span>
+            <span>{props.name}</span>
             <span>{props.artist}</span>
           </div>
         </div>
