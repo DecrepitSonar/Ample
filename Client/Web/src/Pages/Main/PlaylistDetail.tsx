@@ -9,10 +9,11 @@ import AudioItem from '../../Components/AudioItem'
 import axios from 'axios'
 import { useNavigate, useParams } from 'react-router-dom'
 import { useSelector } from 'react-redux'
-import { addToQueue, next, play, addToPlayNext, save, togglePlayer } from '../../utils/mediaPlayerSlice'
+import { addToQueue, next, play, addToPlayNext, togglePlayer } from '../../utils/mediaPlayerSlice'
 import { RootState, useAppDispatch } from '../../utils/store'
 import { RiPlayList2Line } from 'react-icons/ri'
 import httpclient from '../../httpclient'
+import { save } from '../../utils/librarySlice'
 
 type TrackPropType = {
   id: string, 
@@ -20,16 +21,23 @@ type TrackPropType = {
   title: String,
   author: String
 }
-function PlaylistItem(props: TrackPropType){
+function PlaylistItem(props: AudioItemPropType){
 
   const audioPlayer = useSelector( (state: RootState) => state.audioPlayer)
-  const library = useSelector( (state: RootState) => state.library.library
-)
+  const library = useSelector( (state: RootState) => state.library.library)
+  
+  // const [isSaved, setSaved ] = useState<Boolean>(false)
+  const isSaved  = library != undefined ? library.find(_ => _.id == props.id) != undefined : false
   const dispatch = useAppDispatch()
   
   const activeTrackStyle = {
     backgroundColor: 'rgba(198, 161, 104,.2)',
   }
+
+  useEffect(() => {
+    // setSaved(  )
+  },[library])
+
   return(
     <div className="playlist_item_container"
     style={audioPlayer.nowPlaying.id == props.id ? activeTrackStyle : {}}>
@@ -43,7 +51,7 @@ function PlaylistItem(props: TrackPropType){
         </div>
       </div>
       <div className="track_buttons">
-        { props.isSaved ? <button style={{"color":"rgba(198, 161, 104,.8)"}} onClick={() => dispatch(save(props))}> <BiSolidHeart/> </button> : <button onClick={() => dispatch(save(props))}> <BiHeart/></button> }
+        { isSaved? <button style={{"color":"rgba(198, 161, 104,.8)"}} onClick={() => dispatch(save(props))}> <BiSolidHeart/> </button> : <button onClick={() => dispatch(save(props))}> <BiHeart/></button> }
         <button onClick={(e) =>  dispatch(addToQueue(props)) }><RiPlayList2Line/></button>
         <button className='optionsBtn'><HiEllipsisHorizontal/></button>
       </div>
@@ -64,6 +72,14 @@ type PlaylistPageDataType = {
   relatedVideos: [VideoItemPropType]
 }
 
+// const PlaylistTrackItem = (props: AudioItemPropType) => {
+//   const library = useSelector( (state: RootState) => state.library.library)
+//   const [isSaved, setSaved ] = useState<Boolean>(library != undefined ? library.find(_ => _.id == props.id) != undefined : false)
+  
+//   return(
+    
+//   )
+// }
 export default function PlaylistDetail() {
 
   const [playListITem, setPlayyListItem ] = useState<PlaylistPageDataType>()
@@ -81,15 +97,11 @@ export default function PlaylistDetail() {
     })
 
   },[params])
-  
-  useEffect(() => {
-
-  },[])
 
   const isSaved = (item) => {
-     console.log( item )
+    console.log( item )
     return library != undefined ? library.find(_ => _.id == item.id) != undefined : false
-  }
+ }
 
   return ( 
     <div className='page_container'>

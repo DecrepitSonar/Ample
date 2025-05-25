@@ -9,7 +9,7 @@ import { invalidFormStyle } from "../../utils/computedSyles";
 
 function SignUpForm() {
 
-  const [ errorState, setErrorState ] = useState('')
+  const [ errorState, setErrorState ] = useState<AuthErrorType>()
   const [ inputError, setInputError ] = useState<boolean>(false)
 
   const dispatch = useAppDispatch()
@@ -27,42 +27,54 @@ function SignUpForm() {
       confirmPassword: {value: String}
     } 
 
+    const formdata = {
+      email: target.email.value,
+      password: target.password.value,
+      confirmPassword: target.confirmPassword.value
+    } as RegistrationFormType
+    
+
     try{
-      await validateInput(target)
-      setErrorState('')
+      await validateInput(formdata)
+      setErrorState({
+            message: '',
+            Code: ''
+      })
 
       dispatch(
         register({
           email: target.email.value,
           password: target.password.value
       })).then( (response ) => {
-        
-        console.log(response )
 
-        if( response.error ){
-          console.log( response.error.message )
+        const payload = response.payload.data
 
-          switch( response.error.code){
-            case 'ERR_BAD_REQUEST':
-              setErrorState("User already exists")
-              return
-
-            default:
-              return
-          }
+        if( payload.error ){
+          const message = payload.error.message
+          setErrorState({
+            message: message,
+            Code: AuthValues.EMailError
+          })
+          return
         } 
 
-        // console.log( response.payload.data.id)
-          window.localStorage.setItem('id', response.payload.data.id)
-
-        console.log( 'success')
-        setErrorState('')
-        navigate('/login')
+        console.log( payload)
+        setErrorState({
+          message: '',
+          Code: ''
+        })
+        navigate(`/userdetailedits/${payload}`)
       })
       
     }catch( error ){
-      console.log( 'error')
-      // setErrorState(error)
+      console.log( error )
+      
+      const message = error.message
+
+      setErrorState({
+        message: message,
+        Code: AuthValues.PWError
+      })
     }
 
   }
@@ -71,16 +83,17 @@ function SignUpForm() {
     return new Promise( (resolve, reject) => {
       const  {email, password, confirmPassword} = target
 
-      if( password.value.length > 0 && email.value.length > 0 ){
+      if( password.length > 0 && email.length > 0 ){
 
-        if( confirmPassword.value.length > 0){
+        if( confirmPassword.length > 0){
 
-          if (password.value == confirmPassword.value){ 
-          setInputError(false) 
-          console.log( 'resolved')
-          resolve('')
-          
-          }else{
+          if (password == confirmPassword){ 
+            setInputError(false) 
+            console.log( 'resolved')
+            resolve('')  
+          }
+
+          else{
             setInputError(true)
             reject({
               message: 'Passwords do not match',
@@ -111,13 +124,14 @@ function SignUpForm() {
         <form action="" method="post" onSubmit={(e: React.SyntheticEvent) => handleSubmit(e)}>
           <h1>Alto</h1>
           <span className="auth_form_title">Sign up</span>
-          <span className="auth_error_label">{errorState}</span>
+          <span className="auth_error_label">{errorState?.message}</span>
           <label className="auth_form_username_label">Email</label>
           <input
             className="auth_form_username_input"
             type="text"
             name="email"
             placeholder={"Email@email.com"}
+            style={errorState?.Code == AuthValues.EMailError || errorState?.Code == AuthValues.VoidInputError ? invalidFormStyle : {} }
             
           />
           <label className="form_password_label">Password</label>
@@ -126,7 +140,9 @@ function SignUpForm() {
             type="password"
             name="password"
             placeholder={"***********"}
-            style={errorState?.Coded == AuthValues.PWError || errorState?.Code == AuthValues.VoidInputError ? invalidFormStyle : {} }
+            style={errorState?.Code == AuthValues.EMailError || 
+              errorState?.Code == AuthValues.VoidInputError ||
+              errorState?.Code == AuthValues.PWError? invalidFormStyle : {} }
           />
           <label className="form_password_label">Confirm Password</label>
           <input
@@ -134,7 +150,10 @@ function SignUpForm() {
             type="password"
             name="confirmPassword"
             placeholder={"***********"}
-            style={ errorState?.Code == AuthValues.PWError || errorState?.Code == AuthValues.VoidInputError ? invalidFormStyle : {} }
+            style={ 
+              errorState?.Code == AuthValues.EMailError || 
+              errorState?.Code == AuthValues.VoidInputError ||
+              errorState?.Code == AuthValues.PWError ? invalidFormStyle : {} }
           />
           <button type="submit"
           className="auth_form_submit">Submit</button>

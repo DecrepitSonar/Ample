@@ -240,7 +240,7 @@ export default function Browse() {
                             <section>
                                 <div className="section_header recent_search_section">
                                     <h1>Recent</h1>
-                                    <button onClick={() => clearSearchHistory() }><CgClose/></button>
+                                    <span onClick={() => clearSearchHistory() }><CgClose/> clear</span>
                                 </div>
                                 <div className='search_history_container h_list'>
                                 {
@@ -267,7 +267,10 @@ export default function Browse() {
                 <section>
                     <div className="section_header recent_search_section">
                         <h1>Recent</h1>
-                        <button onClick={() => clearSearchHistory() }><CgClose/></button>
+                        {
+                            searchHistory.length > 0 &&
+                            <span onClick={() => clearSearchHistory() }><CgClose/> Clear</span>
+                        }
                     </div>
 
                     <div className='search_history_container h_list'>

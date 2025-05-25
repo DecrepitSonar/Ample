@@ -9,6 +9,7 @@ import { authState } from "../utils/Authslice";
 import { RootState } from "../utils/store";
 import { PiMagnifyingGlass } from "react-icons/pi";
 import { BiBell, BiCog } from "react-icons/bi";
+import httpclient from "../httpclient";
 
 function Nav(){
   // const [ loggedIn, setLogin ] = useState(false)
@@ -37,20 +38,13 @@ function Nav(){
     backgroundColor: 'transparent' 
   }
 
-
     return(
       <nav>
         <div className="nav_main">
         <div className="logo">AVi</div>
 
         <div className="nav_links">
-          <Link to={'/'} 
-          style={currentLocation[1] == '' ? activeLink : inActiveLink}
-          > <FaHome/></Link>
-          {/* <Link to={'/watch'} 
-          style={currentLocation[1] == 'watch' ? activeLink : inActiveLink}
-          ><FaTv/></Link> */}
-          <Link to={'/listen'} style={currentLocation[1] == 'listen' ? activeLink : inActiveLink}
+          <Link to={'/'} style={currentLocation[1] == 'listen' ? activeLink : inActiveLink}
           > <FaRegPlayCircle/></Link>
           <Link to={'/browse'}
           style={currentLocation[1] == 'browse' ? activeLink : inActiveLink}><PiMagnifyingGlass/></Link>
@@ -74,8 +68,10 @@ function Nav(){
             auth.isLoggedIn ? 
             < div className='nav_avi_container'>
               <Link to={'/notifications'} style={currentLocation[1] == 'notifications' ? activeLink : inActiveLink}>  <BiBell/></Link>
-              <span onClick={ (e: React.SyntheticEvent) => navigate(`/profile/${auth.user.id}`)} className="nav_usedrname">{auth.user.username}</span>
-              <div onClick={ (e: React.SyntheticEvent) => navigate(`/profile/${auth.user.id}`)} className="nav_avi" style={{'backgroundImage': `url(${auth.user.imageURL}`}}/>
+              <div className='nav_profile' onClick={ (e: React.SyntheticEvent) => navigate(`/profile/${auth.user.id}`)}>
+                <span>{auth.user.username}</span>
+                <button className="nav_avi nline-block h-12 w-12 rounded-full ring-2 ring-white" style={{'backgroundImage': `url(${auth.user.profileimage}`}}></button>
+              </div>
             </div> :
             <>
             <div className="nav_auth_button_container">

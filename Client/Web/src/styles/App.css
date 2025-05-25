@@ -12,8 +12,13 @@ input:is(:-webkit-autofill, :autofill) {
   /* border: 1px solid red; */
   display: flex;
   flex-direction: column;
-  width: 20%;
+  width: 30%;
   color: #737373;
+}
+.auth form i{
+  /* border: 1px solid red;  */
+  display: flex;
+  align-items: center;
 }
 .auth form input {
   border-radius: 10px;
@@ -577,16 +582,22 @@ section{
   flex-direction: column;
   margin-top: 10px;
   max-width: 150px;
-  /* text-wrap: nowrap; */
   overflow: hidden;
-  text-overflow: ellipsis;
+  /* text-overflow: ellipsis; */
 }
 .audio_item_info span:nth-child(1){
-font-weight: bold;
-}d
+  font-weight: bold;
+  display: -webkit-box;
+  font-size: .8rem;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  overflow: hidden;
+}
 .audio_item_info span:nth-child(2){
-  font-size: .9rem;
-  text-wrap-mode: nowrap;
+  font-size: .7rem;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 .audio_item_info span:nth-child(3){
   font-size: .8rem;

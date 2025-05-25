@@ -34,7 +34,7 @@ export default function AudioItem(props: AudioItemPropType){
             </div>
           </div>,
           "Album":
-          <div claassName="audio_item_container" onClick={() => navigate(`/playlist/${props.id}`)}>
+          <div className="audio_item_container" onClick={() => navigate(`/playlist/${props.id}`)}>
               <div className="audio_item_track_image_container">
                 <img className="audio_item_art" src={ props.id != undefined && `https://prophile.nyc3.digitaloceanspaces.com/images/${props.imageURL}.jpg`}/>
               </div>

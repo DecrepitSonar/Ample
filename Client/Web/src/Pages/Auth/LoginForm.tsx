@@ -39,31 +39,46 @@ function LoginForm() {
     
 
     try{
-      await validateInput(target)
-      setErrorState({
-        message: "",
-        Code: ""
-      })
       
+      await validateInput(formdata)
+      console.log( formdata )
       const response = await dispatch(login(formdata))
-      console.log( 'response', response.payload)
-      dispatch(setLibraryItems(response.payload.data.library))
+
+      console.log( response )
+      if( response.payload == undefined){
+        setErrorState({
+          message: "Internal Error Try again",
+          Code: 'SrvErr'
+        })
+        return
+      }
+
+      if( response.payload.data.error != undefined){
+
+        const message = response.payload.data.error.message 
+        const code = response.payload.data.error.errorCode 
+        
+        setErrorState({
+          message: message,
+          Code: AuthValues.AuthError
+        }) 
+        return 
+      }
 
       navigate('/')
 
     }catch( error ){
-      console.log('error', error)
       setErrorState(error as AuthErrorType)
     }
 
 
   }
 
-  const validateInput = (target: RegistrationFormType) : Promise<String> => {
+  const validateInput = (target: LoginFormType) : Promise<String> => {
     return new Promise( (resolve, reject) => {
       const  {email, password} = target
 
-      if( password.value.length > 0 && email.value.length > 0 ){
+      if( password.length > 0 && email.length > 0 ){
         resolve('')
       }
       else{
@@ -93,7 +108,7 @@ function LoginForm() {
             placeholder="Email@email.com"
             style={errorState?.Code == AuthValues.VoidInputError || errorState?.Code == AuthValues.AuthError ? invalidFormStyle : {} }
             />
-          <label className="auth_form_password_label">Passowrd</label>
+          <label className="auth_form_password_label">Password</label>
           <input
             className="auth_form_password_input"
             type="password"

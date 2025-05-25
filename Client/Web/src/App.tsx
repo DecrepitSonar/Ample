@@ -1,38 +1,26 @@
-
+import React from 'react'
 import "./styles/App.css";
 import { Route, Routes } from "react-router-dom";
 
+// Auth/ login imports
 import SignUpForm from './Pages/Auth/SignUpForm'
 import LoginForm from './Pages/Auth/LoginForm'
 import PasswordReset from './Pages/Auth/PasswordReset'
-import Home from './Pages/Main/Home'
-import Profile from './Pages/Main/Profile'
+import Profile from './Pages/Main/Profile/Profile'
 
+// Main imports
 import Wrapper from './Pages/Main/Wrapper'
-import Watch from "./Pages/Main/Watch";
 import { useEffect } from "react";
-import { useDispatch } from "react-redux";
-import { auth, setUser, validate } from "./utils/Authslice";
+import { setUser, validate } from "./utils/Authslice";
 import { useAppDispatch } from "./utils/store";
-import axios from "axios";
 import SignUpEditForm from "./Pages/Auth/SignUpEditForm";
 import Browse from "./Pages/Main/Browse";
 import Listen from "./Pages/Main/Listen";
 import PlaylistDetail from "./Pages/Main/PlaylistDetail";
 import VideoPlayerPage from "./Pages/Main/videoPlayerPage";
-import DashboardWrapper from "./Pages/Dashboard/DashboardWrapper";
 import CreatorProfile from './Pages/Main/CreatorProfile'
 import { setSavedTracks } from "./utils/mediaPlayerSlice";
 import { setLibraryItems } from "./utils/librarySlice";
-
-
-function Dash(){
-  return (
-    <>
-    <h1>Home</h1></>
-  )
-}
-
 
 function App() {
   const dispatch = useAppDispatch()
@@ -40,33 +28,40 @@ function App() {
   useEffect( () => {
     ( async () => {
 
-      const user = window.localStorage.getItem('user')
-      if( user != undefined ) {
-          await dispatch(setUser(user))
-      }  
 
-      try{
-        const response = await dispatch(validate())
-        console.log( response )
-        await dispatch(setLibraryItems(response.payload.data.library))
-      }
-      catch( err ){
-        console.log( err )
+      const user = JSON.parse(window.localStorage.getItem('user'))
+
+      if( user != undefined ) {
+        try{
+          dispatch(setUser(user))
+        }
+        catch( error){
+          console.log( error)
+        }
+          
+      }  
+      else{
+        try{
+          const response = await dispatch(validate())
+          console.log( response )
+        }
+        catch( err ){
+          console.log( err )
+        }
       }
 
     })()
   },[])
+  
   return (
     <div className="App">
       <Routes>
         <Route path="/login" element={<LoginForm />} />
         <Route path="/signup" element={<SignUpForm/>} />
-        <Route path="/userdetailedits" element={<SignUpEditForm/>} />
+        <Route path="/userdetailedits/:id" element={<SignUpEditForm/>} />
         <Route path="/reset" element={<PasswordReset/>} />
         <Route path='/' element={<Wrapper/>}>
-          <Route index element={<Home/>}/>
-          <Route path='/watch' element={<Watch/>}/>
-          <Route path='/listen' element={<Listen/>}/>
+          <Route index element={<Listen/>}/>
           <Route path='/browse' element={<Browse/>}/>
           <Route path='/user/:id' element={<CreatorProfile/>}/>
           <Route path='/profile/:id' element={<Profile/>}/>

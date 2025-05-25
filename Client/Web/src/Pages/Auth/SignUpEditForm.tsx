@@ -1,4 +1,4 @@
-import React, { useRef, useState } from "react";
+import React, { useEffect, useId, useRef, useState } from "react";
 import '../../styles/AuthStyles.css'
 import { FaImage, FaRegImage } from "react-icons/fa";
 import { FaImagePortrait, FaImages } from "react-icons/fa6";
@@ -8,8 +8,8 @@ import { invalidFormStyle, validFormStyle } from "../../utils/computedSyles";
 import { useSelector } from "react-redux";
 import { RootState, useAppDispatch } from "../../utils/store";
 import { updatePreferences } from "../../utils/settingsSlice";
-import { useNavigate } from "react-router-dom";
-import { validate } from "../../utils/Authslice";
+import { useNavigate, useParams } from "react-router-dom";
+import { addUserDetail, validate } from "../../utils/Authslice";
 
 function SignUpEditForm() {
 
@@ -22,6 +22,7 @@ function SignUpEditForm() {
 
   const imgRef = useRef()
   const navigate = useNavigate()
+  const params = useParams()
 
   const handleSeletedImage = (file: Blob) => {
     const reader = new FileReader()
@@ -38,31 +39,37 @@ function SignUpEditForm() {
   const handleSubmit = async (e: React.SyntheticEvent ) => {
     e.preventDefault()
 
+    
     const target = e.target as typeof e.target & {
         username: {value: string},
         image: {value: string}
     }
 
-    const userId = window.localStorage.getItem('userId')
+    const userId = params['id']
 
     const formdata = new FormData()
-    formdata.set ('id', window.localStorage.getItem('userId'))
+    formdata.set ('id', userId as string )
     formdata.append( 'username', target.username.value)
-    formdata.append('imageURL', file)
+    formdata.append('profileImage', file)
+
+    formdata.forEach( item => [
+        console.log( item)
+    ])
 
     try{
         await dispatch( 
-            updatePreferences(formdata)
+            addUserDetail(formdata)
         )
         .then( response => {
-            const error = response.payload.data.error
-            if( error){
-                setusernameAvailable(false)
-                setErrorState(error)
-                return
-            }
-            // setErrorState({})
-            setusernameAvailable(true)
+            // console.log( response )
+            // const error = response.payload!.data.error
+            // if( error){
+            //     setusernameAvailable(false)
+            //     setErrorState(error)
+            //     return
+            // }
+            // // setErrorState({})
+            // setusernameAvailable(true)
             navigate('/login')
         })
     }   
@@ -70,14 +77,15 @@ function SignUpEditForm() {
         console.log( error )
     }
   }
-  
+
+
     return ( 
         <div className="auth">
             <form action="" method="post" onSubmit={(e: React.SyntheticEvent) => handleSubmit(e)}>
-                <h1>MediaFS</h1>
-                <label className="auth_form_username_label">Upload profile photo</label>
+                <h1>AVi</h1>
+                <h2 className="auth_form_username_label">Edit Details</h2>
                 <div className="image_Upload_section">
-                    <img className="imageInputPreview" src="default-profile-account-unknown-icon-black-silhouette-free-vector.jpg" width={'170px'} ref={imgRef}/>
+                    <img className="imageInputPreview" src="https://prophile.nyc3.cdn.digitaloceanspaces.com/images/default-profile-account-unknown-icon-black-silhouette-free-vector.jpg" width={'170px'} ref={imgRef}/>
                     <label className="custom_upload_buttom">
                         <input className=""type="file" onChange={(e) => handleSeletedImage(e.target.files[0])}/>
                         <i><RiImageCircleFill/></i>

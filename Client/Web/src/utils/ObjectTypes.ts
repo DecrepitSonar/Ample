@@ -8,9 +8,16 @@ export type LibraryStatePropType = {
 export type userAuthType = {
     id: string,
     username: string,
-    imageURL: string, 
-    type: string,
-    headerPosterURL: string,
+    profileimage: string, 
+    accounttype: string,
+    headerimage: string,
+}
+
+export type UserAccountSettingsType = {
+    profileImage: string, 
+    headerimage: string,
+    username: string,
+    email: string
 }
 
 export type stateAuthType = {
@@ -37,6 +44,7 @@ export type MediumUserListItemPropType = {
 }
 
 export type UserAviPropType = {
+    name: string
     id?: String,
     username: string,
     imageURL: string,
@@ -54,6 +62,7 @@ export type VideoItemPropType = {
 
 }
 export type AudioItemPropType = {
+    trackNum: number
     name: ReactNode
     id: string,
     title: string, 
@@ -68,9 +77,9 @@ export type LoginFormType = {
 }
 
 export type RegistrationFormType = {
-    email: {value: string}, 
-    password: {value: string}, 
-    confirmPassword: {value: string}
+    email: string,
+    password: string, 
+    confirmPassword: string
 }
 
 export type AuthErrorType = {
@@ -89,7 +98,8 @@ export type PaymentSettings = {
     credits: Number,
     paymentHistory: [AudioListItemPropType]
 }
-export type storeSettingsType = {
+export type userSettings = {
+    accountSettings: UserAccountSettingsType,
     paymentSettings: PaymentSettings,
 }
 export type HomePageDataType = {

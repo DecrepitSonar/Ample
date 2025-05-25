@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import axios from 'axios'
-import { AudioItemPropType, userAuthType } from '../../utils/ObjectTypes'
+import { AudioItemPropType, userAuthType, UserAviPropType } from '../../utils/ObjectTypes'
 import { activeNavButtonStyle, inActiveButtonStyle } from '../../utils/computedSyles'
 import TrackStrip from '../../Components/TrackStrip'
 // import Home from './Home'
@@ -10,7 +10,9 @@ import AudioItem from '../../Components/AudioItem'
 import { BiCheckCircle } from 'react-icons/bi'
 import { useSelector } from 'react-redux'
 import { RootState } from '../utils/store'
-import { handleSubscription } from '../../utils/librarySlice'
+import { handleSubscription, save } from '../../utils/librarySlice'
+import { useDispatch } from 'react-redux'
+import { useAppDispatch } from '../../utils/store'
 
 
 function Home() {
@@ -59,16 +61,13 @@ type profileData = {
     albums: [AudioItemPropType]
     singles: [AudioItemPropType]
 }
-const FollowButton = (props) => {
+function FollowButton(props: UserAviPropType){
     
 
     const library = useSelector( (state: RootState) => state.library.library)
-    const [isSubscribed, setIsSubscribed ] = useState<Boolean>(false)
+    const isSubscribed = library != undefined ? library.find(_ => _.id == props.id) != undefined : false
     
-    useEffect(() => {
-        library.find(item =>  item.id == props.id ) && setIsSubscribed(true)
-
-    },[library])
+    const dispatch = useAppDispatch() 
     
     return(
         <>
@@ -78,7 +77,7 @@ const FollowButton = (props) => {
                     onClick={() => handleSubscription()}
                     className='following_button'>Subscribed</button> :
                 <button
-                    onClick={() => handleSubscription()}
+                    onClick={() => dispatch(save(props))}
                     className='follow_button'>Subscribe</button>  
             }
         </>

@@ -1,4 +1,6 @@
 import React from "react"
+import { clsx } from 'clsx'
+import { twMerge } from 'tailwind-merge'
 
 export  const handleSeletedImage = (file: Blob, setFile: Function, imgRef: React.SyntheticEvent) => {
     const reader = new FileReader()
@@ -11,3 +13,7 @@ export  const handleSeletedImage = (file: Blob, setFile: Function, imgRef: React
     reader.readAsDataURL(file)
 
   }
+
+export function cn(...inputs){
+    return twMerge(clsx(inputs))
+}

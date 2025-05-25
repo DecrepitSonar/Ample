@@ -39,15 +39,7 @@ const playTrack = createAsyncThunk('mediaPlayer/playTrack',  async (track: Audio
     return track
 })
 
-const savedItem = createAsyncThunk('mediaPlayer/savedItem', async (track: AudioListItemPropType ) => {
-    try{
-        await httpclient.post(`http://127.0.0.1:5000/save`, track)
-    }
-    catch( error ){
-        console.log( error )
-    }
-    return  track
-})
+
 
 const playNextTrack = createAsyncThunk('mediaPlayer/playNextTrack', async (queue: [AudioListItemPropType]) => {
         // console.log( queue )
@@ -254,17 +246,12 @@ export const AudioPlayer = createSlice({
 
             state.nowPlaying = action.payload
         })
-        builder.addCase(savedItem.fulfilled, (state: PlayerState, action: any) => {
-            state.savedTracks.push(action.payload)
-
-        })
     }
 })
 
 export const audioPlayer = AudioPlayer.reducer
 export const play = playTrack
 export const next = playNextTrack
-export const save = savedItem
 export const populateAudioPlayer = populatePlayer
 export const  {
     togglePlayer, 

@@ -39,8 +39,8 @@
 }
 
 .imageInputPreview img{
-    display: block
-    /* font-size: 3rem; */
+    display: block;
+    font-size: 3rem;
 }
 .imageInputPreview{
     border: 1px solid #0b0b0d;
