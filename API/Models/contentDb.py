@@ -23,30 +23,6 @@ class BucketManager:
                         aws_secret_access_key=os.environ['aws_secret_access_key'])
 
 
-    # Initiate multipart upload 
-    def create_multiPart_upload(self): 
-        
-        # print( response['UploadId'] )
-
-        # upload_id = response['UploadId']
-
-        return upload_id
-    
-    # upload part
-    def upload_file(self, file, id):
-        try:
-            self.client.upload_file( 
-                ApplicationConfig.UPLOAD_FOLDER + file, 
-                id, 
-                file, 
-                ExtraArgs={'ACL': 'public-read'}
-            )
-
-        except self.client._exceptions as e: 
-            print( e )
-
-        return
-
     # create Bucket 
     def create_bucket(self, id):
         print( 'creating user bucket')
@@ -76,10 +52,33 @@ class BucketManager:
 
 
         print( response  )
-
-
         return 
+
+    # Initiate multipart upload 
+    def create_multiPart_upload(self): 
+        
+        # print( response['UploadId'] )
+
+        # upload_id = response['UploadId']
+
+        return upload_id
     
+    # upload part
+    def upload_file(self, file, id):
+        try:
+            self.client.upload_file( 
+                ApplicationConfig.UPLOAD_FOLDER + file, 
+                id, 
+                file, 
+                ExtraArgs={'ACL': 'public-read'}
+            )
+
+        except self.client._exceptions as e: 
+            print( e )
+
+        return
+
+
     # delete bucket
     def delete_bucket(self, user): 
         return

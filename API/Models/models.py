@@ -1,10 +1,12 @@
 import json
 from flask_sqlalchemy import SQLAlchemy
-from flask import request
+from flask import jsonify, request
 from uuid import uuid4
 from config import ApplicationConfig
 import psycopg2
 from flask_bcrypt import Bcrypt
+from utils import AuthCodes
+
 
 def get_uuid():
     return uuid4().hex
@@ -73,28 +75,22 @@ class Database:
             
         """ Check if user exists """        
         print( """ Check if user exists """ )
-        print(data)
-
+        
+        email = data['email'] 
         if self.getUserByEmail(data['email']) is not None:
             return None
-
-        hashed_password = Bcrypt().generate_password_hash(data['password']).decode('utf-8')
 
         """ Creating New user"""
         print( """ Creating New user""" )
         
-        userSql = """ 
-            INSERT INTO users ( 
-                username, 
-                email, 
-                password
-            )
-            VALUES (%s, %s, %s ) 
+        createUser = """ 
+            INSERT INTO users (email)
+            VALUES ( '%s' )
 
-            RETURNING id;
-        """
+            RETURNING id; 
+        """ %data['email']
 
-
+     
         if self.conn.closed: 
             print( 'initializing db connectino ')
             self.__init__()
@@ -102,28 +98,159 @@ class Database:
         try:
             
             print( 'creating user')
-            with self.conn.cursor() as cursor:
             
-                cursor.execute(userSql, (
-                    'defaultUser',
-                    data['email'], 
-                    hashed_password
-                ))
-
-                row = cursor.fetchone()
-        
-                if row: 
-                    result =  row[0]
+            with self.conn.cursor() as cur: 
+                cur.execute( createUser, (email) )
+                id = cur.fetchone()[0]
+                
+                print( id )
+                print( 'user created')
+                
+                self.createUserWallet(id)
+                self.createUserLibrary(id)
+                
+                hashed_password = Bcrypt().generate_password_hash(data['password']).decode('utf-8')
+                self.createUserSecurityDetails(hashed_password, id )
 
         except (self.conn.DatabaseError, Exception) as error: 
             print( error )
-            return error
+            result =  AuthCodes( 'SRVERR')
         
         finally:
                 self.conn.commit()
                 self.conn.close()
-                return result 
+                return id
+
+    def createUserWallet( self, id): 
+
+        createUserWallet = """
+            INSERT INTO user_wallet (user_id)
+            VALUES ( '%s' )
+        """ %id
+
+        if self.conn.closed: 
+            print( 'initializing db connectino ')
+            self.__init__()
+
+        try:
+            with self.conn.cursor() as cursor:
+                print( 'creating user Wallet')
+                cursor.execute( createUserWallet)   
+
+                print( cursor.statusmessage)
+                print( 'user wallet created')
+                
+                result = None
+
+        except (self.conn.DatabaseError, Exception) as error: 
+            print( error )
+            result = False
+        
+        finally:
+                self.conn.commit()
+
+                return result
+    def createUserLibrary( self, id): 
+
+        createUserLibrary = """
+            INSERT INTO user_library ( user_id ) 
+            VALUES ('%s')
+        """ %id
+     
+        if self.conn.closed: 
+            print( 'initializing db connectino ')
+            self.__init__()
+
+        try:
+
+            with self.conn.cursor() as cursor:
+            
+                print( 'creating user library')
+                cursor.execute(createUserLibrary)   
+
+                print( cursor.statusmessage)
+                print( 'user library created')
+                result = None
+
+        except (self.conn.DatabaseError, Exception) as error: 
+            print( error )
+            result = False
+        
+        finally:
+                self.conn.commit()
+
+                return result
+    def createUserSecurityDetails( self, password, id ): 
+
+        createUserSecurity = """
+            INSERT INTO security ( password, user_id) 
+            VALUES ( %s, %s )
+        """
+
+        if self.conn.closed: 
+            print( 'initializing db connectino ')
+            self.__init__()
+
+        try:
+
+            with self.conn.cursor() as cursor:
+                print( 'creating user security')
+                cursor.execute( createUserSecurity,( password, id ))   
+
+                print( cursor.statusmessage)
+                print( 'user security created')
+
+                result = id
+
+        except (self.conn.DatabaseError, Exception) as error: 
+            print( error )
+            result = False
+        
+        finally:
+                self.conn.commit()
+                return result   
+
+    def updateUserDetails(self, data):
+
+        print( data )
+        if self.conn.closed: 
+            print( 'initializing db connectino ')
+            self.__init__()
+        
+        sql = """
+            UPDATE users
+            SET username = %s,
+                profileimage = %s
+            WHERE id = %s
+        """
+
+        try: 
+            with self.conn.cursor() as cursor: 
+                cursor.execute(sql, (data["username"], data['profileImage'], data["id"] ))
+                print( cursor.statusmessage)
+            
+        except  (self.conn.DatabaseError, Exception) as error:
+            print(error)
+
+        finally: 
+            self.conn.commit()
+            return 
+    def updateUserProfileImage( self, imageurl, id):
+
+        if self.conn.closed:
+            self.__init__()
+
+        updateProfileImage = """
+            UPDATE user
+            SET profileimage = %s
+            WHERE id = %s
+        """
+
+        with self.conn.cursor() as cursor: 
+
+            cursor.execute( updateProfileImage, ())
     
+    # TODO
     def createPaymentSettings(self, user_id):
 
         paymentSettings = """ 
@@ -150,7 +277,7 @@ class Database:
                 return 
         
     # LIBRARY 
-    def createUserLibrary(self, user_id):
+    # def createUserLibrary(self, user_id):
 
         createLibrary = """ 
             INSERT INTO library( user_id)
@@ -182,13 +309,15 @@ class Database:
             self.__init__()
 
         insert = """
-            UPDATE library
-            SET data = data || %s
+            UPDATE user_library
+            SET data -> 'saved' = data -> 'saved' || %s
             WHERE user_id = %s
         """
         
         item = json.dumps(item)
 
+        print( item )
+        
         try: 
             with self.conn.cursor() as cursor:
                 cursor.execute(insert, (item, user_id))
@@ -201,6 +330,83 @@ class Database:
             self.conn.close
             self.conn.commit()
             return
+    def getSavedITemFromLibrary( self, item, user_id): 
+
+        if( self.conn.closed):
+            self.__init__()
+
+        item_id =  item['id']
+
+        item = json.dumps(item)
+        sql = """
+            SELECT jsonb_array_elements(data) 
+            FROM user_library 
+            WHERE user_id = '%s'
+        """ %user_id
+
+        try: 
+            with self.conn.cursor() as cursor: 
+                cursor.execute( sql )
+                row = cursor.fetchall()
+                # print( row)
+                for row_item in row:
+                    ( id ) = row_item[0]
+                    # print( id )
+                    # print( item_id)
+
+                    if( id == item_id):
+                        result = True
+                        return 
+                    
+                    result = False
+
+                return 
+        except( self.conn.DatabaseError, Exception) as error: 
+            print( error )
+        finally:  
+            return result
+
+    def removeItemFromLibrary(self, item, user_id):
+
+        if self.conn.closed: 
+            self.__init__()
+
+        # sql = """
+        # UPDATE library i
+        # SET    data = i2.items
+        # FROM  (
+        #     SELECT array_to_json(array_agg(data)) AS items
+        #     FROM library lib
+        #     ,    jsonb_array_elements(lib.data) AS elem
+        #     WHERE  lib.data @> '{"id":"1af17e73721dbe0c40011b82ed4bb1a7dbe3ce29"}'::jsonb
+        #     AND    elem->>'id' <> '1af17e73721dbe0c40011b82ed4bb1a7dbe3ce29'
+        #     GROUP  BY 1
+        # ) i2
+        # WHERE i2.id = i.id;
+        # """
+        # print( item['id'])
+
+        sql = """
+            UPDATE library
+            SET data = jsonb_set(data)
+            FROM library
+            WHERE user_id = '%s'
+         """ %user_id
+        
+
+        try: 
+
+            with self.conn.cursor() as cursor:
+                cursor.execute( sql)
+                print( cursor.fetchall())
+                print( cursor.statusmessage )
+                print( cursor.query )
+
+        except( self.conn.DatabaseError, Exception) as error: 
+            print( error )
+
+        finally: 
+            return 
     
     # USER SESSIONS
     def createUserSession(self, id):
@@ -208,8 +414,9 @@ class Database:
             self.__init__()
 
         sql = '''
-            INSERT INTO user_sessions( sessions_key, user_id)
-            VALUES (%s, %s)
+            UPDATE security
+            SET session_key = %s
+            WHERE user_id = %s
         ''' 
 
         try: 
@@ -217,7 +424,10 @@ class Database:
                 session = get_uuid()
                 print( session )
                 cursor.execute(sql, (session, id))
-                print( cursor.statusmessage )
+                print( 'update status ', cursor.statusmessage )
+                if cursor.statusmessage == 'UPDATE 0': 
+                    session = None 
+                
                 self.conn.commit()
 
         except( Exception, self.conn.DatabaseError) as error:
@@ -446,11 +656,27 @@ class Database:
     # USER
     def getUserById(self, id):
 
+        print( id )
+
         if self.conn.closed:
             self.__init__()
 
-        sql = """SELECT * FROM users WHERE id = '%s' """ %id
-        user_account = """ SELECT  id, username, avi_image_url, email, header_image, verified  FROM users """
+        # sql = """SELECT * FROM users WHERE id = '%s' """ %id
+        # user_account = """ SELECT  id, username, avi_image_url, email, header_image, verified  FROM users """
+
+        sql = """ 
+        SELECT row_to_json(t)
+        FROM (
+            SELECT 
+                id,
+                username, 
+                accounttype, 
+                email, 
+                profileimage, 
+                headerimage
+            FROM users
+            WHERE id = '%s'
+        ) t """ %id
 
         try: 
             with self.conn.cursor() as cursor: 
@@ -458,35 +684,16 @@ class Database:
                 # print( '2:', cursor.statusmessage )
                 # print( cursor.query)
                 
-                user_id = cursor.fetchone()[0]
-                # print( user_id )
+                user = cursor.fetchone()[0]
+                print( user )
 
-                cursor.execute(user_account)
+                # cursor.execute(user_account)
                 # print( '3:', cursor.statusmessage )
                 # print( cursor.query)
-                result = cursor.fetchone()
+                # result = cursor.fetchone()
                 # print( result )
 
-                if result is not None: 
-
-                    (
-                        id,
-                        username,
-                        avi_image_url,
-                        email,
-                        header_image,
-                        verified,
-                    ) = result
-                    
-
-                    result =  {
-                            "id": id,
-                            "username": username,
-                            "email": email,
-                            "imageURL": avi_image_url,
-                            "headerPosterURL": header_image,
-                            'verified': verified
-                    }
+                # if result is not None: 
 
         except (self.conn.DatabaseError, Exception) as error: 
             print( error )
@@ -495,30 +702,37 @@ class Database:
         finally: 
             self.conn.close()
             # print( result )
-            return result
+            return user
+        
     def getUserByEmail(self, email):
 
+        print( 'Retrieving user by email')
         if self.conn.closed: 
             self.__init__()
 
         sql = """ 
-        SELECT json_build_object(
-        'id',id, 
-        'username',username, 
-        'avi_image_url', avi_image_url, 
-        'email', email, 
-        'header_image',header_image, 
-        'verified', verified )
-
-        FROM users 
-        WHERE email LIKE '%s' """ %email
+        SELECT row_to_json(t)
+        FROM (
+            SELECT 
+                id,
+                username, 
+                accounttype, 
+                email, 
+                profileimage, 
+                headerimage
+            FROM users
+            WHERE email = '%s'
+        ) t """ %email
 
         try: 
             with self.conn.cursor() as cursor: 
                 cursor.execute(sql)
-
+                # print( cursor.statusmessage)
+                # print( cursor.query)
                 rows = cursor.fetchone()
+                # print(rows)
                 if rows is not None:
+                    # print( rows )
                     result = rows[0]
                     return result
 
@@ -529,6 +743,7 @@ class Database:
             return error
         
         finally: 
+            # print( result )
             self.conn.close()
             return result
         
@@ -540,7 +755,7 @@ class Database:
         sql = """ 
             SELECT username 
             FROM users 
-            WHERE username = %s  
+            WHERE username = '%s'  
             """ %username
         
 
@@ -548,8 +763,9 @@ class Database:
             with self.conn.cursor() as cursor: 
                 cursor.execute(sql)
                 
-                results = cursor.fetchall() 
-
+                results = cursor.fetchone()
+                
+                print( results)
                 if results is not None: 
                     results = results[0]
 
@@ -560,65 +776,66 @@ class Database:
         finally: 
             self.conn.close()
             return results
+        
     def getUserBySession(self, sessionId):
         
         if self.conn.close:
             self.__init__()
 
         sql = '''
-            with rows as (
                 SELECT user_id
-                FROM user_sessions
-                WHERE sessions_key = '%s' )
-                
-            SELECT user_id
-            FROM rows
+                FROM security
+                WHERE session_key = '%s'
         ''' %sessionId
 
         try: 
             with self.conn.cursor() as cursor:
                 cursor.execute(sql)
-                # print( '1:', cursor.statusmessage )
-                result = cursor.fetchone()[0]
-
-                user = self.getUserById(result)
+                print( '1:', cursor.statusmessage )
+                result = cursor.fetchone()
 # 
         except( self.conn.DatabaseError, Exception) as error :
-            print( error )
+            print( 'error', error )
+            result = None
 
         finally:
 
             self.conn.close()
-            return user       
-    def validatePassword(self, data):
-        
-        print( data )
+            return result   
+            
+    def validatePassword(self, id, data):
+
+        print( 'validating user password  ')
+
         if self.conn.closed: 
             self.__init__()
 
-        if list(data)[0] == 'username':
-            sql = """"
-                SELECT password
-                FROM users
-                WHERE username = %s
-            """ %data['username']
-        else: 
             sql = """
                 SELECT password
-                FROM users
-                WHERE email = '%s'
-            """ %data['email']
+                FROM security
+                WHERE user_id = '%s'
+            """ %id
 
         try: 
             with self.conn.cursor() as cursor: 
 
                 cursor.execute(sql)
-                result = cursor.fetchone()[0]
+                result = cursor.fetchone()
+                print( cursor.statusmessage )
+                print( "passwords result", result )
+
+                if Bcrypt().check_password_hash(result, data['password']):
+                    result = True
+                    return
                 
-                result = Bcrypt().check_password_hash(result, data['password'])
+                else: 
+                    result = False
 
         except( self.conn.DatabaseError, Exception) as error: 
+            print( 'error')
             print( error )
+            result = False
+            raise( Exception(error))
         
         finally: 
             return result
@@ -737,9 +954,9 @@ class Database:
         """ %user_id
         try: 
             with self.conn.cursor() as cursor: 
-                # cursor.execute(profile_sql)
-                # user = cursor.fetchone()
-                # print( user )
+                cursor.execute(profile_sql)
+                user = cursor.fetchone()
+                print( user )
 
                 user = self.getUserById(user_id)
                 # print( user )
@@ -750,16 +967,105 @@ class Database:
 
         finally: 
             return user
+    
+    # Settings
+    def getAccountSettings(self, user_id):
+
+        print( 'Retrieving user by email')
+        if self.conn.closed: 
+            self.__init__()
+
+        sql = """ 
+        SELECT row_to_json(t)
+        FROM (
+            SELECT 
+                username, 
+                email, 
+                profileimage, 
+                headerimage
+            FROM users
+            WHERE id = '%s'
+        ) t """ %user_id
+
+        try: 
+            with self.conn.cursor() as cursor: 
+                
+                cursor.execute(sql)
+                rows = cursor.fetchone()
+
+                if rows is not None:
+                    result = rows[0]
+                    return 
+
+                result = None
+
+        except (self.conn.DatabaseError, Exception) as error: 
+            print( '\n Error', error , '\n' )
+            return error
         
+        finally: 
+            self.conn.close()
+            return result
+        
+    def getPaymentSettings(self, user_id):
+
+        if self.conn.closed: 
+            self.__init__()
+
+        sql = """
+            SELECT row_to_json(t)
+            FROM(
+                SELECT  
+                    credit, 
+                    history
+                FROM user_wallet 
+                WHERE user_id = '%s'
+            ) t
+        """ %user_id
+
+        try: 
+            with self.conn.cursor() as cursor: 
+                cursor.execute(sql)
+                result = cursor.fetchone()[0]
+
+        except( self.conn.DatabaseError, Exception) as error: 
+            print( error )
+        return result
+    
+    def getNotificationsSettings(self, user_id):
+        return
+    
     # SAVED CONTENT
     def getAllLibraryItems(self, user_id):
-        
+        if self.conn.close:
+            self.__init__()
+        print( 'getting saved content')
+        sql = """
+            SELECT data -> 'saved'
+            FROM user_library
+            WHERE user_id = '%s'
+        """ %user_id
+
+        try: 
+            with self.conn.cursor() as cursor:
+                cursor.execute(sql)
+                result = cursor.fetchone()[0]
+                # print( result )
+
+        except( self.conn.DatabaseError, Exception) as error:
+            print( error )
+
+        finally: 
+            return result
+    
+    def getUserPlaylists(self, user_id):
+       
         if self.conn.close:
             self.__init__()
 
         sql = """
-            SELECT data::JSONB 
-            FROM library
+            SELECT data -> 'playlists'
+            FROM user_library
             WHERE user_id = '%s'
         """ %user_id
 
@@ -774,8 +1080,30 @@ class Database:
 
         finally: 
             return result
-    
-    # def getSavedLibaryItems()
+        
+    def getUserHistory(self, user_id):
+        
+        if self.conn.close:
+            self.__init__()
+
+        sql = """
+            SELECT data -> 'history'
+            FROM user_library
+            WHERE user_id = '%s'
+        """ %user_id
+
+        try: 
+            with self.conn.cursor() as cursor:
+                cursor.execute(sql)
+                result = cursor.fetchone()[0]
+                print( result )
+
+        except( self.conn.DatabaseError, Exception) as error:
+            print( error )
+
+        finally: 
+            return result
+
     
     # VIDEO COMMENTS COMMENTS 
     def getCommentsByVideoId(self, video_id):
@@ -799,9 +1127,8 @@ class Database:
         
         finally: 
             self.conn.close()
-        
             return result
-    
+        
     def getUserSettings(self, user_id):
 
         if self.conn.closed: 
@@ -859,18 +1186,7 @@ class Database:
             updated_rows = cursor.rowcount
             return updated_rows
     
-    # UPDATE SESSIONS
-    def updateUserSession(self, session):
-
-        if self.conn.closed:
-            self.__init__()
-
-        sql = '''
-            insert sessions,
-            SET id = '%s', sessionId = '%s'
-        '''   
-    
-    # DELETE -------------------------------------------
+    # UPDATE SESSIONS / logout user
     def deleteUserSession(self, sessionId):
         
         if self.conn.closed:
@@ -878,27 +1194,29 @@ class Database:
         
         print('removiing user session ' )
         
-        sql = '''
-            DELETE FROM user_sessions
-            WHERE sessions_key = '%s'
-        ''' %sessionId
+        print( sessionId)
         
-        # print( sessionId)
+        sql = '''
+            UPDATE security
+            SET session_key = ''
+            WHERE session_key = '%s'
+        ''' %sessionId
 
         try: 
             with self.conn.cursor() as cursor: 
                 cursor.execute( sql )
                 result = cursor.statusmessage
-                self.conn.commit()
 
-                # print( result )
+                print( result )
 
         except( self.conn.DatabaseError, Exception) as error:
             print( error  )
 
         finally:
+            self.conn.commit()
             self.conn.close() 
             return result
+        
     # def deleteITemFromLibrary()
 
 # For user migration purposes 

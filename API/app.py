@@ -79,21 +79,48 @@ def getUser():
     
     return jsonify({})
 
-@app.route('/user-profile', methods=['GET'])
-def getUserProfile():  
-    userId = request.args['id']
-    user = databse.getUserProfile(userId)
+@app.route('/library', methods=['POST'])
+def handleSavedContent(): 
+    
+    user_id = databse.getUserBySession(request.cookies['xrftoken'])
+    print( user_id)
 
-    # GET USER WATCHLIST 
-    # GET USER LISTENING HISTORY 
-    # GET USER
-    profileData = { 
-        'head': user,
-        'library': databse.getAllLibraryItems(userId)    
+    # savedItem = databse.getSavedITemFromLibrary(request.json, user_id)
+    
+    # if( savedItem ):
+    #     print( 'item already saved')
+    #     databse.removeItemFromLibrary(request.json, user_id)
+    #     return jsonify(databse.getAllLibraryItems(user_id))
+    
+    databse.saveItemToLibary(request.json, user_id)
+    
+    return jsonify(databse.getAllLibraryItems(user_id))
+
+@app.route('/library', methods=['GET'])
+def getUserProfile():  
+
+    user_id = databse.getUserBySession(request.cookies['xrftoken'])
+
+    # GET ALL LIBRARY ITEMS 
+    # GET MY PLAYLIISTS
+    # GET PLAY HISTORY
+
+    def getAllLibraryContent():
+        return databse.getAllLibraryItems(user_id)
+    def getUserPlaylistItems():
+        return databse.getUserPlaylists(user_id)
+    def getUserHistory():
+        return databse.getUserHistory(user_id)
+
+    filter = {
+        "saved": getAllLibraryContent,
+        "playlists": getUserPlaylistItems,
+        "history": getUserHistory
     }
-        
-    response = jsonify(profileData) 
-    return response 
+
+    # print( request.args['filter'] )
+    # print( filter[request.args['filter']]() )
+    return jsonify(filter[request.args['filter']]())
 
 @app.route('/creator-profile', methods=['GET'])
 def getArtistProfile():
@@ -147,35 +174,34 @@ def getArtistProfile():
 
     return jsonify(data)
 
-@app.route('/settings', methods=['POST'])
-def updateAccountSettings(): 
+@app.route('/settings/account', methods=['GET'])
+def getAccountSettings(): 
+    print( 'Getting Account Settings')
 
-    user_id = databse.getUserBySession(request.cookies['xrftoken'])['id']    
+    sessionId = request.cookies['xrftoken']
+    id = databse.getUserBySession(sessionId)
 
-    uploader = BucketManager()
+    accountSettings = databse.getAccountSettings(id)
 
-    print( request.files)
-    for filename in request.files:    
+    return jsonify(accountSettings)
 
-        file = request.files[filename] 
-        file.save(os.path.join(app.config['UPLOAD_FOLDER'], file.filename))
-
-        uploader.upload_file(file.filename, user_id )
-
-    data = {
-        'username': request.form['username'],
-        'headerImage': 'https://' + user_id + '.nyc3.digitaloceanspaces.com/' + request.files['headerImage'].filename ,
-        'userImage': 'https://'+ user_id + '.nyc3.digitaloceanspaces.com/' + request.files['userImage'].filename
-    }
-
-    databse.updateAccountSettings(data, user_id)
-
-    return jsonify({}), 200
-
-@app.route('/settings', methods=['GET'])
+@app.route('/settings/payment', methods=['GET'])
 def getPaymentBalance():
+    sessionId = request.cookies['xrftoken']
+    id = databse.getUserBySession(sessionId )
 
+    paymentSettings = databse.getPaymentSettings(id)
+    print( paymentSettings)
+    
     print( "you have no credit yet. try paying for something brokie" )
+    return jsonify(paymentSettings)
+
+@app.route('/settings/notifications', methods=['GET'])
+def getNotificationSettings(): 
+    return jsonify(200)
+
+@app.route('/settings/privacy', methods=['GET'])
+def getPrivacySettings():
     return jsonify({}, 200)
 
 # Content
@@ -692,12 +718,7 @@ def handleSearchQuery():
                     continue
 
                 for item in collectionQueries[colletion]():
-                    print( item )
-
                     results.append(item)
-                    
-                print( results  )
-
             
             return results 
 
@@ -751,7 +772,7 @@ def handleSearchQuery():
 @app.route('/history', methods={'GET'})
 def getUserHistory():
 
-    userId = databse.getUserBySession(request.cookies['xrftoken'])['id']
+    userId = databse.getUserBySession(request.cookies['xrftoken'])
 
     def getAudioHistory():
 
@@ -784,7 +805,6 @@ def getUserHistory():
 
         watchHistory = databse.getUserWatchHistory(userId, None)
 
-        print( watchHistory)
         for item in watchHistory: 
             id =  item[0]
             print( id )
@@ -817,22 +837,6 @@ def getUserHistory():
     }
 
     return filter[request.args['filter']]()
-
-@app.route('/save', methods=['GET', 'POST'])
-def handleSavedContent(): 
-    
-    user_id = databse.getUserBySession(request.cookies['xrftoken'])['id']
-
-    if( request.method == 'POST'):
-        databse.saveItemToLibary(request.json, user_id)
-        return jsonify(200)
-    
-    print(request.args['filter'])
-    
-    return jsonify(200)
-
-
-
 
 @app.route('/migrate/audio', methods=['GET'])
 def migrateTrack():
