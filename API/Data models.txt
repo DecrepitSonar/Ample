@@ -1,0 +1,40 @@
+Data models
+
+# Users 
+id UUID PRIMAR DEFAULT uuid_generate()
+data JSONB DEFAULT '{
+    profile: {
+        username: String, 
+        email: String, 
+        profileImage: String, 
+        headerImage: String, 
+        isVerified: Boolean, 
+        accountType: String,
+        joinDate: Date
+        bio: String, 
+        interests: []
+    },
+    library: {
+        history: [],
+        saved: [],
+        playlists: []
+    },
+    payments: {
+        credit: NUMBER, 
+        history: []
+    },
+    security: {
+        password: String,
+        loginHistory: []
+    },
+    notifications: []
+}'
+
+# User Sessions
+id UUID PRIMARY DEFAULT gen_random_uuid()
+session_key VARCHAR(255) NOT NULL
+user_id VARCHAR(255) NOT NULL
+
+
+
+

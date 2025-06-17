@@ -19,6 +19,7 @@ class ApplicationConfig:
     SQLALCHEMY_TRACK_MODIFICATIONS=False
     SQLALCHEMY_ECHO=True
     SQLALCHEMY_DATABASE_URI= r"postgresql://postgres:12358132121@127.0.0.1:5432/avi_dev"
+    SQLALCHEMY_ADMIN_DATABASE_URI= r"postgresql://postgres:12358132121@127.0.0.1:5432/avi_admin"
     
     SESSION_TYPE='redis'
     SESSION_PERMANENT= False

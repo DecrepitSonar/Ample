@@ -40,7 +40,7 @@ def register_user():
             })
         
         bucketmanager.create_bucket(result)
-        
+
         return jsonify(result)
 
 @auth.route('/register/details', methods=['POST'])
@@ -55,13 +55,7 @@ def updateAccountSettings():
         'username': request.form['username'],
         'profileImage': 'https://'+ id + '.nyc3.digitaloceanspaces.com/' + request.files['profileImage'].filename
     }
-
-    for filename in request.files:    
-
-        file = request.files[filename] 
-        file.save(os.path.join(current_app.config['UPLOAD_FOLDER'], file.filename))
-
-        uploader.upload_file(file.filename, id )
+    uploader.upload_files(request.files, id)
     
     databse.updateUserDetails(data)
 
@@ -75,13 +69,6 @@ def addUserInterests():
     #  return user account details
 
     return jsonify({}, 200)
-
-@auth.route('/settings/update', methods=['POST'])
-def updateUserSettings(): 
-    print( request.form)
-    return jsonify({}, 200)
-
-@auth.route('/validate/username', methods=['POST'])
 
 @auth.route('/validate', methods=['GET'])
 def confirmUserSession():
@@ -160,7 +147,7 @@ def login_user():
         print( user['id'])
         try: 
             
-            databse.validatePassword(user['id'], request.json)
+            databse.validatePassword(user['id'], request.json['password'])
 
             # Create and save sessionId
             print( "creating user sessions ")
@@ -210,23 +197,6 @@ def login_user():
     
     return result 
 
-@auth.route('/dashboard', methods=['GET'])
-def getDashboard():
-    
-    try: 
-        token = request.cookies['xrftoken']
-        response = make_response()
-        response.headers.set('Authorization', token)
-        print( response.headers.get_all)
-        response.location = 'http://localhost:3000'
-        return response
-    
-    except KeyError as error: 
-        if error: 
-            response = make_response()
-            response.location = "http://localhost:5173/listen"
-            return response 
-
 @auth.route('/logout', methods=['DELETE'])
 def logout():
 
@@ -242,3 +212,7 @@ def logout():
     request.cookies.clear()
 
     return jsonify({"status": "success"}), 200
+
+# TODO
+# UPGRADE USER ROLE TO 
+# - CREATOR

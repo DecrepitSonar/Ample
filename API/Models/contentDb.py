@@ -1,7 +1,6 @@
 import pymongo
 import boto3
 import os 
-
 from config import ApplicationConfig
 
 client = pymongo.MongoClient('mongodb+srv://rob:12358132121@cluster0.xadsk.mongodb.net/ampleDev?retryWrites=true&w=majority')
@@ -34,7 +33,7 @@ class BucketManager:
                             'LocationConstraint': 'us-east-2',
                             'Location': {
                                 'Type': 'AvailabilityZone',
-                                'Name': 'Some_bucket'
+                                'Name': 'user_bucket'
                             },
                             'Bucket': {
                                 'DataRedundancy': 'SingleAvailabilityZone',
@@ -78,10 +77,18 @@ class BucketManager:
 
         return
 
+    def upload_files(self, files, id): 
+
+        for filename in files:    
+            file = files[filename] 
+            file.save(os.path.join(ApplicationConfig.UPLOAD_FOLDER, file.filename))
+
+            self.upload_file(file.filename, id )
 
     # delete bucket
     def delete_bucket(self, user): 
         return
+    
 class DBManager: 
 
     def __init__(self):

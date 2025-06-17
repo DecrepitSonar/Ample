@@ -12,8 +12,7 @@ from flask_session import Session
 from flask_cors import CORS
 
 from Auth.auth import auth
-from Live.live import live
-from Dashboard.dashboard import dashboard
+from Profile.userProfile import profile
 from Admin.admin import admin
 
 app = Flask(__name__)
@@ -21,63 +20,14 @@ app.config.from_object(ApplicationConfig)
 CORS(app, supports_credentials=True)
 
 app.register_blueprint(auth)
-app.register_blueprint(live)
-app.register_blueprint(dashboard)
+# app.register_blueprint(live)
+app.register_blueprint(profile)
 app.register_blueprint(admin)
 
 with app.app_context():
     databse = db()
     uuid = uuid.uuid4()
     server_session = Session(app)
-
-@app.route('/whoami', methods=['GET'])
-def getCurrentUser():
-
-    if not len(request.cookies): 
-        return jsonify({'error':'unauthorized'}), 401
-    
-    token = request.cookies['xrftoken']
-
-    print( 'token', token  )
-
-    if token == None: 
-        return jsonify({ "error": "unauthorized user "}, 401)
-
-    user = databse.getUserByToken(token)
-
-    if not user: 
-        return jsonify({ "error": "unauthorized user "}, 401)
-
-    return jsonify({
-        "id": user.id,
-        "username": user.username,
-        "email": user.email,
-        "imageURL": user.imageURL,
-        "headerPosterURL": user.headerPosterURL,
-        "type": user.type
-    }), 200
-
-@app.route('/user', methods=['GET'])
-def getUser():
-    userId = request.args['id']
-    # print( userId )
-
-
-    user = databse.getUserById(userId)
-    (id, username, email, password, imageURL, headerPosterURL, type) = user
-
-    if user != None:
-
-        return jsonify({
-            "id": id,
-            "username": username,
-            "email": email,
-            "imageURL": imageURL,
-            "headerPosterURL": headerPosterURL,
-            "type": type
-        }), 200
-    
-    return jsonify({})
 
 @app.route('/library', methods=['POST'])
 def handleSavedContent(): 
@@ -139,7 +89,7 @@ def getArtistProfile():
     creator = contentDb['artists'].find_one({'id': id }, {'__v': 0, '_id': 0})
     data['creator'] = creator
 
-    trending = contentDb['tracks'].find({'artistId': id},{'_id': 0}).limit(12).sort('playCount')
+    trending = contentDb['tracks'].find({'artistId': id},{'_id': 0}).limit(6).sort('playCount')
     for item in list(trending):
         data['trending'].append({
             'id': item['id'],
@@ -158,51 +108,26 @@ def getArtistProfile():
             'author': item['name'],
             'title': item['title'],
             'imageURL': item['imageURL'],
+            'type': item['type']
         })
+
+    print( data['albums'])
 
     singles = contentDb['albums'].find({'type': 'Single', 'artistId': id},{'_id': 0}).sort('releaseDate').limit(7)
 
-    for item in list(albums):
-        data['albums'].append({
+    for item in list(singles):
+        data['singles'].append({
             'id': item['id'],
             'author': item['name'],
             'title': item['title'],
             'imageURL': item['imageURL'],
+            'type': item['type']
         })
 
-    print( data ) 
-
+    print( data['singles'] )
+    
     return jsonify(data)
 
-@app.route('/settings/account', methods=['GET'])
-def getAccountSettings(): 
-    print( 'Getting Account Settings')
-
-    sessionId = request.cookies['xrftoken']
-    id = databse.getUserBySession(sessionId)
-
-    accountSettings = databse.getAccountSettings(id)
-
-    return jsonify(accountSettings)
-
-@app.route('/settings/payment', methods=['GET'])
-def getPaymentBalance():
-    sessionId = request.cookies['xrftoken']
-    id = databse.getUserBySession(sessionId )
-
-    paymentSettings = databse.getPaymentSettings(id)
-    print( paymentSettings)
-    
-    print( "you have no credit yet. try paying for something brokie" )
-    return jsonify(paymentSettings)
-
-@app.route('/settings/notifications', methods=['GET'])
-def getNotificationSettings(): 
-    return jsonify(200)
-
-@app.route('/settings/privacy', methods=['GET'])
-def getPrivacySettings():
-    return jsonify({}, 200)
 
 # Content
 @app.route('/', methods=['GET'])
@@ -837,6 +762,7 @@ def getUserHistory():
     }
 
     return filter[request.args['filter']]()
+
 
 @app.route('/migrate/audio', methods=['GET'])
 def migrateTrack():
