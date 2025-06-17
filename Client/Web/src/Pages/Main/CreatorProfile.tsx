@@ -97,7 +97,8 @@ export default function CreatorProfile(){
 
         if( params.id) {
             httpclient.get(`http://127.0.0.1:5000/creator-profile?id=${params.id}`)
-            .then( response => { setProfileData(response.data) })
+            .then( response => { 
+                setProfileData(response.data) })
         }
     },[])
 
@@ -117,13 +118,12 @@ export default function CreatorProfile(){
                                     <div className='creator_profile_header_info'>   
                                         <span>{profileData && profileData.creator.type} <i><BiCheckCircle/></i></span> 
                                         <span className='profile_section_title'>{profileData &&  profileData.creator.name}</span>
-                                        <span>Subscribers: {profileData && formatNumber(profileData.creator.subscribers.toString())}</span>
                                         <FollowButton {...profileData?.creator}/>
                                     </div>
 
                         <div className='profile_about_sub_section'>
-                            <span>About</span>
-                            <p>Lorem, ipsum dolor sit amet consectetur adipisicing elit. Illo magni reiciendis quasi possimus aspernatur. Reiciendis reprehenderit repudiandae alias eos ad optio! Consequuntur quo quod vel distinctio eius qui? Iusto, omnis.</p>
+                            {/* <span>About</span> */}
+                            {/* <p>Lorem, ipsum dolor sit amet consectetur adipisicing elit. Illo magni reiciendis quasi possimus aspernatur. Reiciendis reprehenderit repudiandae alias eos ad optio! Consequuntur quo quod vel distinctio eius qui? Iusto, omnis.</p> */}
                         </div>  
                     </div>
                 </section>
@@ -148,16 +148,19 @@ export default function CreatorProfile(){
             {
                 profileData && 
                 <>
-                    <section>
+                    {   profileData.trending.length > 0 && 
+                        <section>
                         <h1>Trending Songs</h1>
                         <div className="dual_list_collection">
 
-                            {profileData.trending.length > 0 && profileData.trending?.map( track => {
+                            {profileData.trending.length > 0 && 
+                            profileData.trending?.map( track => {
                                 return <TrackStrip key={track.id} {...track}/>
                             })}
 
                         </div>
                     </section>
+                    }
 
                     {
                         profileData.albums.length > 0 &&
@@ -166,10 +169,11 @@ export default function CreatorProfile(){
                             <div className='h_list'>
                                 {
                                     profileData.albums.map( item => {
-                                        return <AudioItem key={item.id} {... item} />
+
+                                        console.log( item )
+                                        return <AudioItem key={item.id} {...item} />
                                     })
                                 }
-                                    
                             </div>
                         </section>
                     }
@@ -180,7 +184,7 @@ export default function CreatorProfile(){
                             <div className='h_list'>
                                 {
                                     profileData.singles.map( item => {
-                                        return <AudioItem key={item.id} {... item} />
+                                        return <AudioItem key={item.id} {...item} />
                                     })
                                 }  
                             </div>

@@ -122,7 +122,7 @@ function SignUpForm() {
     return ( 
       <div className="auth">
         <form action="" method="post" onSubmit={(e: React.SyntheticEvent) => handleSubmit(e)}>
-          <h1>Alto</h1>
+          <h1>Distrolog</h1>
           <span className="auth_form_title">Sign up</span>
           <span className="auth_error_label">{errorState?.message}</span>
           <label className="auth_form_username_label">Email</label>

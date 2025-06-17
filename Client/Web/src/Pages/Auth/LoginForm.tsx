@@ -74,6 +74,12 @@ function LoginForm() {
 
   }
 
+    // Refactor: 
+    // Get function should recieve and object from input form 
+    // Check if each value is empty
+    // resolve all keys not empty
+    // Move to utils for reuse
+    
   const validateInput = (target: LoginFormType) : Promise<String> => {
     return new Promise( (resolve, reject) => {
       const  {email, password} = target
@@ -84,6 +90,7 @@ function LoginForm() {
       else{
         reject({
           message: 'Please fill in al Fields',
+          // Create new case for input error seperate from Auth errors
           Code: AuthValues.VoidInputError
         })    
       }
@@ -97,7 +104,7 @@ function LoginForm() {
     return (
       <div className="auth">
         <form action="/" method="post" onSubmit={(e: React.SyntheticEvent) => handleInput(e)}> 
-          <h1>Station 12</h1>
+          <h1>Distrolog</h1>
           <span className="auth_form_title">Sign in </span>
           <span className="auth_error_label">{errorState?.message} </span>
           <label className="auth_form_username_label">Username</label>

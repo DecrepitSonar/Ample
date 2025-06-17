@@ -41,7 +41,7 @@ function Nav(){
     return(
       <nav>
         <div className="nav_main">
-        <div className="logo">AVi</div>
+        <div className="logo">Distrolog</div>
 
         <div className="nav_links">
           <Link to={'/'} style={currentLocation[1] == 'listen' ? activeLink : inActiveLink}

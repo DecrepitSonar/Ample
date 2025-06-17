@@ -4,7 +4,7 @@ function PasswordReset(){
     return(
       <div className="auth">
         <form>
-        <h1>Station 12</h1>
+        <h1>Distrolog</h1>
           <span className="auth_form_title">Reset Password</span>
           <span className="auth_error_label">* Username or email does not exist</span>
           <label className="auth_form_username_label">Email</label>

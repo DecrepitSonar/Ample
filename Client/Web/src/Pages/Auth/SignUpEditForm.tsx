@@ -82,7 +82,7 @@ function SignUpEditForm() {
     return ( 
         <div className="auth">
             <form action="" method="post" onSubmit={(e: React.SyntheticEvent) => handleSubmit(e)}>
-                <h1>AVi</h1>
+                <h1>Distrolog</h1>
                 <h2 className="auth_form_username_label">Edit Details</h2>
                 <div className="image_Upload_section">
                     <img className="imageInputPreview" src="https://prophile.nyc3.cdn.digitaloceanspaces.com/images/default-profile-account-unknown-icon-black-silhouette-free-vector.jpg" width={'170px'} ref={imgRef}/>

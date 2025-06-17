@@ -22,6 +22,7 @@ function UserProfileSavedVideos(props: {id: String}){
       <h2>Saved Videos</h2>
     </div>
   )}
+  
 function UserProfileSavedAudio(props: {setNavState: Function}){ 
   
   const savedTracks = useSelector( ( state: RootState) => state.audioPlayer.savedTracks) 
@@ -154,7 +155,7 @@ function UserProfile(props: {navState: String, setNavState: Function}) {
                 'All': library.library.length > 0 ? library.library.map( item => item.type == 'Artist' ? <UserAvi username={item.name} {...item}/> : <AudioItem {...item}/> )
                 : <span className='empty_description'>You have nothing saved in your library</span>,
                 'Tracks': library.Tracks.length > 0 ? library.Tracks.map( item => <AudioItem {...item}/> ) 
-                : <span className='empty_description'>You have Saved Tracks</span>,
+                : <span className='empty_description'>You have no Saved Tracks</span>,
                 'Albums': library.Albums.length > 0 ? library.Albums.map( item => <AudioItem {...item}/> )
                 : <span className='empty_description'>You have Saved Albums</span>,
                 'Videos': library.Videos.length > 0 ?library.Videos.map( item =>  <VideoItem {...item}/> )
@@ -165,7 +166,6 @@ function UserProfile(props: {navState: String, setNavState: Function}) {
               }[props.navState]
             }
           </div>
-          <div style={ {'display': 'block'}} className="scroll_to_top_button"><i><BsArrowUp/></i></div>
         </div>
       </>
   )}

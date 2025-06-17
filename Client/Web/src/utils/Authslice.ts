@@ -145,7 +145,7 @@ export const authSlice = createSlice({
         builder.addCase( handleLogout.fulfilled, ( state: stateAuthType, action: any) => { 
             console.log( 'user logged out')
          
-            window.localStorage.removeItem('user')
+            window.localStorage.clear()
 
         })
         builder.addCase( handleUserDetails.fulfilled, ( state: stateAuthType, action: any) => { console.log( action.payload)})

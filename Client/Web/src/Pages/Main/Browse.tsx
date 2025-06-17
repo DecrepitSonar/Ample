@@ -173,11 +173,11 @@ export default function Browse() {
             case 'playlist': 
                 return <AlbumSearchResultSection {...props}/>
 
-            case 'music':
-                return <VideoSearchResultSection {...props}/>
+            // case 'music':
+            //     return <VideoSearchResultSection {...props}/>
 
-            case 'podcast':
-                return <VideoSearchResultSection {...props}/>
+            // case 'podcast':
+            //     return <VideoSearchResultSection {...props}/>
             break
             default: 
                 return 'All'
@@ -207,8 +207,8 @@ export default function Browse() {
                         onClick={(e) => handleFilter(e)}>All</li>
                         <li style={ filter == 'User' ? {borderBottom: '1px solid rgb(198, 161, 104)'} : {}}
                         onClick={(e) => handleFilter(e)}>User</li>
-                        <li style={ filter == 'Video' ? {borderBottom: '1px solid rgb(198, 161, 104)'} : {}}
-                        onClick={(e) => handleFilter(e)}>Video</li>
+                        {/* <li style={ filter == 'Video' ? {borderBottom: '1px solid rgb(198, 161, 104)'} : {}}
+                        onClick={(e) => handleFilter(e)}>Video</li> */}
                         <li style={ filter == 'Album' ? {borderBottom: '1px solid rgb(198, 161, 104)'} : {}}
                         onClick={(e) => handleFilter(e)}>Album</li>
                         <li style={ filter == 'Track' ? {borderBottom: '1px solid rgb(198, 161, 104)'} : {}}
@@ -249,7 +249,7 @@ export default function Browse() {
                                         return {
                                             'Artist' : <UserAvi username={ item.name } {...item} />,
                                             'Album' : <AudioItem {...item } />,
-                                            'Video' : <VideoItem {...item } />,
+                                            // 'Video' : <VideoItem {...item } />,
                                         }[item.type]}
                                     )
                                     : <><span>No Recent Searches</span></>
@@ -286,7 +286,7 @@ export default function Browse() {
                                 return {
                                     'Artist' : <UserAvi {...item as UserAviPropType} />,
                                     'Album' : <AudioItem {...item as AudioItemPropType} />,
-                                    'Video' : <VideoItem {...item as VideoItemPropType} />,
+                                    // 'Video' : <VideoItem {...item as VideoItemPropType} />,
                                 }[item.type]}
                             )
                             : <><span>No Recent Searches</span></>
@@ -303,9 +303,9 @@ export default function Browse() {
                     <div className='catagory_browser_item' style={{backgroundImage: `url(mic.webp)`}}>
                         <div className='catagory_browser_item_overlay'>Podcast</div>
                     </div>
-                    <div className='catagory_browser_item' style={{backgroundImage: `url(hq720.jpg)`}}>
+                    {/* <div className='catagory_browser_item' style={{backgroundImage: `url(hq720.jpg)`}}>
                         <div className='catagory_browser_item_overlay'>Video</div>
-                    </div>
+                    </div> */}
                     <div className='catagory_browser_item' style={{backgroundImage: `url(live.webp)`}}>
                         <div className='catagory_browser_item_overlay'>Live</div>
                     </div>

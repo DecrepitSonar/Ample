@@ -2,7 +2,11 @@ import React, { useEffect, useRef, useState } from "react";
 import { RiImageCircleFill } from "react-icons/ri";
 import { useSelector } from "react-redux";
 import { validate } from "../../../../utils/Authslice";
-import { getUserAccount, setAccountSettings, updatePreferences } from "../../../../utils/settingsSlice";
+import { 
+  getUserAccount, 
+  setAccountSettings, 
+  updateAccountPreferences 
+} from "../../../../utils/settingsSlice";
 import { RootState, useAppDispatch } from "../../../../utils/store";
 
 export default function AccountSettings(){
@@ -15,6 +19,7 @@ export default function AccountSettings(){
     const [ profileImageFile, setFile ] = useState<Blob>()
     const [ headerFile, setHeaderFile ] = useState<Blob>()
     const [ username, setUsername ] = useState('')
+    const [ email, setEmail ] = useState('')
   
     const dispatch = useAppDispatch()
   
@@ -80,7 +85,7 @@ export default function AccountSettings(){
       e.preventDefault()
       console.log( 'run')
       
-      // const formData = {
+      // const data = {
       //   profileImage: profileImageFile, 
       //   headerImage: headerFile, 
       //   username: username
@@ -91,13 +96,17 @@ export default function AccountSettings(){
       // console.log(typeof(profileImageFile) )
   
       const formData = new FormData()
-      formData.append('username', username)
-      formData.append('headerImage', headerFile)
-      formData.append('userImage', profileImageFile)
+      formData.append('username', username || accountSettings.username)
+      formData.append('headerimage', headerFile || accountSettings.headerimage)
+      formData.append('profileimage', profileImageFile || accountSettings.profileImage)
+      formData.append('email', email || accountSettings.email)
   
       try{
-            await dispatch( updatePreferences(formData) )
-            .then( response => { dispatch(validate()) })
+            await dispatch( updateAccountPreferences(formData) )
+            .then( response => { 
+              window.localStorage.clear()
+              dispatch(validate()) 
+            })
       }   
       catch( error ){ console.log( error ) }
       
@@ -124,7 +133,7 @@ export default function AccountSettings(){
               </label>
   
               <img className='imageInputPreview' 
-              // ref={imgRef}
+              ref={imgRef}
               src={accountSettings.profileImage}/>
   
             </div>
@@ -134,9 +143,12 @@ export default function AccountSettings(){
             <div className='section_input_content'>
   
               <label className='custom_upload_buttom'>
-                <input className=""type="file" name='profile-header-image' onChange={(e: React.SyntheticEvent) => handleSeletedImage(e)}/>
-                <RiImageCircleFill/>
-              </label>
+                <input 
+                className=""
+                type="file" 
+                name='profile-header-image' 
+                onChange={(e: React.SyntheticEvent) => handleSeletedImage(e)}
+                /> <RiImageCircleFill/></label>
   
               <img className='settings_banner_preview' 
               ref={headerImgRef}
@@ -164,7 +176,7 @@ export default function AccountSettings(){
                 className="auth_form_password_input"
                 type="text"
                 name="username"
-                onChange={(e) => setUsername(e.currentTarget.value)}
+                onChange={(e) => setEmail(e.currentTarget.value)}
                 placeholder={accountSettings.email}/>
               </div>
               </div>
