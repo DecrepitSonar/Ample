@@ -123,7 +123,8 @@ form a {
   color: #C6A168
 }
 .page_body{
-  margin:   0 50px;
+  max-width: 85%;
+  margin: auto;
   overflow: scroll;
 }
 .floating_search_bar{
@@ -230,8 +231,8 @@ form a {
   /* height: 50px; */
   /* width: 500px;  */
   /* border: 1px solid orange; */
-  grid-column-start: 6;
-  grid-column-end: 8;
+  grid-column-start: 4;
+  grid-column-end: 7;
   grid-row-start: 1;
   grid-row-end: 1;
   display: flex;
@@ -653,10 +654,12 @@ section{
   border-radius: 50%;
   object-fit: cover;
 }
-.medium_user_list_item_info{
-}
+.medium_user_list_item_info{}
 .h_list{
   display: flex;
   justify-content: start;
   gap: 25px;
+  overflow: scroll;
 }
+
+@media screen and (max-width: 740px){}

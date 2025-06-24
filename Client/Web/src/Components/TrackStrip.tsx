@@ -14,7 +14,7 @@ export default function TrackStrip(props: AudioListItemPropType){
                 <span>{props.title}</span>
                 <span>{props.name}</span>
             </div>
-            <button className='ellipsis_button'><HiEllipsisHorizontal/></button>
+            {/* <button className='ellipsis_button'><HiEllipsisHorizontal/></button> */}
         </div>
     )
 }

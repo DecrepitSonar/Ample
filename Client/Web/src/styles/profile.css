@@ -121,7 +121,7 @@
 /* body */
 .profile_body{
     display: flex;
-    padding: 20px;
+    /* padding: 20px; */
   }
   .page_body_content{
     margin: 0px 70px 70px;
@@ -131,21 +131,24 @@
     flex-wrap: wrap;
   }
   .empty_description{
-    color: #787878
+    display: block;
+    color: #787878;
+    margin: auto;
+    /* border: 1px solid red */
   }
   .page_body_content::after{
     content: ""; 
     flex: auto;
   }
   .page_body_heading{
-    margin-left: 70px;;
+    margin: 10px;;
   }
   .profile_content_filter{
     margin: 0px;
     padding: 0px;
   }
   .profile_content_filter ul{
-    margin-left: 25px;
+    /* margin-left: 25px; */
   }
   .profile_content_filter li{
     display: inline-block;
@@ -274,7 +277,7 @@
   gap: 10px;
 }
 .label_username{
-  font-size: 3em;  
+  font-size: 3rem;  
 }
 .follower_count_container{
   display: flex;
@@ -537,4 +540,26 @@
   padding: 10px;
   /* justify-content: space-evenly; */
   /* margin: auto; */
+}
+
+@media screen and (max-width: 740px) {
+  .settings_nav{
+    display: none;
+  }
+  .settings_content_section {
+    width: 100%;
+  }
+  .section_input_content{
+    flex-direction: row;
+  }
+  .profile_header_overlay{
+    padding: 20px 20px;
+  }
+  .profile_avi{
+    height: 100px;
+    width: 100px;
+  }
+  .label_username{
+    font-size: 2rem;
+  }
 }

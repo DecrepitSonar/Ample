@@ -11,13 +11,19 @@
   -moz-osx-font-smoothing: grayscale;
   overflow: hidden;
 }
-
+ul{
+  margin: 0px;
+  padding: 0px;
+}
 a {
   text-decoration: none;
   color: inherit;
   /* display: block; */
   margin: 0px; 
   padding: 0px;
+}
+span{
+  font-size: 1rem;
 }
 a:hover {}
 
@@ -59,27 +65,12 @@ button:focus-visible {}
   }
 }
 
-@media screen and ( min-width: 1440px){
-  .content{
-    /* grid-column-start: 2; */
-    /* grid-column-end: 13; */
-    /* grid-row-start: 1; */
-    /* grid-row-end: 12; */
-    overflow: scroll;
-    position: relative;
-  }
+@media screen and ( min-width: 1440px){}
 
-  aside{
-    /* grid-column-start: 11; */
-    /* grid-column-end: 13; */
-    /* grid-row-start: 1; */
-    /* grid-row-end: 12; */
-    background-color: #1C1C25;
-    border-left: 1px solid #0B0B0D;
-    padding: 20px;
-  }
-  
-  aside{
-    display: block;
+@media screen and (max-width: 740px) {
+  .page_body{
+    margin: 0px 0px;
+    padding: 0px
+    border: 1px solid red;
   }
 }

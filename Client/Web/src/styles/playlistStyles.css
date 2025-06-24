@@ -18,7 +18,7 @@ audio{
 }
 .playlist_header_item_container{
     /* border: 1px solid red; */
-    width: 85%;
+    width: 90%;
     margin: auto;
     display: flex;
     align-items: center;
@@ -121,7 +121,7 @@ audio{
 }
 .header_playlist_detail{
     height: 100px; 
-    width: 85%;
+    width: 90%;
     /* border: 1px solid red; */
     margin: 10px auto;
     display: flex;
@@ -189,10 +189,33 @@ div::-webkit-scrollbar{
     display: none;
 }
 .playlist_body_container{
-    width: 85%;;
+    width: 90%;;
     margin: auto;
 }
 .playlist_body_container section{
     border-bottom: 1px solid rgb(221, 221, 221, .05);
     margin: 50px 0;
+}
+@media screen and (max-width: 740px){
+    .header_playlist_image{
+        height: 200px;
+        width: 200px;
+        margin: auto
+    }
+    .playlist_header_item_container{
+        padding: 20px 0
+    }
+    .header_playlist_detail{
+        flex-direction: column;
+        height: auto; 
+    }
+    .header_playlist_author_detail_container{
+        align-items: normal;
+    }
+    .playlist_item_container button:nth-child(2){
+        display: none;
+    }
+    .playlist_item_container button:nth-child(3){
+        display: none;
+    }
 }

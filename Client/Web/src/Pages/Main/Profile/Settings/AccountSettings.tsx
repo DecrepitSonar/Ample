@@ -140,7 +140,7 @@ export default function AccountSettings(){
           </section>
           <section> 
             <span>Banner Image</span>
-            <div className='section_input_content'>
+            <div className='section_input_content banner_settings_input'>
   
               <label className='custom_upload_buttom'>
                 <input 

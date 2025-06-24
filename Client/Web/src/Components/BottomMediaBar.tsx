@@ -111,13 +111,13 @@ function BottomMediaBar(props){
             </span>
             
             <div className="volume_control_container">
-              <input type="range" 
+              {/* <input type="range" 
                   value={audioPlayerElement.current?.volume} 
                   onChange={(e) => {
                     audioPlayerElement.current.volume =  parseInt(e.currentTarget.value) / 100 
                     setVolume(e.currentTarget.value / 100)
                   }}
-              />
+              /> */}
               {
                (() => {
                 const currentVolume =  audioPlayerElement.current?.volume
