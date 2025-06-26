@@ -1,7 +1,7 @@
 .listen_page_container{
     
     /* margin: 50px; */
-    /* max-width: 95%; */
+    max-width: 90%;
     margin: auto;
 }
 @media screen and (min-width: 1024) {

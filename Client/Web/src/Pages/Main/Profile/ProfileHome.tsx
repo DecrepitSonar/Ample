@@ -8,7 +8,7 @@ import VideoItem from '../../../Components/VideoItem'
 import httpclient from '../../../httpclient'
 import { RootState, useAppDispatch } from '../../../utils/store'
 import { BiChevronLeft, BiListUl } from 'react-icons/bi'
-import { setLibraryItems } from '../../../utils/librarySlice'
+import { loadLibrary, setLibraryItems } from '../../../utils/librarySlice'
 import UserAvi from '../../../Components/UserAvi'
 import { BsArrowUp } from 'react-icons/bs'
 
@@ -117,9 +117,14 @@ function UserProfile(props: {navState: String, setNavState: Function}) {
     const library = useSelector((state: RootState) => state.library)
     const user = useSelector( ( state: RootState) => state.auth.user)
 
+    const dispatch = useAppDispatch()
+
     useEffect(() => {
-      console.log( user )
-    })
+      if(library.library.length < 1){
+        dispatch( loadLibrary())
+      }
+    }, [])
+
   return(
     <>
         <header className='profile_header' style={{'backgroundImage': `url(${user.headerimage})`}}>
@@ -141,27 +146,33 @@ function UserProfile(props: {navState: String, setNavState: Function}) {
         <div className="page_body">
           <div className="profile_content_filter">
             <ul>
-              <li onClick={() => props.setNavState('All')} >All</li>
-              <li onClick={() => props.setNavState('Tracks')}>Tracks</li>
-              <li onClick={() => props.setNavState('Albums')}>Albums</li >
-              <li onClick={() => props.setNavState('Videos')}>Videos</li>
-              <li onClick={() => props.setNavState('Subscriptions')}>Subscribtions</li>
+              <li style={ props.navState == 'All' ? {'border-bottom': '2px solid rgb(198, 161, 104)'} : {}} onClick={() => props.setNavState('All')} >All</li>
+              <li style={ props.navState == 'Tracks' ? {'border-bottom': '2px solid rgb(198, 161, 104)'} : {}} onClick={() => props.setNavState('Tracks')}>Tracks</li>
+              <li style={ props.navState == 'Albums' ? {'border-bottom': '2px solid rgb(198, 161, 104)'} : {}} onClick={() => props.setNavState('Albums')}>Albums</li >
+              <li style={ props.navState == 'Subscriptions' ? {'border-bottom': '2px solid rgb(198, 161, 104)'} : {}} onClick={() => props.setNavState('Subscriptions')}>Subscribtions</li>
             </ul>
           </div>
-          <h1 className="page_body_heading">{props.navState}</h1>
+          {/* <h1 className="page_body_heading">{props.navState}</h1> */}
           <div className="page_body_content">
             {
               {
-                'All': library.library.length > 0 ? library.library.map( item => item.type == 'Artist' ? <UserAvi username={item.name} {...item}/> : <AudioItem {...item}/> )
+                'All': library.library.length > 0 ? 
+                  library.library.map( item => item.type == 'Artist' ?
+                    <UserAvi username={item.name} {...item}/> : 
+                    <AudioItem {...item}/> )
+                    
                 : <span className='empty_description'>You have nothing saved in your library</span>,
-                'Tracks': library.Tracks.length > 0 ? library.Tracks.map( item => <AudioItem {...item}/> ) 
+                'Tracks': library.library.length > 0 ?
+                  library.library.map( item => item.type == "Track" && <AudioItem {...item}/> ) 
+
                 : <span className='empty_description'>You have no Saved Tracks</span>,
-                'Albums': library.Albums.length > 0 ? library.Albums.map( item => <AudioItem {...item}/> )
+                'Albums': library.library.length > 0 ?
+                  library.library.map( item => item.type == "Album" && <AudioItem {...item}/> )
+
                 : <span className='empty_description'>You have Saved Albums</span>,
-                'Videos': library.Videos.length > 0 ?library.Videos.map( item =>  <VideoItem {...item}/> )
-                : <span className='empty_description'>You have Saved Videos</span>,
-                'Subscriptions': library.Subscriptions.length > 0 ? 
-                  library.Subscriptions.map( item =>  <UserAvi username={item.name} {...item}/> )
+
+                'Subscriptions': library.library.length > 0 ? 
+                  library.library.map( item =>  item.type == "Artist" && <UserAvi username={item.name} {...item}/> )
                 : <span className='empty_description'>You are not subscribed to anyone</span>
               }[props.navState]
             }

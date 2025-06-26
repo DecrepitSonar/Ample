@@ -74,7 +74,7 @@ function FollowButton(props: UserAviPropType){
             {
                 isSubscribed  ?
                 <button 
-                    onClick={() => handleSubscription()}
+                    onClick={() => dispatch(save(props))}
                     className='following_button'>Subscribed</button> :
                 <button
                     onClick={() => dispatch(save(props))}

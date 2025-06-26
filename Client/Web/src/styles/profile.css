@@ -35,7 +35,7 @@
     height: inherit; 
     /* width: inherit;  */
     background-image: linear-gradient(180deg, transparent, #212129);;
-    padding: 20px 80px;
+    padding: 20px 70px;
 }
 .creator_profile_header_overlay{
     height: inherit; 
@@ -47,7 +47,7 @@
   position: absolute;
   bottom: 50px;
   overflow: hidden;
-  margin: 0 130px;
+  margin: 0 80px;
 }
 .profile_header_nav{
     position: absolute;
@@ -124,7 +124,7 @@
     /* padding: 20px; */
   }
   .page_body_content{
-    margin: 0px 70px 70px;
+    margin: 20px 0px;
     display: flex;
     gap: 25px;
     justify-content: space-between;
@@ -289,15 +289,13 @@
   border-radius: 20px;
   padding: 5px ;
   margin-top: 10px;
-}
-.followButton{
-  border: 1px solid red;
   max-width: 100px;
+  width: 200px;
 }
 .follow_button{
   background-color: rgba(198, 161, 104,.8);
   color: #fff;
-  width: 200px;
+  
   border: 0;
 }
 

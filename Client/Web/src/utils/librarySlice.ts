@@ -3,14 +3,11 @@ import httpclient  from '../httpclient'
 import {  } from "./ObjectFormats";
 import { storeSettingsType, PaymentSettings, AudioListItemPropType, UserAviPropType, LibraryStatePropType, VideoItemPropType } from "./ObjectTypes";
 import AudioListItem from "../Components/AudioListItem";
+import axios from "axios";
 
 
 const initialState: LibraryStatePropType = {
     library: [],
-    Tracks: [],
-    Albums: [],
-    Videos: [],
-    Subscriptions: []
 }
 
 const subscribe = createAsyncThunk('library/subscriptions', async (props) => {
@@ -20,10 +17,20 @@ const subscribe = createAsyncThunk('library/subscriptions', async (props) => {
 const handleItemSave = createAsyncThunk('mediaPlayer/savedItem', async (item: AudioListItemPropType | UserAviPropType | VideoItemPropType ) => {
     try{
         console.log( item )
-        const response = await httpclient.post(`http://127.0.0.1:5000/library`, item)
+        const response = await httpclient.post(`http://127.0.0.1:5000/library/save`, item)
         return response.data 
     }
     catch( error ){
+        console.log( error )
+    }
+})
+
+const getLibraryItems = createAsyncThunk('library/saved', async () => {
+    try{
+        const response = await httpclient.get(`http://127.0.0.1:5000/library`)
+        return response
+    }
+    catch( error){
         console.log( error )
     }
 })
@@ -63,8 +70,8 @@ export const librarySlice = createSlice({
     },
     extraReducers: ( builder: any ) => {
         builder.addCase(handleItemSave.fulfilled, (state: any, action: any) => {
-            // console.log( action.payload )
-            state.library = action.payload
+            console.log( action.payload )
+            state.library =  action.payload
         })
         builder.addCase(subscribe.fulfilled, (state: LibraryStatePropType, action: any) => {})
     }
@@ -73,4 +80,5 @@ export const librarySlice = createSlice({
 export const library = librarySlice.reducer
 export const handleSubscription = subscribe
 export const save = handleItemSave
+export const loadLibrary = getLibraryItems 
 export const { setLibraryItems } = librarySlice.actions
