@@ -655,30 +655,49 @@ class Database:
 
     # LIBRARY
     def saveItemToLibary(self, item, user_id):
+        
+        items = self.getSavedItems(user_id)
+        
         if self.conn.closed:
             self.__init__()
 
-        insert = """
-            UPDATE user_library
-            SET data -> 'saved' = data -> 'saved' || %s
+            print( user_id)
+
+        deleteIfExists = """
+            UPDATE user_library 
+            SET saved =  %s
             WHERE user_id = %s
         """
         
-        item = json.dumps(item)
-
-        print( item )
+        insert = """
+            UPDATE user_library 
+            SET saved =  saved || %s
+            WHERE user_id = %s
+        """
         
         try: 
             with self.conn.cursor() as cursor:
-                cursor.execute(insert, (item, user_id))
-                # print( cursor.statusmessage )
+
+                if item in items: 
+                    print( ' item already saved ')
+                    items = list( filter(lambda d: d.get('id') != item['id'], items))
+                    print( items )
+                    
+                    items = json.dumps(items)
+                    cursor.execute(deleteIfExists, (items, user_id))
+                    print( cursor.statusmessage)
+                
+                else:     
+                    item = json.dumps(item)
+                    cursor.execute(insert, ( item, user_id))
+                    print( cursor.statusmessage)
 
         except( Exception, self.conn.DatabaseError) as error:
             print( error )
 
         finally: 
-            self.conn.close
             self.conn.commit()
+            self.conn.close
             return
     def getSavedITemFromLibrary( self, item, user_id): 
 
@@ -957,12 +976,12 @@ class Database:
         finally: 
             self.conn.close()
             return result
-    def getAllLibraryItems(self, user_id):
+    def getSavedItems(self, user_id):
         if self.conn.close:
             self.__init__()
         print( 'getting saved content')
         sql = """
-            SELECT data -> 'saved'
+            SELECT saved
             FROM user_library
             WHERE user_id = '%s'
         """ %user_id

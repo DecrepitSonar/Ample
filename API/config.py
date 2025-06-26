@@ -27,3 +27,10 @@ class ApplicationConfig:
     SESSION_REDIS = redis.from_url('redis://127.0.0.1:6379')
     SESSION_SECRETE_KEY = 'SECRET KEY'
 
+
+# username = doadmin
+# password = AVNS_DOtBcu48BmvW0AfdP0h
+# host = db-postgresql-nyc3-06592-do-user-10181522-0.h.db.ondigitalocean.com
+# port = 25060
+# database = defaultdb
+# sslmode = require

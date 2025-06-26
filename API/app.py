@@ -29,48 +29,22 @@ with app.app_context():
     uuid = uuid.uuid4()
     server_session = Session(app)
 
-@app.route('/library', methods=['POST'])
+@app.route('/library/save', methods=['POST'])
 def handleSavedContent(): 
     
     user_id = databse.getUserBySession(request.cookies['xrftoken'])
-    print( user_id)
-
-    # savedItem = databse.getSavedITemFromLibrary(request.json, user_id)
-    
-    # if( savedItem ):
-    #     print( 'item already saved')
-    #     databse.removeItemFromLibrary(request.json, user_id)
-    #     return jsonify(databse.getAllLibraryItems(user_id))
     
     databse.saveItemToLibary(request.json, user_id)
     
-    return jsonify(databse.getAllLibraryItems(user_id))
+    return jsonify(databse.getSavedItems(user_id))
 
 @app.route('/library', methods=['GET'])
 def getUserProfile():  
 
     user_id = databse.getUserBySession(request.cookies['xrftoken'])
 
-    # GET ALL LIBRARY ITEMS 
-    # GET MY PLAYLIISTS
-    # GET PLAY HISTORY
 
-    def getAllLibraryContent():
-        return databse.getAllLibraryItems(user_id)
-    def getUserPlaylistItems():
-        return databse.getUserPlaylists(user_id)
-    def getUserHistory():
-        return databse.getUserHistory(user_id)
-
-    filter = {
-        "saved": getAllLibraryContent,
-        "playlists": getUserPlaylistItems,
-        "history": getUserHistory
-    }
-
-    # print( request.args['filter'] )
-    # print( filter[request.args['filter']]() )
-    return jsonify(filter[request.args['filter']]())
+    return jsonify(databse.getSavedItems(user_id))
 
 @app.route('/creator-profile', methods=['GET'])
 def getArtistProfile():
