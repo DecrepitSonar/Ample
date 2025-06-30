@@ -1,13 +1,13 @@
 .listen_page_container{
     
     /* margin: 50px; */
-    max-width: 90%;
-    margin: auto;
+    /* max-width: 90%; */
+    /* margin: auto; */
 }
 @media screen and (min-width: 1024) {
     .list_page_container{
         height: 100px; 
-        width: 75%;
+        /* width: 75%; */
     }
 }
 .listen_page_container section{
@@ -88,7 +88,9 @@
     grid-template-columns: repeat(2, 1fr);
     /* grid-template-columns: auto; */
     gap: 5px;
-    padding: 5px
+    /* padding: 5px; */
+    width: 90%;
+    margin: auto
 }
 
 /* pagination */
@@ -159,6 +161,8 @@
     display: grid;
     grid-template-columns: repeat(4, 1fr);
     gap: 20px;
+    width: 90%;
+    margin: auto;
 }
 .genre_item{
     /* border: 1px solid red; */

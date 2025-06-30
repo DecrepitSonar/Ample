@@ -120,8 +120,8 @@ export default function SecuritySettings(){
     return(
       <form onSubmit={handleInputsubmit} className='settings_content_section'>
         
+      <h1>Security</h1>
       <section>
-        <h1>Security</h1>
           <div className='section_input_content section_inputs'
           style={ validateField('password') ? { 'border': '1px solid red'} : {}  }>
             <div className="settings_input_container">
@@ -146,6 +146,7 @@ export default function SecuritySettings(){
               type="password"
               onChange={(e:  React.ChangeEvent<HTMLInputElementd>) => handleInput( e )}
               name="newPassword"/>
+              
             </div>
           </div>
           

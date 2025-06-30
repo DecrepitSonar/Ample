@@ -1,18 +1,11 @@
 /* Nav */
 nav{
-    /* grid-column-start: 1; */
-    /* grid-column-end: 2; */
-    /* grid-row-start: 1; */
-    /* grid-row-end: 12; */
-    /* border-right: 1px solid #262629; */
-    /* width: 200px; */
     background-color: #000;;
-    /* border: 1px solid red; */
     display: flex;
+    padding: 5px 3%;
     /* height: 200px; */
     /* flex-direction: column; */
     justify-content: space-between;
-    padding: 10px 50px;
   }
   .nav_main{
     display: flex;
@@ -77,12 +70,8 @@ nav{
   .nav_avi{
     height: 30px; 
     width: 30px;
-    background-color: #aaa;;
     border-radius: 50%;
-    /* margin: 10px auto; */
-    background-position: center;
-    background-repeat: no-repeat;
-    background-size: cover;
+    border: 1px solid rgba(198, 161, 104,.8);
   }
   
   .nav_links {

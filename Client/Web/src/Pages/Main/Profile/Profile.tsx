@@ -57,12 +57,12 @@ function SettingsPageWrapper(){
         }
         <button style={activeStyle("Payments")} onClick={((e) => setNavLocation('Payments') )}>
           <span className='settings_nav_icon'><BsCreditCard2BackFill/></span>Payments</button>
-        <button style={activeStyle("Security")} onClick={((e) => setNavLocation('Security') )}>
+        {/* <button style={activeStyle("Security")} onClick={((e) => setNavLocation('Security') )}>
           <span className='settings_nav_icon'><BiShieldQuarter/></span>Security</button>
         <button style={activeStyle("Notifications")} onClick={((e) => setNavLocation('Notifications') )}>
           <span  className='settings_nav_icon'><PiBellRingingFill/></span>Notifications</button>
         <button style={activeStyle("Privacy")} onClick={((e) => setNavLocation('Privacy') )}>
-          <span className='settings_nav_icon'><CgEyeAlt/></span>Privacy</button>
+          <span className='settings_nav_icon'><CgEyeAlt/></span>Privacy</button> */}
         <button onClick={() => logoutUser()}> 
           <span style={{color: "#d6000090"}} className='settings_nav_icon'><BiLockAlt/></span>Sign out</button>
       </div>

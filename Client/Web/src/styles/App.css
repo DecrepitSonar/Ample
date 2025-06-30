@@ -123,7 +123,7 @@ form a {
   color: #C6A168
 }
 .page_body{
-  max-width: 90%;
+  /* max-width: 90%; */
   margin: auto;
   overflow: scroll;
 }
@@ -388,6 +388,10 @@ section{
   /* max-width: 90%; */
   /* margin: 50px auto 0; */
   padding-bottom: 40px;
+}
+section h1{
+  width: 90%;
+  margin: 20px auto;
 }
 .header_progress_bar_container{
   height: 1px; 
@@ -660,6 +664,7 @@ section{
   justify-content: start;
   gap: 25px;
   overflow: scroll;
+  padding: 0 5%
 }
 
 @media screen and (max-width: 740px){}

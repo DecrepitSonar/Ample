@@ -44,10 +44,7 @@ function Nav(){
         <div className="logo">Distrolog</div>
 
         <div className="nav_links">
-          <Link to={'/'} style={currentLocation[1] == 'listen' ? activeLink : inActiveLink}
-          > <FaRegPlayCircle/></Link>
-          <Link to={'/browse'}
-          style={currentLocation[1] == 'browse' ? activeLink : inActiveLink}><PiMagnifyingGlass/></Link>
+          <Link to={'/'} style={currentLocation[1] == 'listen' ? activeLink : inActiveLink}> <FaRegPlayCircle/></Link>
         </div>
 
         {/* <span className="nav_section_subtitle">Live</span>
@@ -67,10 +64,11 @@ function Nav(){
           {
             auth.isLoggedIn ? 
             < div className='nav_avi_container'>
+              <Link to={'/browse'} style={currentLocation[1] == 'browse' ? activeLink : inActiveLink}><PiMagnifyingGlass/></Link>
               <Link to={'/notifications'} style={currentLocation[1] == 'notifications' ? activeLink : inActiveLink}>  <BiBell/></Link>
               <div className='nav_profile' onClick={ (e: React.SyntheticEvent) => navigate(`/profile/${auth.user.id}`)}>
                 <span>{auth.user.username}</span>
-                <button className="nav_avi nline-block h-12 w-12 rounded-full ring-2 ring-white" style={{'backgroundImage': `url(${auth.user.profileimage}`}}></button>
+                <img className="nav_avi" src={auth.user.profileimage}/>
               </div>
             </div> :
             <>

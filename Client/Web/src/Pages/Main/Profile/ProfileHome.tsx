@@ -152,8 +152,7 @@ function UserProfile(props: {navState: String, setNavState: Function}) {
               <li style={ props.navState == 'Subscriptions' ? {'border-bottom': '2px solid rgb(198, 161, 104)'} : {}} onClick={() => props.setNavState('Subscriptions')}>Subscribtions</li>
             </ul>
           </div>
-          {/* <h1 className="page_body_heading">{props.navState}</h1> */}
-          <div className="page_body_content">
+          <div className={`page_body_content after`}>
             {
               {
                 'All': library.library.length > 0 ? 

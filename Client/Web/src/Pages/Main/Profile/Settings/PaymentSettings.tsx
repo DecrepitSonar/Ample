@@ -4,6 +4,7 @@ import AudioListItem from "../../../../Components/AudioListItem";
 import { AudioListItemPropType } from "../../../../utils/ObjectTypes";
 import { getUserPayments, setPaymentSettings } from "../../../../utils/settingsSlice";
 import { RootState, useAppDispatch } from "../../../../utils/store";
+import { PlusCircleIcon, PlusIcon } from "@heroicons/react/24/outline";
 
 export default function PaymentSettings(){
 
@@ -44,20 +45,21 @@ export default function PaymentSettings(){
         {
           Object.keys(payments).length > 0 &&
           <>
+            <h1>Wallet</h1>
             <section>
-              <h1>Balance</h1>
               <div className='settings_content_item_container' >
                 <div className='settings_content_item'>
-                  <h1>{payments.credit}</h1>
                   <span>
-                    Credits
+                    My Balance
                   </span>
+                  <h1>{payments.credit}</h1>
                 </div>
+                <button> <i><PlusIcon/></i>Add Funds</button>
               </div>
             </section>
             
             <section>
-              <h1>History</h1>
+              <h2>History</h2>
               <div className='wallet_settings_content_item_container'>
                 <table className='wallet_settings_purchase_history'>
                     <tr>

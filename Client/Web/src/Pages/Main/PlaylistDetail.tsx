@@ -163,8 +163,8 @@ export default function PlaylistDetail() {
           {
             playListITem?.features ?
             <section>
-              <span className="section_subheading">Featured</span>
-              <div className="playlist_section_item_container">
+              <h1 className="section_subheading">Featured</h1>
+              <div className="h_list">
                   {
                       playListITem.features.map( (user: UserAviPropType)  => {
                           return <UserAvi {...user}/>
@@ -179,8 +179,8 @@ export default function PlaylistDetail() {
           {
             playListITem?.albums ? 
             <section>
-              <span className="section_subheading">Albums from { playListITem.head.playlist.author}</span>
-              <div className="playlist_section_item_container">
+              <h1 className="section_subheading">Albums from { playListITem.head.playlist.author}</h1>
+              <div className="h_list">
                 { 
                   playListITem.albums.map( (item, count) => {
                       return <AudioItem key={count} {...item}/>

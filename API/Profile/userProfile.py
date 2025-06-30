@@ -28,7 +28,7 @@ def updateAccountSettings():
     sessionId = request.cookies['xrftoken']
 
     # print( sessionId )
-    # print( request.files)
+    print( request.files)
     headerimage = request.files['headerimage'].filename 
     profileimage =  request.files['profileimage'].filename
 

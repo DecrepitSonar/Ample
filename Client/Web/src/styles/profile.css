@@ -35,7 +35,7 @@
     height: inherit; 
     /* width: inherit;  */
     background-image: linear-gradient(180deg, transparent, #212129);;
-    padding: 20px 70px;
+    padding: 20px 5%;
 }
 .creator_profile_header_overlay{
     height: inherit; 
@@ -47,7 +47,7 @@
   position: absolute;
   bottom: 50px;
   overflow: hidden;
-  margin: 0 80px;
+  margin: 0 5%;
 }
 .profile_header_nav{
     position: absolute;
@@ -124,7 +124,8 @@
     /* padding: 20px; */
   }
   .page_body_content{
-    margin: 20px 0px;
+    width: 90%;
+    margin: 20px auto;
     display: flex;
     gap: 25px;
     justify-content: space-between;
@@ -136,7 +137,7 @@
     margin: auto;
     /* border: 1px solid red */
   }
-  .page_body_content::after{
+  .after::after{
     content: ""; 
     flex: auto;
   }
@@ -144,15 +145,17 @@
     margin: 10px;;
   }
   .profile_content_filter{
-    margin: 0px;
-    padding: 0px;
+    width: 90%;
+    margin: auto;
+    padding: 20px 0;
   }
   .profile_content_filter ul{
     /* margin-left: 25px; */
   }
   .profile_content_filter li{
     display: inline-block;
-    padding: 10px;
+    padding: 0px 10px 2px 0px;
+    margin: 0px 5px;
     
   }
   .profile_section_item_container{
@@ -265,6 +268,7 @@
 .user_profile_header_detail_container{
   display: flex;
   align-items: center;
+  width: 90%;
   /* border: 1px solid red; */
   /* position:  absolute; */
   /* bottom: 75px; */
@@ -361,9 +365,27 @@
 }
 
 .settings_content_section{
-  margin: 10px auto;
-  width: 75%;
+  margin: 10px 0;
   overflow: scroll;
+  /* border: 1px solid red; */
+  width: 100%;
+}
+.settings_content_section form{
+  width: 90%;
+  margin: 20px auto;
+}
+.settings_content_section h1,
+.settings_content_section section,
+.settings_content_section:not(form)
+{
+  /* border: 1px solid red; */
+  width: 90%;
+  margin: 20px auto; 
+
+}
+.settings_input_section{
+  display: flex;
+  margin:auto
 }
 .settings_content_section section{
   /* margin: 50px 0; */
@@ -372,8 +394,9 @@
   margin:  20px 0;
   /* padding:0 20px; */
   display: flex;
+  justify-content: space-between;
   gap: 50px;
-  width: inherit;
+  width: 100%;
 }
 .section_input_content input[type='file']{
   display: none;
@@ -441,9 +464,29 @@
   padding: 20px;
   background-color: #1c1c2575;
 }
+.settings_content_item_container{
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+.settings_content_item_container button{
+  background-color:  rgba(198, 161, 104,.5);;
+  border: 0;
+  padding: 10px 15px;
+  border-radius: 10px;
+  color: #fff;
+  display: flex;
+  align-items: center; 
+  gap: 5px;
+}
+.settings_content_item_container button i{
+  display: block;
+  height: 15px;
+  width: 15px;
+}
 .settings_content_item{
   /* border: 1px solid red; */
-  text-align: center;
+  /* text-align: center; */
   color: #ddd
 
 }

@@ -118,14 +118,15 @@ export default function AccountSettings(){
           Object.keys(accountSettings).length > 0 &&
           <div className='settings_content_section'>
         
-        <form action=""method='put' onSubmit={(e: React.SyntheticEvent) => handleSubmit(e)} >
-          <section>
             <h1>Account</h1>
-            <span>Avatar Image</span>
+        <form action=""method='put' onSubmit={(e: React.SyntheticEvent) => handleSubmit(e)} >
+          <div className="settings_input_section">
+            <>
             <div className='section_input_content'>
+            {/* <span>Avatar Image</span> */}
   
               <label className='custom_upload_buttom'>
-                <input className=""
+                <input
                 type="file" 
                 name='profile-image' 
                 onChange={(e: React.SyntheticEvent) => handleSeletedImage(e)}/>
@@ -136,27 +137,24 @@ export default function AccountSettings(){
               ref={imgRef}
               src={accountSettings.profileImage}/>
   
-            </div>
-          </section>
-          <section> 
-            <span>Banner Image</span>
-            <div className='section_input_content banner_settings_input'>
+            {/* <span>Banner Image</span> */}
   
               <label className='custom_upload_buttom'>
                 <input 
-                className=""
                 type="file" 
                 name='profile-header-image' 
                 onChange={(e: React.SyntheticEvent) => handleSeletedImage(e)}
                 /> <RiImageCircleFill/></label>
   
-              <img className='settings_banner_preview' 
+              <img className='imageInputPreview' 
               ref={headerImgRef}
               src={accountSettings.headerimage}/>
               
             </div>
-          </section>
-          <section>
+            </>
+            
+          </div>
+          <>
             <div className='section_input_content section_inputs'>
               <div className="settings_input_container">
                 <label className="form_password_label">Username</label>
@@ -182,13 +180,13 @@ export default function AccountSettings(){
               </div>
   
             <button className='submit_button_solid' type='submit'>Update</button>
-          </section>
+          </>
         </form>
   
           {
             user.accounttype != 'Creator' && 
             <section>
-              <h1>Creators</h1>
+              <h2>Creators</h2>
               <div className="section_input_content">
                 <span>Upgrade your account to post, stream and earn from your content</span>
               </div>
@@ -197,7 +195,7 @@ export default function AccountSettings(){
           }
   
         <section>
-          <h1>Delete account</h1>
+          <h2>Delete account</h2>
           <div className="section_input_content">
             <span>Remove your account and all your saved content.<br/>
             NOTE: YOU WILL LOSE YOUR REMAINING BALANCE</span> 
