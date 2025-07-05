@@ -33,8 +33,6 @@ def updateAccountSettings():
     profileimage =  request.files['profileimage'].filename
 
     id = databse.getUserBySession(sessionId)[0]
-    
-    print( id )
 
     data = {
         'id': id,

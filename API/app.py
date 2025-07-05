@@ -13,6 +13,7 @@ from flask_cors import CORS
 
 from Auth.auth import auth
 from Profile.userProfile import profile
+from Dashboard.dashboard import dashboard
 from Admin.admin import admin
 
 app = Flask(__name__)
@@ -20,7 +21,7 @@ app.config.from_object(ApplicationConfig)
 CORS(app, supports_credentials=True)
 
 app.register_blueprint(auth)
-# app.register_blueprint(live)
+app.register_blueprint(dashboard)
 app.register_blueprint(profile)
 app.register_blueprint(admin)
 

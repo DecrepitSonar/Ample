@@ -1073,36 +1073,35 @@ class Database:
             self.__init__()
 
         sql = ''' 
-        INSERT INTO audio ( 
-        id,
-        track_number, 
-        genre, 
-        title, 
-        author, 
-        image_url, 
-        audio_url, 
-        album_id,
-        play_count,
-        author_id,
-        type )
+        INSERT INTO audio (
+            title, 
+            genre, 
+            author_id, 
+            author,
 
-        VALUES ( DEFAULT, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
+            imageurl, 
+            contenturl,
+            category,
+            type
+        )
+
+        VALUES ( %s, %s, %s, %s, %s, %s, %s, %s)
         '''
 
         try: 
             with self.conn.cursor() as cursor: 
                 print( item )
                 cursor.execute(sql, (
-                    item['track_number'],
-                    item['genre'],
                     item['title'],
-                    item['author'],
-                    item['image_url'],
-                    item['audio_url'],
-                    item['album_id'],
-                    item['play_count'],
+                    item['genre'],
                     item['author_id'],
-                    item['type'] ))
+                    item['author'],
+
+                    item['imageurl'],
+                    item['contenturl'],
+                    item['category'],
+                    item['type'] 
+                ))
                 
                 self.conn.commit() 
                 print( cursor.statusmessage )
@@ -1110,12 +1109,36 @@ class Database:
 
         except ( self.conn.DatabaseError, Exception) as error:
             print( error )
-            # self.conn.close()
-            return
+
         finally:
             self.conn.close()
             return   
+    def getUploads(self, item):
 
+        if self.conn.closed: 
+            self.__init__()
+
+        sql = """
+            SELECT array_to_json(
+                array_agg(row_to_json(t))
+            ) AS items
+            FROM (
+                SELECT * FROM audio WHERE author_id = '%s'
+            ) t
+        """ %item
+
+        try: 
+            with self.conn.cursor() as cursor:
+                cursor.execute(sql)
+                result = cursor.fetchone()[0]
+                print( result )
+
+        except( self.conn.DatabaseError, Exception) as error: 
+            print( error )
+
+        finally: 
+            self.conn.close()
+            return result
 # For user migration purposes 
     def addUser(self, user ):
 

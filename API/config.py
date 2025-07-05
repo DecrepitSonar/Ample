@@ -9,9 +9,10 @@ load_dotenv()
 class ApplicationConfig:
 
     UPLOAD_FOLDER = '/Users/robertaubow/Dev/alto/API/static/downloads/'
-    ALLOWED_EXTENSIONS = {'jpg', 'jpeg', 'webp'}
+    ALLOWED_EXTENSIONS = {'jpg', 'jpeg', 'webp', 'mp3','flac','m4a'}
     
     IMAGE_CDN = 'https://prophile.nyc3.cdn.digitaloceanspaces.com/images/'
+    AUDIO_CDN = 'https://prophile.nyc3.cdn.digitaloceanspaces.com/audio/'
     
     aws_access_key_id=os.environ['aws_access_key_id'] = 'DO006YCR9QKM2U74N27H'
     aws_secret_access_key= os.environ['aws_secret_access_key'] = '/BPNSKIg6H69vFW4hSWlxtwFk8O+bMoQwuV8TfNjKtc'
