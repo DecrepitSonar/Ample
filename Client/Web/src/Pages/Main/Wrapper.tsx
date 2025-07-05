@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react"
 import { Outlet, useLocation, useNavigate } from "react-router-dom"
 import Nav from '../../Components/Nav.js'
+import Trackstrip from '../../Components/TrackStrip'
 import BottomMediaBar from '../../Components/BottomMediaBar.js'
 import Aside from "../../Components/Aside.js"
 import '../../styles/playlistStyles.css'
@@ -10,6 +11,11 @@ import '../../styles/sidebar.css'
 import '../../styles/sideNav.css'
 import { RootState } from "../../utils/store.js"
 import { useSelector } from "react-redux"
+import { AudioItemPropType } from "../../utils/ObjectTypes.js"
+import AudioItem from "../../Components/AudioItem.js"
+import { display } from "@mui/system"
+import AudioListItem from "../../Components/AudioListItem.js"
+import { PiPlusBold } from "react-icons/pi"
 
 
 
@@ -56,9 +62,44 @@ function SideNavBar(){
     </div>
   )
 }
+
+function PlaylistModal(props){
+
+  const modalClosedStyle = {
+    display: 'none'
+  }
+
+  return(
+    <div className="OptionsModalContainer" style={props.playlistModalOpen ? {} :  modalClosedStyle}>
+      <div className="OptionsModal">
+        <h1>Add to Playlists</h1>
+        <div className="OptionsModal_main">
+          <Trackstrip {...props.audioItem}/>
+        </div>
+        <div className="modalPlaylistList_header">
+          <h3>My Playlists</h3>
+          <button><PiPlusBold/></button>
+        </div>
+        <div className="modalPlaylistList">
+          <span>You have no playlists created</span>
+        </div>
+      <button onClick={() => props.setPlaylistModalOpen()}>close</button>
+      </div>
+    </div>
+  )
+}
+
 function Wrapper(){
   
   const [ navState, setNavState ] = useState( false )
+  const [playlistModalOpen, setPlaylistModalOpen ] =useState<boolean>(false)
+  const [ audioItem, setAudioItem ] = useState<AudioItemPropType>()
+  
+  const openPlaylistModal = (item: AudioItemPropType) => {
+    setPlaylistModalOpen(true)
+    setAudioItem(item)
+    console.log( audioItem )
+  }
 
   window.addEventListener('keypress', (e) => {
     e.key == 'p' ? setNavState(!navState) : null
@@ -68,10 +109,10 @@ function Wrapper(){
         <main className="main">
           <Nav/>
           <div className="content">
-              <Outlet/>
+              <Outlet context={{openPlaylistModal}}/>
               <Aside navState={navState}/>
           </div>
-          <BottomMediaBar navState={navState} setNavState={setNavState} />
+          <PlaylistModal audioItem={audioItem} playlistModalOpen={playlistModalOpen} setPlaylistModalOpen={setPlaylistModalOpen}/>
         </main>
     )
   } 

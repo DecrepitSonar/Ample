@@ -7,13 +7,15 @@ import { AudioItemPropType, UserAviPropType, VideoItemPropType } from '../../uti
 import VideoItem from '../../Components/VideoItem'
 import AudioItem from '../../Components/AudioItem'
 import axios from 'axios'
-import { Link, useNavigate, useParams } from 'react-router-dom'
+import { Link, OutletProps, useNavigate, useOutletContext, useParams } from 'react-router-dom'
 import { useSelector } from 'react-redux'
 import { addToQueue, next, play, addToPlayNext, togglePlayer } from '../../utils/mediaPlayerSlice'
 import { RootState, useAppDispatch } from '../../utils/store'
 import { RiPlayList2Line } from 'react-icons/ri'
 import httpclient from '../../httpclient'
 import { save } from '../../utils/librarySlice'
+import { CgAdd } from 'react-icons/cg'
+import { BsPlusCircle } from 'react-icons/bs'
 
 type TrackPropType = {
   id: string, 
@@ -21,17 +23,24 @@ type TrackPropType = {
   title: String,
   author: String
 }
-function PlaylistItem(props: AudioItemPropType){
+function PlaylistItem(props: AudioItemPropType ){
 
   const audioPlayer = useSelector( (state: RootState) => state.audioPlayer)
   const library = useSelector( (state: RootState) => state.library.library)
+  const [optionSlider, setOptionSlider ] = useState<boolean>(false)
   
   // const [isSaved, setSaved ] = useState<Boolean>(false)
-  const isSaved  = library != undefined ? library.find(_ => _.id == props.id) != undefined : false
+  const audioItem = props as AudioItemPropType
+
+  const isSaved  = library != undefined ? library.find(_ => _.id == audioItem.id) != undefined : false
   const dispatch = useAppDispatch()
   
   const activeTrackStyle = {
     backgroundColor: 'rgba(198, 161, 104,.2)',
+  }
+
+  const sliderOpen = {
+    width: '92%'
   }
 
   useEffect(() => {
@@ -39,22 +48,34 @@ function PlaylistItem(props: AudioItemPropType){
   },[library])
 
   return(
-    <div className="playlist_item_container"
-    style={audioPlayer.nowPlaying.id == props.id ? activeTrackStyle : {}}>
+    <div className="playlist_item_container" onMouseLeave={() => setOptionSlider(false)}
+    style={audioPlayer.nowPlaying.id == audioItem.id ? activeTrackStyle : {}}>
       
-      <div className="track_item_container" onClick={() => {dispatch(play(props))}}>
-      {audioPlayer.nowPlaying.id == props.id && audioPlayer.player.isPlaying ? <><span className='track_numner'>{props.trackNum + 1} </span> <button style={{'color': 'rgba(198, 161, 104,1)' }}><FaPause/></button> </>: <span className='track_numner'>{props.trackNum + 1} </span>
-       }
-        <div className="track_item_detail">
-          <span>{props.title}</span>
-          <span>{props.author}</span>
+      <div className="track_item_container" 
+      style={optionSlider ? sliderOpen : {}}
+      >
+        
+        <div className='track_item'
+        onClick={() => {dispatch(play(audioItem))}}
+        >
+          {audioPlayer.nowPlaying.id == audioItem.id && audioPlayer.player.isPlaying ? <><span className='track_numner'>{audioItem.trackNum + 1} </span> <button style={{'color': 'rgba(198, 161, 104,1)' }}><FaPause/></button> </>: <span className='track_numner'>{audioItem.trackNum + 1} </span>}
+          <div className="track_item_detail">
+            <span>{audioItem.title}</span>
+            <span>{audioItem.author}</span>
+          </div>
         </div>
+
+        <div className="track_buttons">
+          { isSaved? <button style={{"color":"rgba(198, 161, 104,.8)"}} onClick={() => dispatch(save(audioItem))}> <BiSolidHeart/> </button> : <button onClick={() => dispatch(save(audioItem))}> <BiHeart/></button> }
+          <button onClick={() => setOptionSlider(!optionSlider)} className='optionsBtn'><HiEllipsisHorizontal/></button>
+        </div>
+        
       </div>
-      <div className="track_buttons">
-        { isSaved? <button style={{"color":"rgba(198, 161, 104,.8)"}} onClick={() => dispatch(save(props))}> <BiSolidHeart/> </button> : <button onClick={() => dispatch(save(props))}> <BiHeart/></button> }
-        <button onClick={(e) =>  dispatch(addToQueue(props)) }><RiPlayList2Line/></button>
-        <button className='optionsBtn'><HiEllipsisHorizontal/></button>
-      </div>
+
+        <div className="optionsList">
+          <button onClick={(e) =>  dispatch(addToQueue(audioItem)) }><RiPlayList2Line/></button>
+          <button onClick={() => props.openPlaylistModal(audioItem)}><BsPlusCircle/></button>
+        </div>
     </div>
   )
 }
@@ -80,7 +101,15 @@ type PlaylistPageDataType = {
     
 //   )
 // }
+
+type ModalOutletProps = {
+  openPlaylistModal: ( item: AudioItemPropType ) => void 
+  playlistModalOpen:Boolean 
+  setPlaylistModalOpen: React.Dispatch<React.SetStateAction<boolean>>
+}
 export default function PlaylistDetail() {
+
+  const { openPlaylistModal } = useOutletContext<ModalOutletProps>()
 
   const [playListITem, setPlayyListItem ] = useState<PlaylistPageDataType>()
   const params = useParams()
@@ -155,7 +184,12 @@ export default function PlaylistDetail() {
                       </div>
                       {
                         playListITem?.head.tracks.map( (item, count) =>{
-                          return <PlaylistItem isSaved={isSaved(item)} key={count} trackNum={count} {...item}/>
+                          return <PlaylistItem 
+                                    openPlaylistModal={openPlaylistModal}
+                                    isSaved={isSaved(item)} 
+                                    key={count} 
+                                    trackNum={count} 
+                                    {...item}/>
                         } )
                       }
                     </div> : <></>
@@ -183,7 +217,7 @@ export default function PlaylistDetail() {
               <div className="h_list">
                 { 
                   playListITem.albums.map( (item, count) => {
-                      return <AudioItem key={count} {...item}/>
+                      return <AudioItem open key={count} {...item}/>
                   })
                 }
               </div>

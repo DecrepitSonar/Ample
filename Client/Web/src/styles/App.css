@@ -20,7 +20,7 @@ input:is(:-webkit-autofill, :autofill) {
   display: flex;
   align-items: center;
 }
-.auth form input {
+form input {
   border-radius: 10px;
   background-color: #1c1c25;
   border: 1px solid #0b0b0d;
@@ -160,21 +160,23 @@ form a {
 
 /* footer media bar */
 #footer{
-  /* height: 100px;  */
-  /* width: 100p; */
+  height: 100px; 
+  /* width: 500px; */
   /* grid-row: 66; */
   /* border: 1px solid red; */
   background-color: #000;
-  grid-column-start: 1;
+  /* grid-column-start: 1;
   grid-column-end: 13;
   grid-row-start: 12;
   grid-row-end: 13;
   padding: 10px 30px;
-  position: relative;
   bottom: 0px;
   color: #ddd;
-  display: grid;
-  grid-template-columns: repeat(12, auto);
+  grid-template-columns: repeat(12, auto); */
+  display: flex;
+  position: absolute;
+  right: 50%;
+  bottom: 0px;
 }
 .bottom_Mediabar_progressbar_container{
   background-color: rgba(198, 161, 104, .5);
@@ -182,7 +184,7 @@ form a {
   top: 0px;
   left: 0px;
   right: 0px;
-  height: 1px;
+  height: 1px; 
   transition: all .5s;
 }
 .bottom_Mediabar_progressbar_container:hover{
@@ -668,3 +670,47 @@ section h1{
 }
 
 @media screen and (max-width: 740px){}
+
+.OptionsModalContainer{
+  position: absolute;
+  left: 0px; 
+  right: 0px; 
+  bottom: 0px; 
+  top: 0px;
+  display: flex;
+  z-index: 2;
+}
+.OptionsModal{
+  width: 50%; 
+  height: 50%; 
+  padding: 40px;
+  /* border: 1px solid red; */
+  margin: auto;
+  background-color: #000;
+  border-radius: 10px;;
+  z-index: 3;
+}
+.OptionsModal button{
+  padding: 10px 20px;
+  border-radius: 10px;;
+
+}
+.modalPlaylistList_header{
+  display: flex;
+  justify-content: space-between;
+  border-bottom: 1px solid #212129;
+}
+ .modalPlaylistList_header h3{
+  padding: 5px 0;
+}
+.modalPlaylistList_header button{
+  border: 0;
+  background-color: inherit;
+  color: #fff;
+  font-size: 20px;
+}
+.modalPlaylistList {
+  /* border: 1px solid red ; */
+  margin: 20px 0; 
+  padding: 10px; 
+}

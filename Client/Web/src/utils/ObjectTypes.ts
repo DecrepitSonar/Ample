@@ -113,5 +113,7 @@ export type SectionDataType<T> = {
     items: [T]
 }
 
-
-
+export type OutletProps = {
+    setOpenUploadModal: React.Dispatch<React.SetStateAction<Boolean>>,
+    uploadModal: Boolean
+  }
