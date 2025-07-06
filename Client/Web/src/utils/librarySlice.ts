@@ -17,7 +17,7 @@ const subscribe = createAsyncThunk('library/subscriptions', async (props) => {
 const handleItemSave = createAsyncThunk('mediaPlayer/savedItem', async (item: AudioListItemPropType | UserAviPropType | VideoItemPropType ) => {
     try{
         console.log( item )
-        const response = await httpclient.post(`http://127.0.0.1:5000/library/save`, item)
+        const response = await httpclient.post(`http://127.0.0.1:5000/profile/library/save`, item)
         return response.data 
     }
     catch( error ){
@@ -27,7 +27,7 @@ const handleItemSave = createAsyncThunk('mediaPlayer/savedItem', async (item: Au
 
 const getLibraryItems = createAsyncThunk('library/saved', async () => {
     try{
-        const response = await httpclient.get(`http://127.0.0.1:5000/library`)
+        const response = await httpclient.get(`http://127.0.0.1:5000/profile/library`)
         return response
     }
     catch( error){

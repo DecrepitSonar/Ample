@@ -294,7 +294,7 @@
     /* height: 100%; */
     /* width: 100px; */    
   }
-  .uplod_modal input[type='file']::-webkit-file-upload-button{
+  input[type='file']::-webkit-file-upload-button{
     display: none;
   }
   .file_upload span{
