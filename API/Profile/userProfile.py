@@ -8,6 +8,57 @@ profile = Blueprint('profile', __name__, url_prefix='/profile')
 databse = db()
 bucketmanager = BucketManager()
 
+@profile.route('/library/save', methods=['POST'])
+def handleSavedContent(): 
+    
+    user_id = databse.getUserBySession(request.cookies['xrftoken'])
+    
+    databse.saveItemToLibary(request.json, user_id)
+    
+    return jsonify(databse.getSavedItems(user_id))
+
+@profile.route('/library', methods=['GET'])
+def getUserProfile():  
+
+    user_id = databse.getUserBySession(request.cookies['xrftoken'])
+
+
+    return jsonify(databse.getSavedItems(user_id))
+
+@profile.route('/library/playlist', methods=['GET'])
+def getUserPlaylists(): 
+    
+    user_id = databse.getUserBySession(request.cookies['xrftoken'])[0]
+    playlists = databse.getUserPlaylists(user_id)
+    print( playlists)
+
+    return jsonify(playlists)
+@profile.route('/library/playlist', methods=['POST'])
+def savePlaylist(): 
+
+    print( 'creating playlist')
+    
+    sessionId = request.cookies['xrftoken']
+    user_id = databse.getUserBySession(sessionId=sessionId)[0]
+    
+    databse.createNewPlaylist(user_id, request.json)
+
+    return jsonify({})
+
+@profile.route('/library/playlist/save', methods=['POST'])
+def saveItemToPlaylist(): 
+    user_id = databse.getUserBySession(request.cookies['xrftoken'])[0]
+    
+    playlist_id = request.json['playlistId']
+    item = request.json['item']
+    
+    # print( item )
+    
+    databse.addItemToPlaylist(playlist_id, item, user_id)
+    playlists = databse.getUserPlaylists(user_id)
+
+    return jsonify(playlists)
+
 # User Settings
 @profile.route('/settings/account', methods=['GET'])
 def getAccountSettings(): 

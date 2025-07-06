@@ -30,23 +30,6 @@ with app.app_context():
     uuid = uuid.uuid4()
     server_session = Session(app)
 
-@app.route('/library/save', methods=['POST'])
-def handleSavedContent(): 
-    
-    user_id = databse.getUserBySession(request.cookies['xrftoken'])
-    
-    databse.saveItemToLibary(request.json, user_id)
-    
-    return jsonify(databse.getSavedItems(user_id))
-
-@app.route('/library', methods=['GET'])
-def getUserProfile():  
-
-    user_id = databse.getUserBySession(request.cookies['xrftoken'])
-
-
-    return jsonify(databse.getSavedItems(user_id))
-
 @app.route('/creator-profile', methods=['GET'])
 def getArtistProfile():
     

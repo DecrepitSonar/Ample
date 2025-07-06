@@ -341,7 +341,6 @@ class Database:
         try: 
             with self.conn.cursor() as cursor:
                 cursor.execute(sql)
-                print( '1:', cursor.statusmessage )
                 result = cursor.fetchone()
     # 
         except( self.conn.DatabaseError, Exception) as error :
@@ -661,7 +660,7 @@ class Database:
         if self.conn.closed:
             self.__init__()
 
-            print( user_id)
+        print( item )
 
         deleteIfExists = """
             UPDATE user_library 
@@ -1003,15 +1002,19 @@ class Database:
             self.__init__()
 
         sql = """
-            SELECT data -> 'playlists'
-            FROM user_library
-            WHERE user_id = '%s'
+
+         SELECT array_to_json(
+                array_agg(row_to_json(t))
+            ) AS items
+            FROM (
+                SELECT * FROM user_playlist WHERE author = '%s'
+            ) t
         """ %user_id
 
         try: 
             with self.conn.cursor() as cursor:
                 cursor.execute(sql)
-                result = cursor.fetchone()[0]
+                result = cursor.fetchall()[0]
                 print( result )
 
         except( self.conn.DatabaseError, Exception) as error:
@@ -1041,8 +1044,65 @@ class Database:
 
         finally: 
             return result
-    # def deleteITemFromLibrary()
+    def createNewPlaylist(self, user_id, data): 
 
+        if self.conn.closed:
+            self.__init__()
+
+        sql = """
+            INSERT INTO user_playlist ( title, author )
+            VALUES ( %s, %s )
+        """
+
+        try: 
+            with self.conn.cursor() as cursor: 
+                print( 'Inserting into playlist library')
+                cursor.execute( sql, ( data['title'], user_id,))
+                print( cursor.statusmessage)
+                self.conn.commit()
+
+        except(self.conn.DatabaseError, Exception) as error:
+            print( error )
+        finally: 
+            self.conn.close()
+            return 
+    def addItemToPlaylist(self, id, item, user_id):
+        
+        if self.conn.closed: 
+            self.__init__()
+
+        sql = """
+            UPDATE user_playlist 
+            SET items = items || %s
+            WHERE id = %s
+        """
+
+        getPlaylist = """
+            SELECT * FROM user_playlist
+            WHERE id = %s
+        """ %id
+
+        update = """
+            UPDATE user_playlist
+            SET items = ['%s']
+            WHERE id = %s
+        """
+        try: 
+            with self.conn.cursor() as cursor:
+                    item = json.dumps(item)
+
+                    cursor.execute(sql, (item, id))
+                    print(cursor.statusmessage)
+                    self.conn.commit()
+                     
+        except(self.conn.DatabaseError, Exception) as error:
+            print( error)
+
+        finally: 
+            self.conn.close()
+            return
+
+        
     # Creator manager
     def getCreators(self):
 
