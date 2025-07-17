@@ -1,14 +1,9 @@
 .dash_container{
-    /* border: 1px solid red; */
     width: 100vw;
     height: 100vh;
     background-color: rgb(33, 33, 41);
 }
 .dash_nav{
-    /* height: 100px; */
-    /* width: 100%; */
-    /* border: 1px solid orange; */
-    /* margin: 5px; */
     display: flex;
     justify-content: space-between;
     align-items: center;
@@ -18,14 +13,9 @@
     display: flex;
     align-items: center;
 }
-
 .dash_aside{
     height: 100%;
-    /* width: 200px;/ */
-
-
     flex-direction: column;
-    /* padding: 20px; */
     gap: 20px;
     background-color: #000;
 }
@@ -50,7 +40,6 @@
 .dash_aside li i{
     height: 20px;
     width:20px;
-    /* border: 1px solid red; */
     display: flex;
     align-items: center;
 }
@@ -68,11 +57,7 @@
     overflow: scroll;
     position: relative;
 }
-.dash_main_content{
-    /* height: 100vh; */
-    /* border: 1px solid red; */
-    overflow: scroll;
-}
+.dash_main_content{ overflow: scroll }
 .dash_main header{
     display: flex;
     width: 90%;
@@ -84,15 +69,11 @@
     margin: 20px auto;
 }
 .dash_main table{
-    /* border: 1px solid red; */
-    /* display: block; */
-    /* padding: 5px; */
     border-radius: 10px;
     width: 90%;
     margin: 20px auto;;
 }
 .dash_main table span{
-    /* border: 1px solid red; */
     display: block;
     padding: 10px;
 }
@@ -106,19 +87,10 @@
     gap: 20px;
 }
 .dash_main table th,
-.dash_main table td{
-    padding: 15px;
-}
-/* .dash_main table td{
-    display: flex;
-} */
-.dash_main table tr{
-    text-align: left;
-}
+.dash_main table td{ padding: 15px }
+.dash_main table tr{ text-align: left }
 .dash_main table tr:nth-child(even),
-.dash_main table thead{
-    background-color: rgba(0, 0, 0, 0.2);
-}
+.dash_main table thead{ background-color: rgba(0, 0, 0, 0.2) }
 .dash_main section{
     width: 90%;
     margin: auto;
@@ -128,19 +100,14 @@
     margin: 20px auto;
     justify-content: space-between;
 }
-.dash_main header h1{
-    margin: 0px;
-}
+.dash_main header h1{ margin: 0px }
 .dash_header_section{
     width: 90%;
     margin: auto;
     display: flex;
     justify-items: stretch;
-    /* flex-direction: column; */
     justify-content: space-around;
     align-items: start;
-    /* gap: 10px; */
-    /* padding: 20px 0; */
     margin: 20px auto;
     background-color: #1c1c2575;
     border-radius: 20px;
@@ -164,26 +131,19 @@
     color: #ddd;
     border: 1px solid #252525;
 }
-.dash_header_section span{
-    margin: 0 20px;
-}
+.dash_header_section span{ margin: 0 20px }
 .dash_header_section button{
     height: auto; 
     width: auto;
     padding: 40px;
 }
 .dash_quick_action_button{
-    /* height: 50px; */
-    /* width: 150px; */
     background-color: #000;
     color: #fff;
     display: flex;
     align-items: center;
-    /* flex-direction: r; */
     gap: 10px;
     padding: 10px;
-    /* margin: 0 20px; */
-    /* background-color: transparent; */
     border: 0;
     border-radius: 10px;
 }
@@ -194,18 +154,13 @@
     align-items: center;
 }
 .dash_info_box{
-    /* border: 1px solid red; */
     text-align: center;
     width: 100%;
     padding: 20px;
-    /* margin: 10px; */
-    /* border-radius: 20px;; */
     background-color: rgba(0, 0, 0, 0.2);
     border-right: 1px solid #252525;
 }
-.dash_header_section .dash_info_box:last-child{
-    border: 0;
-}
+.dash_header_section .dash_info_box:last-child{ border: 0 }
 .chartContainer{
     width: 90%;
     margin: auto;
@@ -256,28 +211,19 @@
     background-color: #000;
     width: 50%;
     margin: auto;
-    /* display: flex; */
-    /* flex-direction: column; */
     padding: 20px;
-    /* gap: 20px; */
-    /* padding:20px; */
     border-radius: 20px;
   }
-  .uplod_modal form{
-    /* display: flex; */
-    /* flex-direction: column; */
-  }
+  .uplod_modal form{}
   .uplod_modal label{
     padding: 5px 0;
     display: block;
-    /* margin: 5px 0; */
 }
 .uplod_modal input{
     color: #fff;
     outline: none;
 }
 .uplod_modal select{
-    /* border: 1px solid red; */
     outline: none;
     margin:5px 0;
     border-radius: 10px;
@@ -290,9 +236,6 @@
 .uplod_modal  input[type='file']{
     border: 1px dashed #474747;
     padding: 10px 5px;
-    /* display: none; */
-    /* height: 100%; */
-    /* width: 100px; */    
   }
   input[type='file']::-webkit-file-upload-button{
     display: none;
@@ -315,17 +258,12 @@
   }
   .uplod_modal .custom_upload_buttom{
     border: 1px dashed #0b0b0d;
-    /* height: 200px; */
     width: 100%;
     margin: 20px 0;
     display: flex;
-    /* align-items: center; */
-    /* justify-content: center; */
     overflow: hidden;
   }
-  .uplod_modal span{
-    /* display: block; */
-  }
+  .uplod_modal span{}
   .uplod_modal input{
     padding: 10px 0;
     margin: 10px 0;
@@ -335,12 +273,10 @@
   .uplod_modal button,
   .button_cancel{
     padding: 10px 20px;
-    /* margin: 10px; */
     border-radius: 5px;
     border: 0px;
   }
   .form_button_container{
-    /* border: 1px solid red; */
     display: flex;
     gap:20px;
     margin: 20px 0;

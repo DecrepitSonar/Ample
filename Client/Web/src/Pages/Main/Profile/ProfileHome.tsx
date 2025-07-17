@@ -127,22 +127,23 @@ function UserProfile(props: {navState: String, setNavState: Function}) {
 
   return(
     <>
-        <header className='profile_header' style={{'backgroundImage': `url(${user.headerimage})`}}>
+        {/* <header className='profile_header' style={{'backgroundImage': `url(${user.headerimage})`}}>
             <div className="profile_header_overlay">
               <div className='user_profile_header_detail_container'>
                   <img className='profile_avi' src={user.profileimage}/>
                   <div className='user_profile_header_detail'>
                       <span className='label_username'>{user.username}</span>
                       <div className='follower_count_container'> 
-                      </div>
+                      </div> */}
                       {/* { auth.user.id != props.id ?  */}
                       {/* <button className='follow_button'>Follow</button>  */}
                       {/* // <button className='following_button'>Following</button> */}
                       {/* } */}
-                  </div>
+                  {/* </div>
               </div>    
             </div>
-        </header>
+        </header> */}
+
         <div className="page_body">
           <div className="profile_content_filter">
             <ul>

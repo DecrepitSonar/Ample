@@ -11,27 +11,7 @@ import {
 import { axisClasses } from "@mui/x-charts";
 import { useOutletContext } from "react-router-dom";
 import httpclient from "../../httpclient";
-
-
-type DashboardUploadsType = {
-  author: string
-  author_id: string
-  category: string 
-  contenturl: string
-  genre: string
-  id: string
-  imageurl: string
-  playcount: number
-  playlist_id: string | null
-  title: string
-  tracknumber: number
-  type: string
-  upload_date: string
-}
-
-
-
-
+import { DashboardUploadsType } from "../../utils/ObjectTypes";
 
 function Home(){
   
@@ -79,7 +59,7 @@ function Home(){
       </div>
       <div className="dash_header_section">
       <div className="dash_info_box">
-        <h1>{uploads?.length}</h1>
+        <h1>{uploads?.length || 0}</h1>
         <span> <i><LuUpload/></i>Uploads</span>
       </div>
       <div className="dash_info_box">
@@ -158,7 +138,7 @@ function Home(){
                       <td>{item.upload_date}</td>
                     </tr>
 
-                  })  : <></>
+                  })  : <span>You have no uploads</span>
                }
 
             </tbody>

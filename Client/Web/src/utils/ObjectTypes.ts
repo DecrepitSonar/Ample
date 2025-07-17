@@ -117,3 +117,48 @@ export type OutletProps = {
     setOpenUploadModal: React.Dispatch<React.SetStateAction<Boolean>>,
     uploadModal: Boolean
   }
+export type ModalOutletProps = {
+    openPlaylistModal: ( item: AudioItemPropType ) => void 
+    playlistModalOpen:Boolean 
+    setPlaylistModalOpen: React.Dispatch<React.SetStateAction<boolean>>
+}
+export type TrackPropType = {
+  id: string, 
+  trackNum: number,
+  title: String,
+  author: String
+}
+export type PlaylistPageDataType = {
+  head: {
+    playlist: AudioItemPropType,
+    tracks: [TrackPropType],
+    author: UserAviPropType
+  },
+  features: [UserAviPropType],
+  albums: [AudioItemPropType],
+  recommendations: [AudioItemPropType],
+  relatedFetures: [AudioItemPropType],
+  relatedVideos: [VideoItemPropType]
+}
+export type DashboardUploadsType = {
+  author: string
+  author_id: string
+  category: string 
+  contenturl: string
+  genre: string
+  id: string
+  imageurl: string
+  playcount: number
+  playlist_id: string | null
+  title: string
+  tracknumber: number
+  type: string
+  upload_date: string
+}
+
+export type PlaylistITemType = {
+      id: string,
+      title: string, 
+      author: string,
+      items: [AudioItemPropType]
+}

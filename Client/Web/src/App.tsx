@@ -28,6 +28,7 @@ import { userAuthType } from './utils/ObjectTypes';
 import { useSelector } from 'react-redux';
 import BottomMediaBar from './Components/BottomMediaBar';
 import NewUploads from './Pages/Dashboard/NewUpload';
+import Nav from './Components/Nav';
 
 type ProtectedRoutePropsTypes = {
   user: userAuthType | null, 
@@ -76,27 +77,30 @@ function App() {
   
   return (
     <div className="App">
+      <Nav/>
       <Routes>
         <Route path="/login" element={<LoginForm />} />
         <Route path="/signup" element={<SignUpForm/>} />
         <Route path="/userdetailedits/:id" element={<SignUpEditForm/>} />
         <Route path="/reset" element={<PasswordReset/>} />
-        <Route path='/' element={<Wrapper/>}>
-          <Route index element={<Listen/>}/>
-          <Route path='/browse' element={<Browse/>}/>
-          <Route path='/user/:id' element={<CreatorProfile/>}/>
+        <Route path='/browse' element={<Browse/>}/>
+        <Route index element={<Listen/>}/>
+        <Route path='/user/:id' element={<CreatorProfile/>}/>
+        <Route path='/playlist/:id' element={<PlaylistDetail/>}/> 
+        {/* <Route path='/playlist/:id' element={</>}/>  */}
+        <Route path='/' element={<ProtectedRoute user={user}><Wrapper/></ProtectedRoute>}>
           <Route path='/profile/:id' element={<Profile/>}/>
-          <Route path='/playlist/:id' element={<PlaylistDetail/>}/>
         </Route>
         <Route path='/dashboard/' element={<ProtectedRoute user={user}> <Dashboard/> </ProtectedRoute>}>
           <Route index element={<Home/>}/>
-          <Route path='/dashboard/uploads' element={<Uploads/>}/>
           <Route path='/dashboard/newUpload' element={<NewUploads/>}/>
         </Route>
       </Routes>
-      {/* <BottomMediaBar /> */}
+      <div className="warning_popup"></div>
+      <BottomMediaBar />
     </div>
   );
+
 }
 
 export default App;
