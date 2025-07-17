@@ -1015,7 +1015,7 @@ class Database:
             with self.conn.cursor() as cursor:
                 cursor.execute(sql)
                 result = cursor.fetchall()[0]
-                print( result )
+                # print( result )
 
         except( self.conn.DatabaseError, Exception) as error:
             print( error )
@@ -1076,29 +1076,51 @@ class Database:
             SET items = items || %s
             WHERE id = %s
         """
-
-        getPlaylist = """
-            SELECT * FROM user_playlist
-            WHERE id = %s
+        
+        check_if_exists = """
+            SELECT items FROM user_playlist WHERE id = '%s' 
         """ %id
-
-        update = """
-            UPDATE user_playlist
-            SET items = ['%s']
-            WHERE id = %s
-        """
         try: 
             with self.conn.cursor() as cursor:
-                    item = json.dumps(item)
+                    
+                    cursor.execute(check_if_exists)
+                    items =  cursor.fetchone()[0]
 
+                    print( items )
+
+                    if(list(items).__len__() < 1):
+                        print( 'playlist empty')
+                        
+                        item = json.dumps(item)
+                        
+                        cursor.execute(sql, (item, id))
+                        print(cursor.statusmessage)
+                        
+
+
+                    for x in items: 
+                        y =  lambda d, c: d == c
+                        
+                        print( item['id'])
+                        print( x['id'])
+                        print(y(item['id'], x['id']))
+
+                        if y(item, x) is True:
+                            return
+                        
+                        continue
+                        
+                    item = json.dumps(item)
+                    
                     cursor.execute(sql, (item, id))
                     print(cursor.statusmessage)
-                    self.conn.commit()
+
                      
         except(self.conn.DatabaseError, Exception) as error:
             print( error)
 
         finally: 
+            self.conn.commit()
             self.conn.close()
             return
 

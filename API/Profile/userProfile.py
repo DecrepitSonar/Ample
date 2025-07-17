@@ -52,8 +52,6 @@ def saveItemToPlaylist():
     playlist_id = request.json['playlistId']
     item = request.json['item']
     
-    # print( item )
-    
     databse.addItemToPlaylist(playlist_id, item, user_id)
     playlists = databse.getUserPlaylists(user_id)
 
