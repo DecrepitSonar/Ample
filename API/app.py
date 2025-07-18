@@ -15,6 +15,7 @@ from Auth.auth import auth
 from Profile.userProfile import profile
 from Dashboard.dashboard import dashboard
 from Admin.admin import admin
+from utils import PageSection
 
 app = Flask(__name__)
 app.config.from_object(ApplicationConfig)
@@ -449,7 +450,8 @@ def postComment():
 
     return jsonify({}, 200)
 
-@app.route('/listen', methods=['GET'])
+
+# @app.route('/listen', methods=['GET'])
 def getAudioPageContent():
     content = {
         'featured': [],
@@ -545,6 +547,23 @@ def getAudioPageContent():
         })
 
     print( content['featured'])
+    return jsonify(content)
+
+@app.route('/listen', methods=['GET'])
+def getAudioPageContent():
+    content = {
+        'featured': databse.getFeaturedContent(),
+        'new': [],
+        'trending': [],
+        'genres': {
+            'alternative': [],
+            'rnb': [],
+            'hiphop': []
+        },
+        'playlists': []
+    }
+
+
     return jsonify(content)
 
 @app.route('/listen', methods=['POST'])

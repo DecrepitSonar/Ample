@@ -445,6 +445,32 @@ class Database:
             self.conn.close() 
             return result
     
+    def getFeaturedContent(self):
+        if self.conn.closed:
+            self.__init__()
+
+        sql = """
+            SELECT row_to_json(t)
+            FROM (
+                SELECT * 
+                FROM playlist
+                INNER JOIN featured
+                ON playlist.id::TEXT = featured.ref_id 
+            )t
+        """
+
+        try:
+            with self.conn.cursor() as cursor: 
+                
+                cursor.execute(sql)
+                result = cursor.fetchone()
+                print( result )
+
+        except( self.conn.DatabaseError, Exception) as error:
+            print( error )
+
+        finally: 
+            return result
     # Settings 
     def getAccountSettings(self, user_id):
 
@@ -1107,8 +1133,6 @@ class Database:
 
                         if y(item, x) is True:
                             return
-                        
-                        continue
                         
                     item = json.dumps(item)
                     
