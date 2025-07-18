@@ -139,8 +139,8 @@ form a {
   gap: 10px;
   /* border: 1px solid red; */
   box-shadow: 0px 0px 10px #000;
-  right: 2%;
-  bottom: 20px;
+  right: 10px;
+  top: 70px;
   z-index: 3;
   border-radius: 10px;
   overflow: hidden;
@@ -683,7 +683,7 @@ section h1{
 
 @media screen and (max-width: 740px){}
 
-.OptionsModalContainer{
+.ModalContainer{
   position: absolute;
   left: 0px; 
   right: 0px; 
@@ -691,8 +691,8 @@ section h1{
   top: 0px;
   display: flex;
   z-index: 2;
-align-items: center;
-justify-content: center;
+  align-items: center;
+  justify-content: center;
 }
 .OptionsModal,
 .newPlaylistModal{
@@ -709,6 +709,7 @@ justify-content: center;
 .OptionsModal{
   width: 50%; 
   height: 55%;
+  background-color: #212129;
   box-shadow: 0px 0px 10px #000;
 }
 .OptionsModal button,

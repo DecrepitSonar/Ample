@@ -7,7 +7,6 @@ export const invalidFormStyle = {
 } 
 
 export const activeNavButtonStyle = {
-    fontWeight: "bold",
     color: "rgb(198, 161, 104)"
 }
 

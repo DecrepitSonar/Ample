@@ -46,7 +46,8 @@ export default function Listen() {
 
   return (
     <div className="page_container">
-        <div className='listen_page_header' style={{backgroundImage: `url(https://prophile.nyc3.cdn.digitaloceanspaces.com/images/${pageData?.featured[featureIndex].imageURL}.jpg`}}>
+
+        <div className='listen_page_header' style={{backgroundImage: `url(${pageData?.featured[featureIndex].imageurl}`}}>
             <div className="listen_page_header_overlay">
                     <div className='header_feature'>
                         
@@ -75,68 +76,81 @@ export default function Listen() {
 
     <div className='listen_page_container'>
         
-        <section>
-            <h1>New For you</h1>
-            <div className='h_list' style={{'justifyContent': 'space-between'}}>
-                
-                {
-                    pageData?.new.map( item => {
-                        return <AudioItem {...item}/>
-                    })
-                }
-                    
-            </div>
-        </section>
+        {
+            pageData?.new &&
+            pageData?.new.length > 0 &&
+                <section>
+                    <h1>New </h1>
+                    <div className='h_list' style={{'justifyContent': 'space-between'}}>
+                        {
+                            pageData?.new.map( item => {
+                                return <AudioItem {...item}/>
+                            })
+                        }
+                    </div>
+                </section>
+        }
 
-        <section>
-            <h1>Trending Songs</h1>
-            <div className="dual_list_collection">
+        {
+            pageData?.new &&
+            pageData?.new.length > 0 &&
+                <section>
+                    <h1>Trending Songs</h1>
+                    <div className="dual_list_collection">
+                        {pageData?.trending.map( track => {
+                            return <Trackstrip {...track}/>
+                        })}
+                    </div>
+                </section>
+        }
 
-                {pageData?.trending.map( track => {
-                    return <Trackstrip {...track}/>
-                })}
+        {
+            pageData?.new &&
+            pageData?.new.length > 0 &&
+                <section>
+                    <h1>New in Alternative</h1>
+                    <div className='h_list'>
+                        {
+                            pageData?.genres.alternative.map( item => {
+                                return <AudioItem {... item} />
+                            })
+                        }  
+                    </div>
+                </section>
+        }
+        {
+            pageData?.new &&        
+            pageData?.new.length > 0 &&
+                <section>
+                    <h1>New in R&B</h1>
+                    <div className='h_list'>
+                        {
+                            pageData?.genres.rnb.map( item => {
+                                return <AudioItem {... item}/>
+                            })
+                        }
 
-            </div>
-                
-        </section>
+                    </div>
+                </section>
+        }
 
-        <section>
-            <h1>New in Alternative</h1>
-            <div className='h_list'>
-                {
-                    pageData?.genres.alternative.map( item => {
-                        return <AudioItem {... item} />
-                    })
-                }
-                    
-            </div>
-        </section>
+        {
+            pageData?.new &&
+            pageData?.new.length > 0 &&
+                <section>
+                    <h1>New in  Hip Hop</h1>
+                    <div className='h_list'>
+                        {
+                            pageData?.genres.hiphop.map( item => {
+                                return<AudioItem {...item}/>
+                            })
+                        }                    
+                    </div>
+                </section>
 
-        <section>
-            <h1>New in R&B</h1>
-            <div className='h_list'>
-                {
-                    pageData?.genres.rnb.map( item => {
-                        return <AudioItem {... item}/>
-                    })
-                }
+        }
 
-            </div>
-        </section>
-
-        <section>
-            <h1>New in  Hip Hop</h1>
-            <div className='h_list'>
-                {
-                    pageData?.genres.hiphop.map( item => {
-                        return<AudioItem {...item}/>
-                    })
-                }                    
-            </div>
-        </section>
-
-
-        <section>
+        {/* <section>
             <h1>Genres</h1>
             <div className='genre_container'>
                 <div className='genre_item'>Hip-Hop</div>
@@ -148,9 +162,9 @@ export default function Listen() {
                 <div className='genre_item'>Afro Beats</div>
                 <button className='genre_item_more_button'>More</button>
             </div>
-        </section>
+        </section> */}
 
-        <section>
+        {/* <section>
             <h1>Playlists</h1>
             <div className='h_list'>
                 {
@@ -160,7 +174,7 @@ export default function Listen() {
                 }
 
             </div>
-        </section>
+        </section> */}
     </div>
     </div>
 

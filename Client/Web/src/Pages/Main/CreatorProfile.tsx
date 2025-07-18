@@ -61,38 +61,20 @@ type profileData = {
     albums: [AudioItemPropType]
     singles: [AudioItemPropType]
 }
-function FollowButton(props: UserAviPropType){
-    
-
-    const library = useSelector( (state: RootState) => state.library.library)
-    const isSubscribed = library != undefined ? library.find(_ => _.id == props.id) != undefined : false
-    
-    const dispatch = useAppDispatch() 
-    
-    return(
-        <>
-            {
-                isSubscribed  ?
-                <button 
-                    onClick={() => dispatch(save(props))}
-                    className='following_button'>Subscribed</button> :
-                <button
-                    onClick={() => dispatch(save(props))}
-                    className='follow_button'>Subscribe</button>  
-            }
-        </>
-    )
-}
-
 
 export default function CreatorProfile(){
 
     const [ navState, setNavState ] = useState("Home")
     const [ profileData, setProfileData ] = useState<profileData>()
+    const [modalOpen, setModalOpen ] = useState(false)
+    
     const params = useParams()
+    const dispatch = useAppDispatch() 
 
     const library = useSelector( (state: RootState) => state.library.library)
-    
+    const isSubscribed = library != undefined ? library.find(_ => _.id == profileData?.creator.id) != undefined : false
+
+
     useEffect(() => {
 
         if( params.id) {
@@ -104,6 +86,19 @@ export default function CreatorProfile(){
 
     function formatNumber(x) {
         return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+    }
+    
+    const subscribeToCreator = async () => {
+
+        try{
+            
+            const response = await dispatch(save(profileData?.creator))
+            console.log( response )
+            setModalOpen(false)
+        }
+        catch( error ){
+            console.log( error )
+        }
     }
     
     return(
@@ -118,7 +113,18 @@ export default function CreatorProfile(){
                                     <div className='creator_profile_header_info'>   
                                         <span>{profileData && profileData.creator.type} <i><BiCheckCircle/></i></span> 
                                         <span className='profile_section_title'>{profileData &&  profileData.creator.name}</span>
-                                        <FollowButton {...profileData?.creator}/>
+                                        
+                                        {
+                                            isSubscribed  ?
+                                            <button 
+                                                
+                                                className='following_button'>Subscribed</button> :
+                                            <button
+                                                // onClick={() => {}}
+                                                onClick={() => setModalOpen(true)}
+                                                className='follow_button'>Subscribe</button>  
+                                        }
+                                        
                                     </div>
 
                         <div className='profile_about_sub_section'>
@@ -129,24 +135,24 @@ export default function CreatorProfile(){
                 </section>
             </div>
 
-            {/* <div className='profile_header_nav'>
+            <div className='profile_header_nav'>
                 <ul>
                     <li 
                     style={navState == "Home" ? activeNavButtonStyle : inActiveButtonStyle}
                     onClick={(e: React.SyntheticEvent) => setNavState(e.currentTarget.innerHTML)}>Home</li>
                     <li 
-                    style={navState == "Video" ? activeNavButtonStyle : inActiveButtonStyle}
-                    onClick={(e: React.SyntheticEvent) => setNavState(e.currentTarget.innerHTML) }>Video</li>
-                    <li 
-                    style={navState == "Tracks" ? activeNavButtonStyle : inActiveButtonStyle}
-                    onClick={(e: React.SyntheticEvent) => setNavState(e.currentTarget.innerHTML)}>Tracks</li>
+                    style={navState == "About" ? activeNavButtonStyle : inActiveButtonStyle}
+                    onClick={(e: React.SyntheticEvent) => setNavState(e.currentTarget.innerHTML)}>About</li>
                 </ul>
-            </div> */}
+            </div>
             
         </header>
         <div className='page_body'>
             {
                 profileData && 
+                {
+                'Home': 
+                
                 <>
                     {   profileData.trending.length > 0 && 
                         <section>
@@ -190,8 +196,44 @@ export default function CreatorProfile(){
                             </div>
                         </section>
                     }
-                </>
+                </>,
+                'About': <section><h1>About</h1></section>
+                }[navState]
             }
+        </div>
+        <div style={modalOpen ? {} : {'display': 'none'} }
+        className="ModalContainer">
+            <div className="subscription_modal_container">
+
+                <div className="subscription_modal_header">
+                    <h1>Subscription Plans</h1>
+                    <span>Subscribe to {profileData?.creator.name}</span>
+                </div>
+                <div className="Subscription_plan_list_container">
+                    <div className="Subscription_plan_item">
+                        <h2>Free Plan</h2>
+                        <span>For regular listeners </span>
+                        <h1>$0 <span>/m</span></h1>
+                        <span>Includes</span>
+                        <ul>
+                            <li>Notified on new content </li>
+                            <li>Regular streams </li>
+                        </ul>
+                    </div>
+                    <div className="Subscription_plan_item">
+                        <h2>Fan </h2>
+                        <span>For Fans </span>
+                        <h1>$5.00 <span>/m</span></h1>
+                        <span>Includes</span>
+                        <ul>
+                            <li>Notified on new content </li>
+                            <li>unlimited streams </li>
+                            <li>exclusive content</li>
+                        </ul>
+                    </div>
+                </div>
+                <button onClick={() => subscribeToCreator() } className='submit_button_solid'>Subscribe</button>
+            </div>
         </div>
     </div>
     )

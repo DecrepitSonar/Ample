@@ -8,6 +8,7 @@ import {
   updateAccountPreferences 
 } from "../../../../utils/settingsSlice";
 import { RootState, useAppDispatch } from "../../../../utils/store";
+import { Link } from "react-router-dom";
 
 export default function AccountSettings(){
   
@@ -190,7 +191,7 @@ export default function AccountSettings(){
               <div className="section_input_content">
                 <span>Upgrade your account to post, stream and earn from your content</span>
               </div>
-              <button className='submit_button_outline'>Upgrade</button>
+              <Link to='/upgrade'className='submit_button_outline'>Upgrade</Link>
             </section>
           }
   

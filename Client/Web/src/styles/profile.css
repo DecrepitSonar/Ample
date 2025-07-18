@@ -52,13 +52,16 @@
 .profile_header_nav{
     position: absolute;
     bottom: 0px;
-    left: 110px; 
+    left: 60px; 
 }
 .profile_header_nav ul{
     margin: 0px;
     padding: 10px 20px;
     display: flex;
     gap: 20px;
+}
+.profile_header_nav li:hover{
+  color: rgb(198, 161, 104)
 }
 .profile_header_nav li{
     list-style-type: none;
@@ -295,23 +298,69 @@
   margin-top: 10px;
   max-width: 100px;
   width: 200px;
+  border: 1px solid rgb(198, 161, 104);
 }
 .follow_button{
   background-color: rgba(198, 161, 104,.8);
   color: #fff;
-  
   border: 0;
 }
 
 .following_button{
   background-color: transparent;
-  /* background-color: red; */
-  border: 1px solid rgb(198, 161, 104);
   color: rgb(198, 161, 104);
 }
 .settings_button:hover{
   background-color: rgb(198, 161, 104);
   color: #fff
+}
+.subscription_modal_container{
+  /* border: 1px solid red; */
+  /* height: 50%;  */
+  padding: 30px; 
+  background-color: #212129;
+  border-radius: 10px;
+  box-shadow: 0px 0px 10px #000;
+}
+.subscription_modal_header {
+  margin-bottom: 10px;
+  border-bottom: 1px solid #2A2A34;
+}
+.subscription_modal_header span{
+  display: block;
+  margin: 10px 0;
+}
+.Subscription_plan_list_container{
+  display: flex;
+  justify-content: space-between;
+  gap: 10px;
+  margin: 10px 0;
+}
+.Subscription_plan_item{
+  border: 1px solid #3E3E3E;
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  background-color: #2A2A34;
+  border-radius: 10px;
+}
+.Subscription_plan_item h1{
+  border: 1px solid #3E3E3E;
+  padding: 5px 10px;
+  border-radius: 10px;
+}
+.Subscription_plan_item h1 span{
+  color: #3E3E3E;
+}
+.Subscription_plan_item:hover{
+  background-color: rgb(198, 161, 104, .5);
+}
+.Subscription_plan_item ul{
+  margin: 0 15px;
+}
+.Subscription_plan_item li{
+  list-style-type: disc;
 }
 
 /* settings page */
@@ -342,7 +391,6 @@
   background-color: rgba(198, 160, 104, 0.01);
   color: #ddd;
   border-radius: 10px;
-
 }
 .settings_nav_icon i{}
 .settings_nav_icon{
@@ -358,16 +406,19 @@
   /* padding: 10px; */
   display: flex;
   /* justify-content: space-around; */
-
-  align-items: center;
-  /* background-color: #ddd; */
   transition: all .1s ease-in-out;
+}
+
+.card_collection{
+  display: flex;
+  flex-direction: column;
+  border: 1px solid red;
+  gap: 20px;
 }
 
 .settings_content_section{
   margin: 10px 0;
   overflow: scroll;
-  /* border: 1px solid red; */
   width: 100%;
 }
 .settings_content_section form{
@@ -381,7 +432,6 @@
   /* border: 1px solid red; */
   width: 90%;
   margin: 20px auto; 
-
 }
 .settings_input_section{
   display: flex;
@@ -400,6 +450,21 @@
 }
 .section_input_content input[type='file']{
   display: none;
+}
+.settings_content_section .table_header_nav{
+  /* border: 1px solid red;     */
+  display: flex;
+  width: 90%;
+  margin: auto;
+  gap: 20px
+}
+.table_header_nav li{
+  display: inline;
+  padding: 10px;
+  /* border: 1px solid red; */
+  color: #787878
+}
+.section_button{
 }
 .profile_imageInputPreview,
 .settings_banner_preview{
@@ -472,22 +537,34 @@
 .settings_content_item_container{
   display: flex;
   justify-content: space-between;
-  align-items: center;
+  /* align-items: center; */
 }
-.settings_content_item_container button{
-  background-color:  rgba(198, 161, 104,.5);;
+.settings_content_item_container button,
+.section_button{
+  background-color:  transparent;
   border: 0;
+  border: 1px solid #3E3E3E;
+  color: #787878;
   padding: 10px 15px;
   border-radius: 10px;
-  color: #fff;
   display: flex;
   align-items: center; 
   gap: 5px;
 }
+.settings_content_item_container button:hover,
+.section_button:hover{
+  background-color: rgba(198, 161, 104,.8);
+  color: #fff;
+}
+.section_button{
+  margin-top: 10px;
+}
+
 .settings_content_item_container button i{
   display: block;
   height: 15px;
   width: 15px;
+
 }
 .settings_content_item{
   /* border: 1px solid red; */
@@ -587,7 +664,20 @@
   /* justify-content: space-evenly; */
   /* margin: auto; */
 }
-
+.upgrade_terms_container{
+  width: 90%;
+  margin:20px auto;
+  overflow: scroll;
+}
+.upgrade_terms_container h1{
+  margin: 20px 0;
+}
+.upgrade_terms_container h2{
+  margin: 20px 0;
+}
+.upgrade_terms_container ul{
+  margin: 20px 0;
+}
 @media screen and (max-width: 740px) {
   .settings_nav{
     display: none;
