@@ -624,6 +624,47 @@ class Database:
 
         finally: 
             return result 
+    def upgradeUserToCreator(self, id):
+        
+        if self.conn.closed:
+            self.__init__()
+        
+        sql = """
+            UPDATE users
+            SET accounttype = 'creator'
+            WHERE id = '%s'
+            RETURNING *
+        """  %id
+
+        getUser = """ 
+        SELECT row_to_json(t)
+        FROM (
+            SELECT 
+                id,
+                username, 
+                accounttype, 
+                email, 
+                profileimage, 
+                headerimage
+            FROM users
+            WHERE id = '%s'
+        ) t """ %id
+
+        try: 
+            with self.conn.cursor() as cursor: 
+                cursor.execute(sql)
+                cursor.execute(getUser)
+                user = cursor.fetchone()
+                print( user )
+
+        except( self.conn.DatabaseError, Exception) as error: 
+            print( error )
+        
+        finally: 
+            self.conn.commit()
+            self.conn.close()
+
+            return user
         
     def createPaymentSettings(self, user_id):
 

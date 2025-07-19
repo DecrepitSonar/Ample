@@ -100,6 +100,13 @@ def updateAccountSettings():
 
     return jsonify({user}, 200)
 
+@profile.route('/settings/upgrade', methods={'POST'})
+def upgradeUserPrilvilages():
+    id = databse.getUserBySession(request.cookies['xrftoken'])[0]
+    user = databse.upgradeUserToCreator(id)
+
+    return jsonify(user)
+
 @profile.route('/settings/payment', methods=['GET'])
 def getPaymentSettings():
     sessionId = request.cookies['xrftoken']
@@ -160,5 +167,6 @@ def getPrivacySettings():
 
 @profile.route('/settings/privacy', methods=['POST'])
 def updatePrivacySettings(): 
+
     print( request.form)
     return jsonify({}, 200)
