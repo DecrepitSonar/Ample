@@ -1,14 +1,16 @@
 import React, { useEffect, useRef, useState } from "react";
 import { RiImageCircleFill } from "react-icons/ri";
 import { useSelector } from "react-redux";
-import { validate } from "../../../../utils/Authslice";
+import { setUser, validate } from "../../../../utils/Authslice";
 import { 
   getUserAccount, 
   setAccountSettings, 
-  updateAccountPreferences 
+  updateAccountPreferences, 
+  updgradeUser
 } from "../../../../utils/settingsSlice";
 import { RootState, useAppDispatch } from "../../../../utils/store";
 import { Link } from "react-router-dom";
+import { hideNotification, showNotification } from "../../../../utils/notificationSlice";
 
 export default function AccountSettings(){
   
@@ -113,6 +115,23 @@ export default function AccountSettings(){
       
     }
   
+    const handleUserUpgrade = async () => {
+      try {
+        const response = await dispatch(updgradeUser())
+        console.log( response )
+        if (response.payload.status == 200){
+
+          dispatch(setUser(response.payload.data))
+          dispatch(showNotification('Your account has been upgraded'))
+
+          setTimeout(() => {
+            dispatch(hideNotification())
+          }, 2000); 
+        }
+      } catch (error) {
+        console.log( error )
+      }
+    }
     return(
       <>
         {
@@ -191,7 +210,9 @@ export default function AccountSettings(){
               <div className="section_input_content">
                 <span>Upgrade your account to post, stream and earn from your content</span>
               </div>
-              <Link to='/upgrade'className='submit_button_outline'>Upgrade</Link>
+              <button 
+              onClick={() => handleUserUpgrade()}
+              className='submit_button_outline'>Upgrade</button>
             </section>
           }
   
@@ -208,3 +229,7 @@ export default function AccountSettings(){
       </>
     )
   }
+
+function upgradeUserProviliges(): any {
+  throw new Error("Function not implemented.");
+}

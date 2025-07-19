@@ -45,6 +45,5 @@
 .imageInputPreview{
     border: 1px solid #0b0b0d;
     border-radius: 50%;
-    z-index: 5;
     object-fit: cover;
 }

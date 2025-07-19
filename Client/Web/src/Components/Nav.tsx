@@ -67,7 +67,9 @@ function Nav(){
             < div className='nav_avi_container'>
               <Link to={'/browse'} style={currentLocation[1] == 'browse' ? activeLink : inActiveLink}><PiMagnifyingGlass/></Link>
               <Link to={'/notifications'} style={currentLocation[1] == 'notifications' ? activeLink : inActiveLink}>  <BiBell/></Link>
-              <Link to={'/dashboard'} style={currentLocation[1] == 'notifications' ? activeLink : inActiveLink}>  <BsUpload/></Link>
+              {
+                auth.isLoggedIn && <Link to={'/dashboard'} style={currentLocation[1] == 'notifications' ? activeLink : inActiveLink}>  <BsUpload/></Link>
+              }
               <div className='nav_profile' onClick={ (e: React.SyntheticEvent) => navigate(`/profile/${auth.user.id}`)}>
                 <span>{auth.user.username}</span>
                 <img className="nav_avi" src={auth.user.profileimage}/>

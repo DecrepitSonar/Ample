@@ -65,11 +65,20 @@ const getPaymentSettings = createAsyncThunk('settings/payment', async () => {
         console.log( response )
         return response })})
 
-const getUserSettings = createAsyncThunk('settings', async () => {
-    return await httpclient.get('http://127.0.0.1:5000/profile/settings')
-    .then( response => { return response })
-})
+// const getUserSettings = createAsyncThunk('settings', async () => {
+//     return await httpclient.get('http://127.0.0.1:5000/profile/settings')
+//     .then( response => { return response })
+// })
 
+const upgradeUserProviliges = createAsyncThunk('settings/updgrade', async () => {
+    try{
+        const response = await httpclient.post('http://127.0.0.1:5000/profile/settings/upgrade')
+        return response 
+    }
+    catch( error){
+        console.log( error )
+    }
+})
 export const SettingsSlice = createSlice({
     name: 'settings',
     initialState,
@@ -91,9 +100,9 @@ export const SettingsSlice = createSlice({
     },
     extraReducers: ( builder: any ) => {
 
-        builder.addCase( getUserSettings.pending, (state: userSettings, actions: any) => ( console.log( "pending")))
-        builder.addCase( getUserSettings.rejected, (state: userSettings, actions: any) => ( console.log( "rejected")))
-        builder.addCase( getUserSettings.fulfilled, (state: userSettings, actions: any) => ( console.log( "fultilled")))
+        // builder.addCase( getUserSettings.pending, (state: userSettings, actions: any) => ( console.log( "pending")))
+        // builder.addCase( getUserSettings.rejected, (state: userSettings, actions: any) => ( console.log( "rejected")))
+        // builder.addCase( getUserSettings.fulfilled, (state: userSettings, actions: any) => ( console.log( "fultilled")))
         
         builder.addCase( getAccountSettings.pending, (state: userSettings, action: any) => ( console.log( "pending")))
         builder.addCase( getAccountSettings.rejected, (state: userSettings, action: any) => ( console.log( "rejected")))
@@ -114,9 +123,11 @@ export const SettingsSlice = createSlice({
         builder.addCase( getPaymentSettings.rejected, (state: userSettings, action: any) => ( window.localStorage.removeItem('accountSettings') ))
         builder.addCase( getPaymentSettings.fulfilled, (state: userSettings, action: any) => (  action.payload != undefined && window.localStorage.setItem('paymenttSettings', JSON.stringify(action.payload.data)) ))
         
-        // builder.addCase( getPaymentSettings.pending, (state: userSettings, action: any) => ( console.log( "pending")))
-        // builder.addCase( getPaymentSettings.rejected, (state: userSettings, action: any) => ( window.localStorage.removeItem('accountSettings') ))
-        // builder.addCase( getPaymentSettings.fulfilled, (state: userSettings, action: any) => (  action.payload != undefined && window.localStorage.setItem('paymenttSettings', JSON.stringify(action.payload.data)) ))
+        builder.addCase( upgradeUserProviliges.pending, (state: userSettings, action: any) => ( console.log( "pending")))
+        builder.addCase( upgradeUserProviliges.rejected, (state: userSettings, action: any) => ( window.localStorage.removeItem('accountSettings') ))
+        builder.addCase( upgradeUserProviliges.fulfilled, (state: userSettings, action: any) => (  
+            console.log( action.payload)
+         ))
     }
 })
 
@@ -124,6 +135,7 @@ export const { setAccountSettings, setPaymentSettings } =  SettingsSlice.actions
 export const settings = SettingsSlice.reducer
 export const updateAccountPreferences = updateAccountSettings 
 export const updateSecurityPreferences = updateSecuritySettings  
-export const getSettings = getUserSettings
+// export const getSettings = getUserSettings
 export const getUserAccount = getAccountSettings
 export const getUserPayments = getPaymentSettings
+export const updgradeUser = upgradeUserProviliges

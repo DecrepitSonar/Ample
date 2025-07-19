@@ -1,84 +1,82 @@
-import React, { useEffect, useRef, useState } from "react"
-import { Outlet, useLocation, useNavigate } from "react-router-dom"
-import Nav from '../../Components/Nav.js'
-import Trackstrip from '../../Components/TrackStrip'
-import Aside from "../../Components/Aside.js"
+import React, { useEffect, useState } from "react"
+import { Link, Outlet, useLocation, useNavigate, useParams } from "react-router-dom"
+
 import '../../styles/playlistStyles.css'
 import '../../styles/listen.css'
 import '../../styles/profile.css'
 import '../../styles/sidebar.css'
 import '../../styles/sideNav.css'
-import { AudioItemPropType } from "../../utils/ObjectTypes.js"
-import PlaylistModal from "../../Components/ PlaylistModal.js"
+
+import {logout, logOutUser } from '../../utils/Authslice'
+import { useSelector } from "react-redux"
+import { RootState, useAppDispatch } from "../../utils/store.js"
+import { CgEyeAlt } from "react-icons/cg"
+import { BiShieldQuarter, BiLockAlt } from "react-icons/bi"
+import { BsUpload, BsCreditCard2BackFill } from "react-icons/bs"
+import { IoHome, IoPerson } from "react-icons/io5"
+import { PiBellRingingFill } from "react-icons/pi"
 
 function Wrapper(){
   
+  const dispatch = useAppDispatch() 
+  const user = useSelector( (state: RootState) => state.auth.user)
+  const [navLocation, setNavLocation ] = useState("Home")
   const [ navState, setNavState ] = useState( false )
   
+  const navigator = useNavigate()
+  const params = useParams()
+  const location = useLocation()
+  const current_path = location.pathname.split('/')
+  
+  const activeStyle = (link: string) => {
+    return navLocation === link ? {
+      color: '#000', 
+      backgroundColor: 'rgba(198, 160, 104, 1)',} : {}
+  }
+
   window.addEventListener('keypress', (e) => {
     e.key == 'p' ? setNavState(!navState) : null
   },{once: true})
 
+
+  useEffect(() => {
+    
+    if( current_path.length > 3){
+      setNavLocation( current_path[current_path.length-1] )
+      return 
+    }
+
+    setNavLocation('')
+
+  }, [location])
+
+  const logoutUser = () => { 
+    dispatch(logout())
+    .then(() => {
+      dispatch(logOutUser(null))
+      navigator(0)
+      navigator('/')
+    })
+   }
+
+  
     return(
         <main className="main">
           
           <div className="content">
+            <div className='dash_aside'>
+                <Link to={`/profile/${params.id}`}><li style={activeStyle("")}><i><IoHome/></i>Home</li></Link>
+                <Link to={`/profile/${params.id}/account`}><li style={activeStyle("account")}><i><IoPerson/></i>Account</li></Link>
+                {user.accounttype == 'creator' && <><Link to={'/dashboard'}><li><i><BsUpload/></i>Dashboard</li></Link></>}
+                <Link to={`/profile/${params.id}/billing`}><li style={activeStyle("billing")}><i><BsCreditCard2BackFill/></i>Biling</li></Link>
+                <Link to={`/profile/${params.id}/security`}><li style={activeStyle("security")}><i><BiShieldQuarter/></i>Security</li></Link>
+                <Link to={`/profile/${params.id}/notifications`}><li style={activeStyle("notifications")}><i><PiBellRingingFill/></i>Notifications</li></Link>
+                <Link to={`/profile/${params.id}/privacy`}><li style={activeStyle("Privacy")}><i><CgEyeAlt/></i>Privacy</li></Link>
+                <a><li onClick={() => logoutUser() }> <i style={{color: "#d6000090"}}><BiLockAlt/></i>Sign out</li></a>
+              </div>
               <Outlet/>
-              <Aside navState={navState}/>
           </div>
         </main>
     )
   } 
   export default Wrapper
-
-// function useEffect(arg0: () => void, arg1: any[]) {
-//   throw new Error("Function not implemented.")
-// }
-// function useSelector(arg0: (state: RootState) => any) {
-//   throw new Error("Function not implemented.")
-// }
-
-
-// function SideNavBar(){
-
-//   const auth = useSelector( (state: RootState) => state.auth)
-//   const [path, setPath] = useState('')
-
-//   const navigate = useNavigate()
-//   const location = useLocation()
-//   const currentLocation = location.pathname.split('/')
-
-//   useEffect(() => {
-//     setPath( currentLocation[1])
-//     console.log(currentLocation[1] == path)
-//   }, [currentLocation])
-
-//   const activeLink = {
-//     border: '.5px solid rgba(198, 161, 104,.1)',
-//     color: 'white',
-//     backgroundColor: 'rgba(198, 161, 104,.5)' 
-//   }
-  
-//   const inActiveLink = {
-//     border: '.5px solid rgba(198, 161, 104,.2)',
-//     color: 'rgba(198, 161, 104,.9)',
-//     backgroundColor: 'transparent' 
-//   }
-  
-//   return(
-//     <div className="sideNavBarContainer">
-//       { 
-//             auth.isLoggedIn  ? 
-//             < div onClick={ (e: React.SyntheticEvent) => navigate(`/profile/${auth.user.id}`)} className='nav_avi_container'>
-//               <div className="nav_avi" style={{'backgroundImage': `url(${auth.user.imageURL}`}}/>
-//               <span className="nav_usedrname">{auth.user.username}</span></div> :
-//              <>
-//               <div className="nav_auth_button_container">
-//               <button onClick={() => navigate("/login")}>Login</button>
-//               <button onClick={() => navigate("/signup")}>Sign up</button>
-//              </div>
-//            </>
-//           }
-//     </div>
-//   )
-// }
