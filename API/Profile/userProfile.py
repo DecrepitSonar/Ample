@@ -21,7 +21,7 @@ def handleSavedContent():
 def getUserProfile():  
 
     user_id = databse.getUserBySession(request.cookies['xrftoken'])
-
+    print(databse.getSavedItems(user_id))
 
     return jsonify(databse.getSavedItems(user_id))
 

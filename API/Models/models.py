@@ -414,7 +414,6 @@ class Database:
         finally: 
             self.conn.close
             return session
-    
     def deleteUserSession(self, sessionId):
         
         if self.conn.closed:
@@ -445,6 +444,7 @@ class Database:
             self.conn.close() 
             return result
     
+    # Content
     def getFeaturedContent(self):
         if self.conn.closed:
             self.__init__()
@@ -471,6 +471,14 @@ class Database:
 
         finally: 
             return result
+    def geAllCreators(self):
+
+        if self.conn.closed:
+            self.__init__()
+
+        sql = """
+
+        """
     # Settings 
     def getAccountSettings(self, user_id):
 
@@ -1243,7 +1251,7 @@ class Database:
                     item['genre'],
                     item['author_id'],
                     item['author'],
-
+                    
                     item['imageurl'],
                     item['contenturl'],
                     item['category'],
@@ -1255,12 +1263,92 @@ class Database:
                 
 
         except ( self.conn.DatabaseError, Exception) as error:
-            print( error )
+            print( 'failt to post audio', error )
 
         finally:
             self.conn.close()
             return   
-    def getUploads(self, item):
+    def postPlaylistAudioTrack(self, item):
+
+        if self.conn.closed: 
+            self.__init__()
+
+        sql = ''' 
+        INSERT INTO audio (
+            title, 
+            genre, 
+            author_id, 
+            author,
+            playlist_id,
+            imageurl, 
+            contenturl,
+            category,
+            type
+        )
+
+        VALUES ( %s, %s, %s, %s, %s, %s, %s, %s, %s)
+        '''
+
+        try: 
+            with self.conn.cursor() as cursor: 
+                print( item )
+                cursor.execute(sql, (
+                    item['title'],
+                    item['genre'],
+                    item['author_id'],
+                    item['author'],
+                    item['playlist_id'],
+                    item['imageurl'],
+                    item['contenturl'],
+                    item['category'],
+                    item['type'] 
+                ))
+                
+                self.conn.commit() 
+                print( cursor.statusmessage )
+                
+
+        except ( self.conn.DatabaseError, Exception) as error:
+            print( 'failt to post audio', error )
+
+        finally:
+            self.conn.close()
+            return   
+    def postPlaylist(self, item):
+
+        if self.conn.closed: 
+            self.__init__()
+        
+        sql = """
+            INSERT INTO playlist (title, author, author_id, imageurl, type, genre)
+            VALUES(%s, %s, %s, %s, %s, %s)
+            RETURNING * 
+        """
+
+        try: 
+            with self.conn.cursor() as cursor: 
+                cursor.execute(sql,
+                (
+                    item['title'],
+                    item['author'],
+                    item['author_id'],
+                    item['imageurl'],
+                    item['type'],
+                    item['genre']
+                ))
+
+                print( cursor.statusmessage)
+
+        except( self.conn.DatabaseError, Exception) as error:
+            print( error )
+
+        finally: 
+            self.conn.commit()
+            self.conn.close()
+            return 
+
+    # dashboard
+    def getAudioUploads(self, id):
 
         if self.conn.closed: 
             self.__init__()
@@ -1270,15 +1358,16 @@ class Database:
                 array_agg(row_to_json(t))
             ) AS items
             FROM (
-                SELECT * FROM audio WHERE author_id = '%s'
+                SELECT * 
+                FROM audio 
+                WHERE author_id = '%s'
             ) t
-        """ %item
+        """ %id
 
         try: 
             with self.conn.cursor() as cursor:
                 cursor.execute(sql)
                 result = cursor.fetchone()[0]
-                print( result )
 
         except( self.conn.DatabaseError, Exception) as error: 
             print( error )
@@ -1286,74 +1375,134 @@ class Database:
         finally: 
             self.conn.close()
             return result
-# For user migration purposes 
-    def addUser(self, user ):
-
-        print( """ Check if user exists """ )
-
-        if self.getUserByEmail(user['email']) is not None:
-            return None
-    
-            # return {
-             #     'error': {
-            #     'message': "User already exists " ,
-            #    'Code': 'EMAIlLERR'}
-            # }
-        
-        accountSQL = """ 
-            INSERT INTO users( 
-            id,
-            username, 
-            avi_image_url, 
-            email, 
-            header_image,
-            password,
-            join_date, 
-            verified,
-            user_type
-        )
-        
-            VALUES (DEFAULT, %s, %s, %s, %s, %s, %s) RETURNING user_id;
-        """
+    def getAudioUploadsByPlaylistId(self, id):
 
         if self.conn.closed: 
             self.__init__()
 
-        print( user )
-        try:
-            
-            print( 'creating user')
+        sql = """
+            SELECT array_to_json(
+                array_agg(row_to_json(t))
+            ) AS items
+            FROM (
+                SELECT * 
+                FROM audio 
+                WHERE playlist_id = '%s'
+            ) t
+        """ %id
+
+        try: 
             with self.conn.cursor() as cursor:
-            
-                cursor.execute(userSQL)
-                print(cursor.statusmessage)
+                cursor.execute(sql)
+                result = cursor.fetchone()[0]
 
-                rows = cursor.fetchone()
-                print( rows )
-
-                if rows: 
-                    userId = rows[0]
-                    print( rows[0])
-
-                    cursor.execute(accountSQL, (
-                        user['username'],
-                        user['image_url'],
-                        user['email'], 
-                        'https://prophile.nyc3.cdn.digitaloceanspaces.com/images/5172658.jpg',
-                        userId,
-                        user['password'],
-                    ))
-                    
-                    print(cursor.statusmessage)
-
-                    return userId 
-                        
-        except (self.conn.DatabaseError, Exception) as error: 
+        except( self.conn.DatabaseError, Exception) as error: 
             print( error )
-            return error
-        
-        finally:
+
+        finally: 
+            self.conn.close()
+            return result
+    def getPlaylistUploads(self, id):
+
+        if self.conn.closed: 
+            self.__init__()
+
+        sql = """
+            SELECT array_to_json(
+                array_agg(row_to_json(t))
+            ) AS items
+            FROM (
+                SELECT * 
+                FROM playlist 
+                WHERE author_id = '%s'
+            ) t
+        """ %id
+
+        try: 
+            with self.conn.cursor() as cursor:
+                cursor.execute(sql)
+                result = cursor.fetchone()[0]
+
+        except( self.conn.DatabaseError, Exception) as error: 
+            print( error )
+
+        finally: 
+            self.conn.close()
+            return result
+    def getPlaylistById( self, id):
+
+        if self.conn.closed: 
+            self.__init__()
+
+        sql = """
+            SELECT row_to_json(t)
+            FROM (
+                SELECT *
+                FROM playlist
+                WHERE id = '%s'
+                ) t
+        """%id
+
+        try: 
+            with self.conn.cursor() as cursor: 
+                    cursor.execute(sql)
+                    playlist = cursor.fetchone()[0]
+
+        except( self.conn.DatabaseError, Exception) as error: 
+            print( error )
+
+        finally: 
+            return playlist
+    def deletePlaylistTrackById(self, id):
+
+        if self.conn.closed:
+            self.__init__()
+
+        sql = """
+            DELETE 
+            FROM audio 
+            WHERE id = '%s'
+        """%id
+
+        try: 
+            with self.conn.cursor() as cursor: 
+                cursor.execute(sql)
+                print( cursor.statusmessage)
+                
+        except(self.conn.DatabaseError, Exception) as error: 
+            print( error )
+
+        finally: 
             self.conn.commit()
             self.conn.close()
-            return 
-    
+            return
+
+    def getItemByPlaylist_id(self, id):
+
+        if self.conn.closed: 
+            self.__init__()
+
+        sql = """
+            SELECT array_to_json(
+                array_agg(row_to_json(t))
+            ) AS items
+            FROM (
+                SELECT * 
+                FROM audio 
+                WHERE playlist_id = '%s'
+            ) t
+        """%id
+
+        try: 
+            with self.conn.cursor() as cursor:
+                cursor.execute(sql)
+                items = cursor.fetchone()[0]
+
+                if( items is None): 
+                    items = []
+
+        except( self.conn.DatabaseError, Exception) as error: 
+            print( error )
+
+        finally: 
+            return items
