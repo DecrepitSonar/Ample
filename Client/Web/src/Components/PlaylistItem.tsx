@@ -9,12 +9,14 @@ import { save } from '../utils/librarySlice'
 import { play, addToQueue } from '../utils/mediaPlayerSlice'
 import { AudioItemPropType } from '../utils/ObjectTypes'
 import { RootState, useAppDispatch } from '../utils/store'
+import { IoCloseCircleOutline } from 'react-icons/io5'
 
 export default function PlaylistItem(props: AudioItemPropType ){
 
   const audioPlayer = useSelector( (state: RootState) => state.audioPlayer)
   const library = useSelector( (state: RootState) => state.library.library)
   const [optionSlider, setOptionSlider ] = useState<boolean>(false)
+  const auth = useSelector( (state: RootState) => state.auth)
   
   // const [isSaved, setSaved ] = useState<Boolean>(false)
   const audioItem = props as AudioItemPropType
@@ -32,6 +34,9 @@ export default function PlaylistItem(props: AudioItemPropType ){
 
   useEffect(() => {
     // setSaved(  )
+    console.log(props.playlist_id == auth.user.id)
+    console.log(props.author_id)
+    console.log(auth.user.id)
   },[library])
 
   return(
@@ -51,18 +56,35 @@ export default function PlaylistItem(props: AudioItemPropType ){
             <span>{audioItem.author}</span>
           </div>
         </div>
-
+        {
+         props.author_id == auth.user.id ? 
+         <div className="track_buttons">
+         <button onClick={() => {
+          props.setModalForm('delete')
+          props.setSelectedTrack({
+            id: props.id,
+            playlist_id: props.playlist_id
+          })
+          props.setModalOpen(true)
+         }} ><IoCloseCircleOutline/></button>
+         </div> :
         <div className="track_buttons">
           { isSaved? <button style={{"color":"rgba(198, 161, 104,.8)"}} onClick={() => dispatch(save(audioItem))}> <BiSolidHeart/> </button> : <button onClick={() => dispatch(save(audioItem))}> <BiHeart/></button> }
           <button onClick={() => setOptionSlider(!optionSlider)} className='optionsBtn'><HiEllipsisHorizontal/></button>
         </div>
+
+        }
         
       </div>
 
+        {
+          props.author_id == auth.user.id && 
         <div className="optionsList">
-          <button onClick={(e) =>  dispatch(addToQueue(audioItem)) }><RiPlayList2Line/></button>
           <button onClick={() => props.openPlaylistModal(audioItem)}><BsPlusCircle/></button>
+          <button onClick={(e) =>  dispatch(addToQueue(audioItem)) }><RiPlayList2Line/></button>
         </div>
+        }
+
     </div>
   )
 }

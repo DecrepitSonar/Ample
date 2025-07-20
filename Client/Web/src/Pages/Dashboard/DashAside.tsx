@@ -39,11 +39,11 @@ function DashAside(){
   const navigator = useNavigate()
     return(
         <div className="dash_aside">
-           <li onClick={() => navigator(-1)}> <i><IoChevronBack/></i> back</li>
+           <Link to={`/profile/${auth.user.id}`}> <li> <i><IoChevronBack/></i> Profile</li></Link>
            <Link to={'/dashboard/'}><li style={activeStyle('dashboard')}><i><BsColumnsGap/></i> Dashboard</li></Link>
            <Link to={'/dashboard/Uploads'}><li style={activeStyle('Uploads')} ><i> <RiArchiveDrawerFill/></i> MyContent</li></Link>
-           <Link to={'/dashboard/Uploads'}><li><i> <BsFillFileBarGraphFill/></i> Analytics</li></Link>
-           <Link to={'/dashboard/Uploads'}><li><i> <FaDollarSign/></i> Earnings</li></Link>
+           {/* <Link to={'/dashboard/Uploads'}><li><i> <BsFillFileBarGraphFill/></i> Analytics</li></Link> */}
+           {/* <Link to={'/dashboard/Uploads'}><li><i> <FaDollarSign/></i> Earnings</li></Link> */}
         </div>
     )
 }

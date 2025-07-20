@@ -58,13 +58,15 @@ export type VideoItemPropType = {
 
 }
 export type AudioItemPropType = {
-    trackNum: number
-    name: ReactNode
-    id: string,
-    title: string, 
-    author: string,
-    imageURL:string,
+    trackNum?: number
+    name: string
+    id: string
+    title: string 
+    author: string
+    author_id: string
+    imageurl:string
     type: string
+    playlist_id?: string
 }
 
 export type LoginFormType = {

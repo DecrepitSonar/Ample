@@ -11,12 +11,12 @@ import {
 import { axisClasses } from "@mui/x-charts";
 import { useOutletContext } from "react-router-dom";
 import httpclient from "../../httpclient";
-import { DashboardUploadsType } from "../../utils/ObjectTypes";
+import { AudioItemPropType, DashboardUploadsType } from "../../utils/ObjectTypes";
 
 function Home(){
   
   const { setOpenUploadModal } = useOutletContext()
-  const [ uploads, setUploads ] = useState<[DashboardUploadsType]>()
+  const [ uploads, setUploads ] = useState<[AudioItemPropType]>()
   
   const margin = { right: 24 };
   const uData = [4000, 3000, 2000, 2780, 1890, 2390, 1231];
@@ -34,7 +34,7 @@ function Home(){
 
   const getDashboardData = async () => {
     try{
-      const response = await httpclient.get('http://127.0.0.1:5000/')
+      const response = await httpclient.get('http://127.0.0.1:5000/dashboard/uploads')
      setUploads( response.data )
     }
     catch( error ){
@@ -51,12 +51,11 @@ function Home(){
       <h1>Dashboard</h1>
       <header>
         <span>Quick Actions</span>
+        <div className=" home_header">
+          <button onClick={() => setOpenUploadModal(true)}><i><BsUpload/></i> Upload</button>
+        </div>
       </header>
 
-      <div className=" home_header">
-        <button onClick={() => setOpenUploadModal(true)}><i><BsUpload/></i> Audio</button>
-        <button><i><BsUpload/></i> Playlist</button>
-      </div>
       <div className="dash_header_section">
       <div className="dash_info_box">
         <h1>{uploads?.length || 0}</h1>
@@ -72,7 +71,7 @@ function Home(){
       </div>
 
       </div>
-      <div className="chartContainer">
+      {/* <div className="chartContainer">
         <LineChart
         height={350}
         series={[
@@ -110,7 +109,7 @@ function Home(){
           },
         }}
         margin={margin}/>
-      </div>
+      </div> */}
       {
           uploads && 
           <table>

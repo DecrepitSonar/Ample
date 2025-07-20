@@ -47,6 +47,9 @@ export default function Listen() {
   return (
     <div className="page_container">
 
+        {
+            pageData?.featured && 
+        
         <div className='listen_page_header' style={{backgroundImage: `url(${pageData?.featured[featureIndex].imageurl}`}}>
             <div className="listen_page_header_overlay">
                     <div className='header_feature'>
@@ -73,6 +76,7 @@ export default function Listen() {
                 </div>
             </div>
         </div>
+        }
 
     <div className='listen_page_container'>
         

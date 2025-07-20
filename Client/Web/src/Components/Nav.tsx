@@ -70,10 +70,10 @@ function Nav(){
               {
                 auth.isLoggedIn && <Link to={'/dashboard'} style={currentLocation[1] == 'notifications' ? activeLink : inActiveLink}>  <BsUpload/></Link>
               }
-              <div className='nav_profile' onClick={ (e: React.SyntheticEvent) => navigate(`/profile/${auth.user.id}`)}>
+              <Link to={`/profile/${auth.user.id}`} className='nav_profile'>
                 <span>{auth.user.username}</span>
                 <img className="nav_avi" src={auth.user.profileimage}/>
-              </div>
+              </Link>
             </div> :
             <div className="nav_avi_container">
               <Link to={'/browse'} style={currentLocation[1] == 'browse' ? activeLink : inActiveLink}><PiMagnifyingGlass/></Link>

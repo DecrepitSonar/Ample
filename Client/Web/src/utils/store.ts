@@ -5,6 +5,7 @@ import { settings } from './settingsSlice'
 import { audioPlayer } from './mediaPlayerSlice'
 import { library } from './librarySlice'
 import { notifications } from './notificationSlice'
+import { dashboard } from './dashboardSlice'
 
 export const store = configureStore({
     reducer: { 
@@ -12,7 +13,8 @@ export const store = configureStore({
         settings,
         audioPlayer,
         library,
-        notifications
+        notifications,
+        dashboard
     }
 })
 

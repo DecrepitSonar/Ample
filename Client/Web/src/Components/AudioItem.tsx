@@ -5,10 +5,14 @@ import { PiPause, PiPlayBold } from 'react-icons/pi'
 import { useSelector } from 'react-redux'
 import { RootState, useAppDispatch } from '../utils/store'
 import { play } from '../utils/mediaPlayerSlice'
+import { auth } from '../utils/Authslice'
+
 export default function AudioItem(props: AudioItemPropType){
   
     const navigate = useNavigate()
     const player = useSelector( (state: RootState) => state.audioPlayer)
+    const auth = useSelector( (state: RootState ) => state.auth)
+
     const dispatch = useAppDispatch()
     
     useEffect(() => {
@@ -30,7 +34,7 @@ export default function AudioItem(props: AudioItemPropType){
                     <button className='audio_itdem_play_button' onClick={() => dispatch(play(props))}><i><PiPlayBold/></i></button>
                   }
                 </div>
-                <img className="audio_item_art" src={ props.id != undefined && `https://prophile.nyc3.digitaloceanspaces.com/images/${props.imageURL}.jpg`}/>
+                <img className="audio_item_art" src={ props.id != undefined ? props.imageurl: '' }/>
               </div>
             <div className="audio_item_info">
               <span>{props.title}</span>
@@ -40,6 +44,8 @@ export default function AudioItem(props: AudioItemPropType){
           "Single": 
           <div className="audio_item_container">
               <div className="audio_item_track_image_container">
+              {
+                auth.user.id != props.author_id &&
                 <div className="audio_item_track_image_overlay" 
                 style={ player.nowPlaying.id == props.id ? { "opacity": "1"} : {}}>
                   {
@@ -48,22 +54,33 @@ export default function AudioItem(props: AudioItemPropType){
                     <button className='audio_itdem_play_button' onClick={() => dispatch(play(props))}><i><PiPlayBold/></i></button>
                   }
                 </div>
-                <img className="audio_item_art" src={ props.id != undefined && `https://prophile.nyc3.digitaloceanspaces.com/images/${props.imageURL}.jpg`}/>
+              }
+                <img className="audio_item_art" src={ props.id != undefined ? props.imageurl : ''}/>
               </div>
             <div className="audio_item_info">
               <span>{props.title}</span>
               <span>{props.author != undefined ? props.author : props.name }</span>
+              {
+                auth.user.id == props.author_id &&
+              <span>{props.type}</span>
+              }
             </div>
           </div>,
-          "Album":
-          <div className="audio_item_container" onClick={() => navigate(`/playlist/${props.id}`)}>
+          "Playlist":
+          <div className="audio_item_container" onClick={() => 
+          auth.user.id == props.author_id ? navigate(`/dashboard/edit/playlist/${props.id}`) : navigate(`/playlist/${props.id}`)
+          }>
               <div className="audio_item_track_image_container">
                 <img className="audio_item_art" 
-                src={ props.id != undefined && `https://prophile.nyc3.digitaloceanspaces.com/images/${props.imageURL}.jpg`}/>
+                src={ props.id != undefined ? props.imageurl : '' }/>
               </div>
             <div className="audio_item_info">
               <span>{props.title}</span>
               <span>{props.author != undefined ? props.author : props.name }</span>
+              {
+                auth.user.id == props.author_id &&
+              <span>{props.type}</span>
+              }
             </div>
           </div>
         }[props.type]

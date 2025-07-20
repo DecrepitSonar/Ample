@@ -93,14 +93,12 @@ nav{
     color: white;
     background-color: rgba(198, 161, 104,.9);
   }
-  a span{
+  /* a span{ */
     /* border: 1px solid red; */
-    display: block;
+    /* display: block;
     width: 4rem;
     margin: auto;
-    /* display: flex; */
-    border: 1px solid red;
-  }
+  } */
   a span svg{
     font-size: 1rem;
     /* color: red; */

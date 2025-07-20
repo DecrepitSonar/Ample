@@ -1,6 +1,6 @@
-import React, { Children } from 'react'
+import React, { Children, useState } from 'react'
 import "./styles/App.css";
-import { Navigate, Route, Routes } from "react-router-dom";
+import { Navigate, Route, Routes, useParams } from "react-router-dom";
 
 // Auth/ login imports
 import SignUpForm from './Pages/Auth/SignUpForm'
@@ -32,12 +32,20 @@ import Nav from './Components/Nav';
 import httpclient from './httpclient';
 import UserUpgrade from './Pages/Main/TermsAndConditions';
 import { CheckCircleIcon } from '@heroicons/react/24/outline';
+
+// Profile 
 import ProfileHome from './Pages/Main/Profile/ProfileHome';
 import AccountSettings from './Pages/Main/Profile/Settings/AccountSettings';
 import SecuritySettings from './Pages/Main/Profile/Settings/SecuritySettings';
 import PaymentSettings from './Pages/Main/Profile/Settings/PaymentSettings';
 import NotificationSettings from './Pages/Main/Profile/Settings/Notifications';
 import PrivacySettings from './Pages/Main/Profile/Settings/PrivacySettings';
+import PlaylistItem from './Components/PlaylistItem';
+import { BsPlusCircle } from 'react-icons/bs';
+import { BiInfoCircle } from 'react-icons/bi';
+import EditPlaylist from './Pages/Dashboard/EditPlaylist';
+
+
 
 type ProtectedRoutePropsTypes = {
   user: userAuthType | null, 
@@ -104,10 +112,12 @@ function App() {
           <Route path='billing' element={<PaymentSettings/>}/>
           <Route path='notifications' element={<NotificationSettings/>}/>
           <Route path='privacy' element={<PrivacySettings/>}/>
+
         </Route>
         <Route path='/dashboard/' element={<ProtectedRoute user={user}> <Dashboard/> </ProtectedRoute>}>
           <Route index element={<Home/>}/>
-          <Route path='/dashboard/newUpload' element={<NewUploads/>}/>
+          <Route path='/dashboard/Uploads' element={<Uploads/>}/>
+          <Route path='edit/playlist/:id' element={<EditPlaylist/>}/>
         </Route>
       </Routes>
       <div className="warning_popup"></div>

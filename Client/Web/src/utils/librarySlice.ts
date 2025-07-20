@@ -74,6 +74,10 @@ export const librarySlice = createSlice({
             state.library =  action.payload
         })
         builder.addCase(subscribe.fulfilled, (state: LibraryStatePropType, action: any) => {})
+        builder.addCase(getLibraryItems.fulfilled, (state: LibraryStatePropType, action: any) => {
+            state.library = action.payload.data
+          console.log( action.payload)   
+        })
     }
 })
 

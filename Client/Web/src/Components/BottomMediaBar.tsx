@@ -50,23 +50,14 @@ function BottomMediaBar(props){
     throw new Error("Function not implemented.")
   }
   useEffect(() => {
-    // console.log( audioPlayer.nowPlaying.imageURL != undefined)
     getAverageImagecolor(playerContainerRef.current)
     progressbarRef.current.value = 0 
-  },[])
 
-  // useEffect(() => {
-  //   auth.isLoggedIn == true && 
-  //     httpclient.get(`http://127.0.0.1:5000/history?filter=audio&&id=${auth.user.id}`)
-  //     .then( response => {
-  //       dispatch(setAudioHistory(response.data))
-  //       // console.log(response.data)
-  //     })
-  // }, [auth.user, audioPlayer.nowPlaying])
+  },[])
 
     return(
       <>
-        <div id="footer" ref={playerContainerRef}>
+        <div id="footer" ref={playerContainerRef} style={ audioPlayer.nowPlaying.id != undefined ? {'right': '20px'}: {}}> 
         <div className="mediabar_overlay">
           <div className='footer_content_container'>
             <div className="bottom_Mediabar_content_info_container">

@@ -2,6 +2,8 @@ import React, { SyntheticEvent, useEffect, useState } from "react";
 import '/src/styles/DashStyles/dashstyles.css'
 import { BiInfoCircle } from "react-icons/bi";
 import httpclient from "../httpclient";
+import { useAppDispatch } from "../utils/store";
+import { hideNotification, showNotification } from "../utils/notificationSlice";
 
 export default function UploadsModal (props: {
   uploadModal: Boolean, 
@@ -10,7 +12,10 @@ export default function UploadsModal (props: {
 
   const [audioFile, setAudioFile] = useState<Blob>()
   const [imageFile, setImageFile] = useState<Blob>()
-
+  const [uploadType, setUploadType ] = useState('Single')
+  
+  const dispatch = useAppDispatch()
+  
   const handleFormInput = async (e: SyntheticEvent ) => {
     
     e.preventDefault()
@@ -39,8 +44,20 @@ export default function UploadsModal (props: {
 
     try{
 
-      const response = httpclient.post('http://127.0.0.1:5000/', form)
+      const response = await httpclient.post('http://127.0.0.1:5000/dashboard/upload', form)
+      
+      if ( response.status == 200){
+        
+        props.setOpenUploadModal(false)
+        
+        dispatch(showNotification('Upload Successful'))
+
+        setTimeout(() => {
+          dispatch(hideNotification())
+        }, 2000); 
+      }
       console.log( response )
+
     }
     catch(error){
       console.log(error)
@@ -52,7 +69,7 @@ export default function UploadsModal (props: {
   return(
     <div  style={props.uploadModal ? {'display':'block'} : {'display': 'none'} } className="uplod_moda_container">
         <div className="uplod_modal">
-            <h1>Upload File</h1>
+            <h1>Upload</h1>
           <form action="" onSubmit={(e: React.SyntheticEvent) => handleFormInput(e)}>
             <label >Image</label>
             <div className="file_upload">
@@ -79,7 +96,9 @@ export default function UploadsModal (props: {
               <option value={'Jazz'}>Jazz</option>
             </select>
             <label >Type</label>
-            <select name="type">
+            <select name="type"
+            onChange={(e: React.ChangeEvent<HTMLSelectElement>) => setUploadType( e.currentTarget.value)}
+            >
               <option value={'Single'}>Single</option>
               <option value={'Playlist'}>Playlist</option>
             </select>
@@ -88,15 +107,21 @@ export default function UploadsModal (props: {
               <option value={'Music'}>Music</option>
               <option value={'Podcast'}>Podcast</option>
             </select> 
-            <label>Audio File</label>
-            <div className="file_upload">
-            <input 
-              type="file" 
-              name="audio_file" 
-              onChange={(e: React.ChangeEvent<HTMLInputElement>) => setAudioFile(e.currentTarget.files![0])}
-            />
-            <span>Only mp3, wave file types are accepted. See usage guidelines for more details  <a href=""><i><BiInfoCircle/></i></a> </span>
-            </div>
+
+          {
+            uploadType == 'Single' &&
+            <>
+              <label>Audio File</label>
+              <div className="file_upload">
+              <input 
+                type="file" 
+                name="audio_file" 
+                onChange={(e: React.ChangeEvent<HTMLInputElement>) => setAudioFile(e.currentTarget.files![0])}
+              />
+              <span>Only mp3, wave file types are accepted. See usage guidelines for more details  <a href=""><i><BiInfoCircle/></i></a> </span>
+              </div>
+            </>
+          }
             
             <div className="form_button_container">
               <button type="submit" className="button_positive">upload</button>

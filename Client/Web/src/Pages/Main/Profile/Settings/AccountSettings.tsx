@@ -204,7 +204,7 @@ export default function AccountSettings(){
         </form>
   
           {
-            user.accounttype != 'Creator' && 
+            user.accounttype != 'creator' && 
             <section>
               <h2>Creators</h2>
               <div className="section_input_content">

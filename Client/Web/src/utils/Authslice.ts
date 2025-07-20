@@ -65,6 +65,14 @@ export const authSlice = createSlice({
         setUser: (state: stateAuthType, action: any) => {
             const user = action.payload
             
+            const storedUser = window.localStorage.getItem('user')
+
+            if( storedUser != undefined){
+                window.localStorage.removeItem('user')
+            }
+            
+            window.localStorage.setItem('user', JSON.stringify(user))
+            
             return state = { 
                 ...state,
                 user: user

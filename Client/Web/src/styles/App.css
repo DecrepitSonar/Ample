@@ -1,3 +1,4 @@
+
 input:is(:-webkit-autofill, :autofill) {
   border: 3px solid darkorange;
 }
@@ -134,16 +135,17 @@ form a {
 #footer{
   /* height: 100px;  */
   width: 40%;
-  
+
   position: absolute;
   gap: 10px;
   /* border: 1px solid red; */
   box-shadow: 0px 0px 10px #000;
-  right: 10px;
-  top: 70px;
+  right: -600px;
+  bottom: 20px;
   z-index: 3;
   border-radius: 10px;
   overflow: hidden;
+  transition: right .3s ease-in
 }
 .footer_content_container{
   display: flex;
@@ -461,6 +463,29 @@ section h1{
 .section_subheading{
   font-size: 2em;
 }
+.sectionHeadingContainer{
+  display: flex;
+  justify-content: space-between;
+}
+.sectionHeadingContainer button{
+  display: flex;
+  margin: auto 10px;
+  align-items: center;
+  gap: 10px;
+  padding: 10px;
+  border-radius: 5px;
+  background-color: transparent;
+  color: #707070
+}
+.sectionHeadingContainer button:hover{
+  background-color: rgba(198, 161, 104, .5);
+  color: #fff;
+}
+.sectionHeadingContainer button i{
+  display: flex;
+  align-items: center;
+  font-size: 1.5rem;
+}
 .section_item_container{
   display: flex;
   justify-content: space-between;
@@ -693,7 +718,6 @@ section h1{
   z-index: 2;
   align-items: center;
   justify-content: center;
-  border: 1px solid red;
 }
 .OptionsModal,
 .newPlaylistModal{
@@ -796,6 +820,7 @@ section h1{
   bottom: 20px; 
   right: -1000px;
   transition: all .5s ease-in-out;
+  z-index: 10;
 }
 .notification_popup i{
   /* display: block; */
