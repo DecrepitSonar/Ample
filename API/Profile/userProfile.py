@@ -2,6 +2,7 @@ from flask import render_template, request, jsonify, current_app
 from flask import Blueprint
 from Models.models import Database as db
 from Models.contentDb import BucketManager
+from utils import login_required
 
 profile = Blueprint('profile', __name__, url_prefix='/profile')
 
@@ -18,7 +19,8 @@ def handleSavedContent():
     return jsonify(databse.getSavedItems(user_id))
 
 @profile.route('/library', methods=['GET'])
-def getUserProfile():  
+# @login_required
+def getUserProfile(user_id):  
 
     user_id = databse.getUserBySession(request.cookies['xrftoken'])
     print(databse.getSavedItems(user_id))

@@ -29,7 +29,8 @@ app.register_blueprint(admin)
 with app.app_context():
     databse = db()
     uuid = uuid.uuid4()
-    server_session = Session(app)
+    session = Session(app)
+
 
 @app.route('/creator-profile', methods=['GET'])
 def getArtistProfile():
@@ -95,13 +96,13 @@ def home():
     # print( request.user_agent )
     content = []
 
-    # content = {
+    content = {
     #     'featured': [],
     #     'podcasts': [],
-    #     'music': [],
+        'music': databse.getAllPlaylists(),
     #     'artists': [],
     #     'videos': []
-    # }
+    }
 
     featuredVideos = contentDb['featuredvideos'].find(
         {
@@ -268,112 +269,114 @@ def home():
 def getPlaylist():
 
     playlistId =  request.args['id']
-
+    playlist = databse.getPlaylistById(playlistId)
+    # print( databse.getPlaylistsByAuthorId(playlist) )
+    
     content = {
             'head': {
-                'playlist': {},
-                'tracks': [],
-                'author': {}
+                'playlist': playlist,
+                'tracks': databse.getItemByPlaylist_id(playlistId),
+                # 'author': databse.getAuthorByAuthorId(playlist)
             },
-            'albums': [],
-            'features': [],
-            'relatedVideos': []
+            # 'albums': databse.getPlaylistsByAuthorId(playlist),
+            # 'features': [],
+            # 'relatedVideos': []
         }
 
-    playlist = contentDb['albums'].find_one({'id': playlistId},
-                                                {'_id': 0,
-                                                 'id': 1,
-                                                'title': 1,
-                                                'name': 1,
-                                                'imageURL': 1,
-                                                'artistId': 1,
-                                                'type': 1})
+    # playlist = contentDb['albums'].find_one({'id': playlistId},
+    #                                             {'_id': 0,'
+    #                                              'id': 1,
+    #                                             'title': 1,
+    #                                             'name': 1,
+    #                                             'imageURL': 1,
+    #                                             'artistId': 1,
+    #                                             'type': 1})
     
-    author = contentDb['artists'].find_one({'id': playlist['artistId']},
-                                           {
-                                               '_id': 0,
-                                               'id': 1,
-                                               'imageURL': 1,
-                                               'name': 1,
-                                               'type': 1
-                                           })
+    # author = contentDb['artists'].find_one({'id': playlist['artistId']},
+    #                                        {
+    #                                            '_id': 0,
+    #                                            'id': 1,
+    #                                            'imageURL': 1,
+    #                                            'name': 1,
+    #                                            'type': 1
+    #                                        })
     
-    content['features'].append({
-        'id': author['id'],
-        'username': author['name'],
-        'imageURL': author['imageURL'],
-        'type': author['type']
-    })
+    # content['features'].append({
+    #     'id': author['id'],
+    #     'username': author['name'],
+    #     'imageURL': author['imageURL'],
+    #     'type': author['type']
+    # })
 
-    tracks = contentDb['tracks'].find({'albumId': playlist['id']},
-                                      {
-                                          '_id': 0,
-                                          'id': 1,
-                                          'title': 1,
-                                          'name': 1,
-                                          'audioURL': 1,
-                                          'artistId': 1,
-                                          'imageURL': 1,
-                                          'albumId':1,
-                                          'type': 1
-                                      }).sort('trackNum')
+    # tracks = contentDb['tracks'].find({'albumId': playlist['id']},
+    #                                   {
+    #                                       '_id': 0,
+    #                                       'id': 1,
+    #                                       'title': 1,
+    #                                       'name': 1,
+    #                                       'audioURL': 1,
+    #                                       'artistId': 1,
+    #                                       'imageURL': 1,
+    #                                       'albumId':1,
+    #                                       'type': 1
+    #                                   }).sort('trackNum')
 
 
-    content['head']['playlist'] = {
-        'id': playlist['id'],
-        'title': playlist['title'],
-        'author': playlist['name'],
-        'imageURL': playlist['imageURL'],
-        'artistId': playlist['artistId'],
-        'type': playlist['type']
-    } 
+    # content['head']['playlist'] = {
+    #     'id': playlist['id'],
+    #     'title': playlist['title'],
+    #     'author': playlist['name'],
+    #     'imageURL': playlist['imageURL'],
+    #     'artistId': playlist['artistId'],
+    #     'type': playlist['type']
+    # } 
 
-    content['head']['author'] = {
-        'id': author['id'],
-        'imageURL': author['imageURL'],
-        'username': author['name']
-    }
+    # content['head']['author'] = {
+    #     'id': author['id'],
+    #     'imageURL': author['imageURL'],
+    #     'username': author['name']
+    # }
 
-    for item in list(tracks): 
-        print( item )
-        content['head']['tracks'].append(
-            {
-                'id': item['id'],
-                'title': item['title'],
-                'author': item['name'],
-                'audioURL': item['audioURL'],
-                'artistId': item['artistId'],
-                'imageURL': item['imageURL'],
-                'albumId': item['albumId'],
-                'type': item['type']
-            }
-        )
+    # for item in list(tracks): 
+    #     print( item )
+    #     content['head']['tracks'].append(
+    #         {
+    #             'id': item['id'],
+    #             'title': item['title'],
+    #             'author': item['name'],
+    #             'audioURL': item['audioURL'],
+    #             'artistId': item['artistId'],
+    #             'imageURL': item['imageURL'],
+    #             'albumId': item['albumId'],
+    #             'type': item['type']
+    #         }
+    #     )
 
-    albums = contentDb['albums'].find({'artistId': author['id']},{'_id': 0,})
+    # albums = contentDb['albums'].find({'artistId': author['id']},{'_id': 0,})
     
-    for item in list(albums): 
-        content['albums'].append({
-            'id': item['id'],
-            'title': item['title'],
-            'imageURL': item['imageURL'],
-            'author': item['name'],
-            'type': item['type']
-        })
+    # for item in list(albums): 
+    #     content['albums'].append({
+    #         'id': item['id'],
+    #         'title': item['title'],
+    #         'imageURL': item['imageURL'],
+    #         'author': item['name'],
+    #         'type': item['type']
+    #     })
 
-    related = contentDb['videos'].find({'artistId': author['id']},{'_id': 0})
+    # related = contentDb['videos'].find({'artistId': author['id']},{'_id': 0})
     
-    for item in list(related): 
-        # print( item, '\n' )
-        content['relatedVideos'].append({
-            'id': item['id'],
-            'title': item['title'],
-            'author': item['artist'],
-            'contentURL': item['videoURL'],
-            'imageURL': item['artistImageURL'],
-            # 'views': video['views']
-        })
+    # for item in list(related): 
+    #     # print( item, '\n' )
+    #     content['relatedVideos'].append({
+    #         'id': item['id'],
+    #         'title': item['title'],
+    #         'author': item['artist'],
+    #         'contentURL': item['videoURL'],
+    #         'imageURL': item['artistImageURL'],
+    #         # 'views': video['views']
+    #     })
 
-    print( content)
+    # print( content['head']['author'])
 
     return jsonify(content)
 
@@ -552,15 +555,15 @@ def getAudioPageContent():
 @app.route('/listen', methods=['GET'])
 def getAudioPageContent():
     content = {
-        'featured': databse.getFeaturedContent(),
-        'new': [],
-        'trending': [],
+        # 'featured': databse.getFeaturedContent(),
+        'new': databse.getAllPlaylists(),
+        # 'trending': [],
         'genres': {
-            'alternative': [],
-            'rnb': [],
-            'hiphop': []
+            'alternative': databse.getPlaylistByGenre('Alternative'),
+            'rnb': databse.getPlaylistByGenre('R&B'),
+            'hiphop': databse.getPlaylistByGenre('Hip-Hop')
         },
-        'playlists': []
+        # 'playlists': []
     }
 
 
@@ -572,7 +575,7 @@ def updateListeningHistory():
 
     user = databse.getUserBySession(request.cookies['xrftoken'])
 
-    databse.addAudioHistoryItem(request.args['audio_id'], user['id'])
+    # databse.addAudioHistoryItem(request.args['audio_id'], user['id'])
 
     return jsonify({}, 200)
 
@@ -580,19 +583,8 @@ def updateListeningHistory():
 def getRandomTrack(): 
     print("random")
 
-    tracks = list(contentDb['tracks'].aggregate([{'$sample': {'size': 1}}]))
-
-    for item in tracks: 
-          track = {
-            'id': item['id'],
-            'title': item['title'],
-            'name': item['name'],
-            'imageURL': item['imageURL'],
-            'audioURL': item['audioURL'],
-            'albumId': item['albumId']
-        }
-        
-    return jsonify(track)
+    tracks = databse.getRandomTracks()
+    return jsonify(tracks)
 
 @app.route('/search', methods=['GET'])
 def handleSearchQuery():
@@ -669,7 +661,7 @@ def handleSearchQuery():
     
     return jsonify( filter[filterQuery]() )
 
-@app.route('/browse', methods=['GET'])
+# @app.route('/browse', methods=['GET'])
 
 @app.route('/history', methods={'GET'})
 def getUserHistory():

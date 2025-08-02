@@ -132,7 +132,7 @@ def uploadPlaylistTrack():
     
 
     tracks = db.getAudioUploadsByPlaylistId(request.form['playlist_id'])
-    
+
     if tracks is not None: 
         print( tracks)
         return jsonify(tracks)
@@ -147,3 +147,8 @@ def updatePlaylist():
 
     return jsonify({})
 
+@dashboard.route('/edit/playlist', methods=['PUT'])
+def editPlaylistItem():
+    print( request.form )
+
+    return jsonify({})

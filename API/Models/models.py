@@ -479,6 +479,187 @@ class Database:
         sql = """
 
         """
+    def getAllPlaylists(self):
+        
+        if self.conn.closed:
+            self.__init__()
+
+        sql = """
+            SELECT array_to_json(
+               array_agg(row_to_json(t))
+            ) AS items
+            FROM (
+                SELECT 
+                    id,
+                    title, 
+                    author,
+                    imageurl,
+                    type
+                FROM playlist 
+                ORDER BY upload_date DESC
+                LIMIT 7
+            ) t
+        """
+
+        try: 
+            with self.conn.cursor() as cursor: 
+
+                cursor.execute(sql)
+                response = cursor.fetchone()[0]
+                print( response )
+
+        except( self.conn.DatabaseError, Exception) as error: 
+            print( error )
+
+        finally: 
+            return response
+    def getAllTracksByPlaylistId(self, id):
+
+        if self.conn.closed: 
+            self.__init__()
+
+        sql = """
+            SELECT array_to_json(
+               array_agg(row_to_json(t))
+            ) AS items
+            FROM (
+                SELECT * 
+                FROM audio
+                WHERE playlist_id = '%s'
+            ) t
+        """ %id
+
+        try: 
+            with self.conn.cursor() as cursor: 
+                cursor.execute(sql)
+                tracks = cursor.fetchall()
+                print( tracks )
+                
+        except( self.conn.DatabseError, Exception) as error: 
+            print( error )
+
+        finally: 
+            return 
+    def getAuthorByAuthorId(self, id): 
+
+        if self.conn.closed: 
+            self.__init__()
+
+        sql = """ 
+            SELECT row_to_json(t)
+            FROM (
+            SELECT 
+                    id,
+                    username,
+                    profileimage as imageurl
+                FROM  users
+                WHERE id = '%s'
+        ) t """ %id
+
+        try: 
+            with self.conn.cursor() as cursor:
+                cursor.execute(sql)
+                result = cursor.fetchone()[0]
+                print( result) 
+
+        except(self.conn.DatabaseError, Exception) as error: 
+            print( error )
+    
+        finally: 
+            self.conn.close()
+            return result
+    def getPlaylistsByAuthorId(self, playlist):
+
+        if self.conn.closed:
+            self.__init__()
+
+        sql = """ 
+        SELECT row_to_json(t)
+        FROM (
+            SELECT * 
+            FROM playlist
+            WHERE author_id = %s
+        ) t
+        """ %playlist['author_id']
+
+        # playlist['author_id'])
+
+        try: 
+            with self.conn.cursor() as cursor:
+                cursor.execute(sql)
+                result = cursor.fetchall()[0]
+
+        except( self.conn.DatabaseError, Exception) as error: 
+            print( error )
+
+        finally: 
+            self.conn.close()
+            return result
+    def getPlaylistByGenre(self, genre):
+
+        if self.conn.closed: 
+            self.__init__()
+
+        sql = """
+            SELECT array_to_json(
+                array_agg(row_to_json(t))
+            ) AS items
+            FROM (
+                SELECT 
+                    id,
+                    title, 
+                    author,
+                    imageurl,
+                    type
+                FROM playlist
+                WHERE genre = '%s'    
+                ORDER BY upload_date DESC
+                Limit 7
+            ) t
+        """%genre
+
+        try: 
+            with self.conn.cursor() as cursor: 
+                cursor.execute(sql)
+                result =  cursor.fetchone()[0]
+        except( self.conn.DatabaseError, Exception) as error: 
+            print( error )
+        
+        finally: 
+            return result
+  
+    # Media
+    def getRandomTracks(self):
+        
+        if self.conn.closed:
+            self.__init__()
+
+        sql = """
+            SELECT row_to_json(t)
+            FROM (
+                SELECT 
+                    id,
+                    author,
+                    author_id,
+                    imageurl,
+                    contenturl
+                FROM  audio
+                ORDER BY RANDOM()
+                LIMIT 5
+            ) t
+        """
+
+        try:
+            with self.conn.cursor() as cursor:
+                cursor.execute( sql )
+                result = cursor.fetchall()
+                print( result )
+        except( self.conn.DatabaseError, Exception) as error: 
+            print( error )
+
+        finally:
+            self.conn.close()
+            return result
     # Settings 
     def getAccountSettings(self, user_id):
 
@@ -673,7 +854,6 @@ class Database:
             self.conn.close()
 
             return user
-        
     def createPaymentSettings(self, user_id):
 
         paymentSettings = """ 
@@ -726,6 +906,27 @@ class Database:
                 self.conn.commit()
                 self.conn.close()
                 return 
+    def addPaymentCredit(self, userId, ammount):
+
+        if self.conn.closed: 
+            self.__init__()
+
+        sql = """
+            UPDATE user_wallet
+            SET credit = %s
+            WHERE user_id = '%s'
+            RETURNING *
+        """ 
+
+        try: 
+            with self.conn.cursor() as cursor:
+                cursor.execute(sql, (ammount, userId))
+                print( cursor.statusmessage )
+        except( self.conn.DatabaseError, Exception) as error: 
+            print( error )
+        
+        finally: 
+            return 
 
     # LIBRARY
     def saveItemToLibary(self, item, user_id):
@@ -1197,7 +1398,6 @@ class Database:
             self.conn.close()
             return
 
-        
     # Creator manager
     def getCreators(self):
 
@@ -1476,7 +1676,9 @@ class Database:
             self.conn.commit()
             self.conn.close()
             return
-
+    # def updateAudioItemById(self, id):
+        
+    #     if self.
     def getItemByPlaylist_id(self, id):
 
         if self.conn.closed: 

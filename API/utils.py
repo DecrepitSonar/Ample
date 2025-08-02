@@ -1,5 +1,5 @@
 import boto3
-from flask import g 
+from flask import g, session, request, redirect, current_app
 from enum import Enum 
 
 class AuthCodes(Enum):
@@ -13,4 +13,11 @@ class PageSection:
         self.items = items
         self.type = type
 
+    
+def login_required(func):
+    if 'cookie' not in session: 
+        request.json({'message':'user not logged in'})
+        # redirect('http://127.0.0.1:5170/login')
+        
+    return func()
     
