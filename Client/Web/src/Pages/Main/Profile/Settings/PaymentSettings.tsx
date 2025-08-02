@@ -52,7 +52,7 @@ export default function PaymentSettings(){
                   <span>
                     My Balance
                   </span>
-                  <h1>0</h1>
+                  <h1>${payments.credit}</h1>
                 </div>
                 
               </div>

@@ -28,7 +28,6 @@ export default function AccountSettings(){
   
     useEffect( () => {
       
-      
       ( async () => {
         console.log('useEffect')
         console.log( accountSettings)
@@ -155,9 +154,9 @@ export default function AccountSettings(){
   
               <img className='imageInputPreview' 
               ref={imgRef}
-              src={accountSettings.profileImage}/>
+              src={accountSettings.profileimage}/>
   
-            {/* <span>Banner Image</span> */}
+            {/* <span>Banner Image</span>
   
               <label className='custom_upload_buttom'>
                 <input 
@@ -168,7 +167,7 @@ export default function AccountSettings(){
   
               <img className='imageInputPreview' 
               ref={headerImgRef}
-              src={accountSettings.headerimage}/>
+              src={accountSettings.headerimage}/> */}
               
             </div>
             </>

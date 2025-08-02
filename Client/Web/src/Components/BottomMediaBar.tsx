@@ -46,12 +46,10 @@ function BottomMediaBar(props){
   //   setPlayerDuration(`${(e.currentTarget.duration / 60).toFixed(0)}:${(e.currentTarget.duration % 60).toFixed(0).padStart(2, 0)}`)
   // }
 
-  function returnFromQueue(): any {
-    throw new Error("Function not implemented.")
-  }
   useEffect(() => {
     getAverageImagecolor(playerContainerRef.current)
     progressbarRef.current.value = 0 
+
 
   },[])
 
@@ -64,16 +62,20 @@ function BottomMediaBar(props){
               <img className="Mediabar_content_artwork" 
               onClick={() => navigate(`/playlist/${audioPlayer.nowPlaying.albumId}`)}
               src={
-                audioPlayer.nowPlaying.imageURL != undefined ? 'https://prophile.nyc3.cdn.digitaloceanspaces.com/images/' + audioPlayer.nowPlaying.imageURL + '.jpg' : '/album.jpg'} />
+                audioPlayer.nowPlaying.imageurl != undefined ? audioPlayer.nowPlaying.imageurl : '/album.jpg'} />
               <div className="Mediabar_content_info">
                 {
                   audioPlayer.nowPlaying ? 
                   <audio 
-                  // onPlay={() => dispatch(togglePlayer(null))}
+                  onPlay={() => {
+                      // dispatch(togglePlayer(null))
+                      getAverageImagecolor( playerContainerRef.current! )
+                    }
+                  }
                   onCanPlay={(e) => {
                     console.log( 'playing')
                     // setVolume(e.currentTarget.volume)
-                    getAverageImagecolor( playerContainerRef.current,  document.querySelector( '.Mediabar_content_artwork').src )
+                    getAverageImagecolor( playerContainerRef.current! )
                   } }
                   onEnded={() => {
                     audioPlayer.queue.length < 1 && audioPlayer.upnext.length < 1 ? dispatch(populateAudioPlayer()) :  dispatch(playNext(null))
@@ -83,13 +85,13 @@ function BottomMediaBar(props){
                   onTimeUpdate={ (e: React.ChangeEvent<HTMLAudioElement>) => updatePlayerTime(e) }
                   id="audioPlayer" autoPlay controls preload="auto">
                   <source src={
-                    audioPlayer.nowPlaying.imageURL != '' ? 
-                    'https://prophile.nyc3.cdn.digitaloceanspaces.com/audio/' + audioPlayer.nowPlaying.audioURL +'.mp3': 'album.jpg' } type="audio/mp3"/>
+                    audioPlayer.nowPlaying.contenturl != '' ? 
+                    audioPlayer.nowPlaying.contenturl : undefined } type="audio/mp3"/>
                 </audio> : <></>
                 }
 
                 <span>{audioPlayer.nowPlaying.title ? audioPlayer.nowPlaying.title : 'Title'}</span>
-                <span onClick={() => navigate(`/user/${audioPlayer.nowPlaying.id}`, {state: props, preventScrollReset: true})} >{audioPlayer.nowPlaying.name ? audioPlayer.nowPlaying.name : 'Artist'}</span>
+                <span onClick={() => navigate(`/user/${audioPlayer.nowPlaying.id}`, {state: props, preventScrollReset: true})} >{audioPlayer.nowPlaying.author ? audioPlayer.nowPlaying.author : 'Artist'}</span>
               </div>
             </div>
             

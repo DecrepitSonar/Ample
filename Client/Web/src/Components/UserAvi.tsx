@@ -7,7 +7,7 @@ export default function UserAvi(props:UserAviPropType) {
     const navigate = useNavigate()
   
     const image = {
-        backgroundImage: `url('${ props.imageURL})`
+        backgroundImage: `url('${ props.imageurl})`
     }
   
     useEffect(()=> {},[])
@@ -15,10 +15,10 @@ export default function UserAvi(props:UserAviPropType) {
     return (
       <div className="large_user_avi"
       onClick={() => navigate(`/user/${props.id}`, {state: props, preventScrollReset: true})}>
-        <img src={`https://prophile.nyc3.digitaloceanspaces.com/images/${props.imageURL}.jpg`}
+        <img src={props.imageurl}
           className="user_avi"
         />
-        <span>{props.username == undefined ? props.name : props.username}</span>
+        <span>{props.username != undefined && props.username}</span>
       </div>
     );
   }

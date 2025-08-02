@@ -10,15 +10,13 @@ function Dashboard(){
   
   return(
     <>
-    <div className="dash_container">
-      <div className="dash_body">
+    <main className="dash_container">
         <DashAside/>
         <div  style={ uploadModal ? { 'overflow': 'hidden'} : {}} className="dash_main">
             <Outlet context={{setOpenUploadModal}}/>
             <UploadsModal uploadModal={uploadModal} setOpenUploadModal={setOpenUploadModal}/>
         </div>
-      </div>
-    </div>
+    </main>
     </>
   )
 }

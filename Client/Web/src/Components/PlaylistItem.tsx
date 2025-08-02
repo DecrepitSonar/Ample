@@ -1,7 +1,7 @@
 import React, { useEffect, useState, useSyncExternalStore } from 'react'
 import { BiSolidHeart, BiHeart } from 'react-icons/bi'
 import { BsPlusCircle } from 'react-icons/bs'
-import { FaPause } from 'react-icons/fa'
+import { FaPause,FaRegChartBar, FaRegEdit } from 'react-icons/fa'
 import { HiEllipsisHorizontal } from 'react-icons/hi2'
 import { RiPlayList2Line } from 'react-icons/ri'
 import { useSelector } from 'react-redux'
@@ -34,9 +34,9 @@ export default function PlaylistItem(props: AudioItemPropType ){
 
   useEffect(() => {
     // setSaved(  )
-    console.log(props.playlist_id == auth.user.id)
-    console.log(props.author_id)
-    console.log(auth.user.id)
+    // console.log(props.playlist_id == auth.user.id)
+    // console.log(props.author_id)
+    // console.log(auth.user.id)
   },[library])
 
   return(
@@ -57,16 +57,22 @@ export default function PlaylistItem(props: AudioItemPropType ){
           </div>
         </div>
         {
+        auth.user &&
          props.author_id == auth.user.id ? 
          <div className="track_buttons">
-         <button onClick={() => {
-          props.setModalForm('delete')
-          props.setSelectedTrack({
-            id: props.id,
-            playlist_id: props.playlist_id
-          })
-          props.setModalOpen(true)
-         }} ><IoCloseCircleOutline/></button>
+          {/* <button onClick={() => {}} ><FaRegChartBar/></button> */}
+          <button onClick={() => {
+            props.setModalForm('edit_audio')
+            props.setSelectedTrack(props)
+            props.setModalOpen(true)
+          }} ><FaRegEdit/></button>
+          <button 
+            onClick={() => {
+              props.setModalForm('delete_audio')
+              props.setSelectedTrack(props)
+              props.setModalOpen(true)
+            }
+          }><IoCloseCircleOutline/></button>
          </div> :
         <div className="track_buttons">
           { isSaved? <button style={{"color":"rgba(198, 161, 104,.8)"}} onClick={() => dispatch(save(audioItem))}> <BiSolidHeart/> </button> : <button onClick={() => dispatch(save(audioItem))}> <BiHeart/></button> }
@@ -78,6 +84,7 @@ export default function PlaylistItem(props: AudioItemPropType ){
       </div>
 
         {
+          auth.user &&
           props.author_id == auth.user.id && 
         <div className="optionsList">
           <button onClick={() => props.openPlaylistModal(audioItem)}><BsPlusCircle/></button>

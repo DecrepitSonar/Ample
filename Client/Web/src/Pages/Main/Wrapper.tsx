@@ -63,8 +63,8 @@ function Wrapper(){
     return(
         <main className="main">
           
-          <div className="content">
             <div className='dash_aside'>
+              <div className="dash_aside_main">
                 <Link to={`/profile/${params.id}`}><li style={activeStyle("")}><i><IoHome/></i>Home</li></Link>
                 <Link to={`/profile/${params.id}/account`}><li style={activeStyle("account")}><i><IoPerson/></i>Account</li></Link>
                 {user.accounttype == 'creator' && <><Link to={'/dashboard'}><li><i><BsUpload/></i>Dashboard</li></Link></>}
@@ -72,10 +72,12 @@ function Wrapper(){
                 <Link to={`/profile/${params.id}/security`}><li style={activeStyle("security")}><i><BiShieldQuarter/></i>Security</li></Link>
                 <Link to={`/profile/${params.id}/notifications`}><li style={activeStyle("notifications")}><i><PiBellRingingFill/></i>Notifications</li></Link>
                 <Link to={`/profile/${params.id}/privacy`}><li style={activeStyle("Privacy")}><i><CgEyeAlt/></i>Privacy</li></Link>
-                <a><li onClick={() => logoutUser() }> <i style={{color: "#d6000090"}}><BiLockAlt/></i>Sign out</li></a>
               </div>
-              <Outlet/>
-          </div>
+              <div className="dash_aside_bottom">
+                <button onClick={() => logoutUser() }> <i style={{color: "#d6000090"}}><BiLockAlt/></i>Sign out</button>
+              </div>
+            </div>
+            <Outlet/>
         </main>
     )
   } 

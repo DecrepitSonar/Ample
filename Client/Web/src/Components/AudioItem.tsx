@@ -45,6 +45,7 @@ export default function AudioItem(props: AudioItemPropType){
           <div className="audio_item_container">
               <div className="audio_item_track_image_container">
               {
+                auth.user &&
                 auth.user.id != props.author_id &&
                 <div className="audio_item_track_image_overlay" 
                 style={ player.nowPlaying.id == props.id ? { "opacity": "1"} : {}}>
@@ -61,6 +62,7 @@ export default function AudioItem(props: AudioItemPropType){
               <span>{props.title}</span>
               <span>{props.author != undefined ? props.author : props.name }</span>
               {
+                auth.user &&
                 auth.user.id == props.author_id &&
               <span>{props.type}</span>
               }
@@ -68,7 +70,8 @@ export default function AudioItem(props: AudioItemPropType){
           </div>,
           "Playlist":
           <div className="audio_item_container" onClick={() => 
-          auth.user.id == props.author_id ? navigate(`/dashboard/edit/playlist/${props.id}`) : navigate(`/playlist/${props.id}`)
+          auth.user &&
+          auth.user.id == props.author_id && auth.isLoggedIn? navigate(`/dashboard/edit/playlist/${props.id}`) : navigate(`/playlist/${props.id}`)
           }>
               <div className="audio_item_track_image_container">
                 <img className="audio_item_art" 
@@ -78,6 +81,7 @@ export default function AudioItem(props: AudioItemPropType){
               <span>{props.title}</span>
               <span>{props.author != undefined ? props.author : props.name }</span>
               {
+                auth.user &&
                 auth.user.id == props.author_id &&
               <span>{props.type}</span>
               }

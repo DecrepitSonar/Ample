@@ -43,15 +43,25 @@ function Uploads(props: OutletProps){
       <div className="profile_content_filter">
         <ul>
           <li style={ navState == 'All' ? {'color': 'rgb(198, 161, 104)'} : {}} onClick={() => setNavState('All')} >All</li>
-          <li style={ navState == 'Tracks' ? {'color': 'rgb(198, 161, 104)'} : {}} onClick={() => setNavState('Tracks')}>Tracks</li>
-          <li style={ navState == 'Albums' ? {'color': 'rgb(198, 161, 104)'} : {}} onClick={() => setNavState('Albums')}>Albums</li>
+          <li style={ navState == 'Tracks' ? {'color': 'rgb(198, 161, 104)'} : {}} onClick={() => setNavState('Track')}>Tracks</li>
+          <li style={ navState == 'Single' ? {'color': 'rgb(198, 161, 104)'} : {}} onClick={() => setNavState('Single')}>Singles</li>
+          <li style={ navState == 'Albums' ? {'color': 'rgb(198, 161, 104)'} : {}} onClick={() => setNavState('Playlist')}>Albums</li>
         </ul>
       </div>
       <div className="page_body_content after">
         {
           libraryItems &&
           libraryItems.map( item => {
-            return <AudioItem key={item.id} {...item}/>
+
+            // return item.filter( item => {
+  
+              if( navState == "All"){
+                return <AudioItem key={item.id} {...item}/> 
+              }
+            
+              return item.type == navState ?   <AudioItem key={item.id} {...item}/> : <></>
+            // })
+
           })
         }
       </div>

@@ -10,7 +10,7 @@ export type userAuthType = {
 }
 
 export type UserAccountSettingsType = {
-    profileImage: string, 
+    profileimage: string, 
     headerimage: string,
     username: string,
     email: string
@@ -26,9 +26,9 @@ export type stateAuthType = {
 export type AudioListItemPropType = {
     id: string,
     title: string, 
-    name: string, 
-    imageURL: string,
-    audioURL?: string,
+    author: string, 
+    imageurl: string,
+    contenturl?: string,
     albumId?: string,
     type?: string
 }
@@ -43,7 +43,7 @@ export type UserAviPropType = {
     name: string
     id?: String,
     username: string,
-    imageURL: string,
+    imageurl: string,
 }
 
 export type VideoItemPropType = {
@@ -67,6 +67,8 @@ export type AudioItemPropType = {
     imageurl:string
     type: string
     playlist_id?: string
+    genre: string,
+    category: string
 }
 
 export type LoginFormType = {
@@ -93,7 +95,7 @@ export type userUpdateDataType = {
 }
 
 export type PaymentSettings = {
-    credits: Number,
+    credit: string,
     paymentHistory: [AudioListItemPropType]
 }
 export type userSettings = {

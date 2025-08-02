@@ -21,10 +21,13 @@ export function cn(...inputs){
 
 
 
-export function  getAverageImagecolor(container, src){
+export function  getAverageImagecolor(container: HTMLDivElement){
     
     const fac = new FastAverageColor();
-    container.querySelector('img')
+    console.log( container)
+    
+    const src =  container.querySelector('img')?.src!
+    console.log( src )
     fac.getColorAsync(src)
         .then(color => {
             console.log( color.rgba )

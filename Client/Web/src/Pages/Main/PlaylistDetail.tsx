@@ -54,8 +54,9 @@ export default function PlaylistDetail() {
     httpclient.get(`http://127.0.0.1:5000/playlist?id=${params.id}`)
     .then( response => {
       setPlayyListItem(response.data)
-      console.log( response.data.head )
     })
+
+    console.log( audioPlayer )
 
   },[params])
 
@@ -68,15 +69,14 @@ export default function PlaylistDetail() {
     <div className='page_container'>
         <div className="playlist_header">
           <div className="playlist_header" 
-               style={{backgroundImage: `url(https://prophile.nyc3.digitaloceanspaces.com/images/${playListITem?.head.playlist.imageURL}.jpg)`}}>
+               style={{backgroundImage: `url(${playListITem?.head.playlist.imageurl})`}}>
             <div className="playlist_header_overlay">
               <div className="playlist_header_item_container">
-              <div className="header_playlist_image" style={{backgroundImage: `url(https://prophile.nyc3.digitaloceanspaces.com/images/${playListITem?.head.playlist.imageURL}.jpg)`}}/>
+              <div className="header_playlist_image" style={{backgroundImage: `url(${playListITem?.head.playlist.imageurl})`}}/>
                 
               </div>
               <div className="header_playlist_detail">
               <div className="header_playlist_author_detail_container">
-                {/* <div className="header_playlist_author_image" style={{backgroundImage: `url(https://prophile.nyc3.digitaloceanspaces.com/images/${playListITem?.head.author.imageURL}.jpg`}}/> */}
                 <div className="header_playlist_author_detail">
                     <span>{playListITem?.head.playlist.title}</span>
                     <span>{playListITem?.head.playlist.author}</span>
@@ -87,10 +87,11 @@ export default function PlaylistDetail() {
                 onClick={() => {
                   if( audioPlayer.nowPlaying.albumId != playListITem?.head.playlist.id ){
                      dispatch(addToPlayNext(playListITem?.head.tracks))
-                    }
+                     dispatch(togglePlayer(null))
+                  }
                   dispatch(togglePlayer(null))
                 }}>
-                {audioPlayer.nowPlaying.albumId == playListITem?.head.playlist.id && audioPlayer.player.isPlaying ? <FaPauseCircle/>: <FaPlayCircle/>} 
+                {audioPlayer.nowPlaying.playlist_id == playListITem?.head.playlist.id && audioPlayer.player.isPlaying ? <FaPauseCircle/>: <FaPlayCircle/>} 
               </button>
               { 
                 playListITem != undefined &&
@@ -127,7 +128,14 @@ export default function PlaylistDetail() {
                     </div> : <></>
                  }
           {
-            playListITem?.features ?
+            playListITem?.head.author &&
+            <section>
+              <h1 className="section_subheading">Author</h1>
+              <div className="h_list"> <UserAvi {...playListITem.head.author}/></div>
+            </section> 
+          }
+          {
+            playListITem?.features &&
             <section>
               <h1 className="section_subheading">Featured</h1>
               <div className="h_list">
@@ -139,7 +147,6 @@ export default function PlaylistDetail() {
                   }
               </div>
             </section> 
-            : <></>
 
           }
           {
@@ -149,7 +156,7 @@ export default function PlaylistDetail() {
               <div className="h_list">
                 { 
                   playListITem.albums.map( (item, count) => {
-                      return <AudioItem open key={count} {...item}/>
+                      return <AudioItem key={count} {...item}/>
                   })
                 }
               </div>
@@ -170,18 +177,18 @@ export default function PlaylistDetail() {
             </section>
           }
           {
-            playListITem?.relatedVideos.length > 0 && 
+            // playListITem?.relatedVideos.length > 0 && 
 
-            <section>
-            <span className="section_subheading">Videos from {playListITem?.head.author.username}</span>
-            <div className="playlist_section_item_container">
-                {
-                  playListITem.relatedVideos.map( video => {
-                      return <VideoItem {...video}/>
-                  })  
-                }
-            </div>
-            </section> 
+            // <section>
+            // <span className="section_subheading">Videos from {playListITem?.head.author.username}</span>
+            // <div className="playlist_section_item_container">
+            //     {
+            //       playListITem.relatedVideos.map( video => {
+            //           return <VideoItem {...video}/>
+            //       })  
+            //     }
+            // </div>
+            // </section> 
           }
               
         </div>

@@ -70,7 +70,7 @@ export const AudioPlayer = createSlice({
     reducers: {
         togglePlayer: (state, action ) => {
 
-            const player = document.getElementById('audioPlayer')
+            const player = document.getElementById('audioPlayer') as HTMLAudioElement
 
             if( player.src == '' ) return
 
@@ -79,7 +79,7 @@ export const AudioPlayer = createSlice({
                         ...state, 
                         isPlaying: false
                 }
-                player?.pause()
+                player?.pause!()
             }
             else{
                 state.player = {
@@ -119,19 +119,21 @@ export const AudioPlayer = createSlice({
         },
         addToPlayNext: ( state, action ) => {
 
+            console.log( action.payload )
+
             const player: HTMLAudioElement = document.getElementById('audioPlayer') as HTMLAudioElement
             
             const upnext: [AudioListItemPropType] = [...action.payload] as [AudioListItemPropType]
             const track: AudioListItemPropType = upnext.shift() as AudioListItemPropType
 
-            try{
-                httpclient.post(`http://127.0.0.1:5000/listen?audio_id=${track.id}`)
-            }
-            catch( err ){
-                // console.log( err)
-            }
+            // try{
+            //     httpclient.post(`http://127.0.0.1:5000/listen?audio_id=${track.id}`)
+            // }
+            // catch( err ){
+            //     // console.log( err)
+            // }
             
-            player!.src = 'https://prophile.nyc3.cdn.digitaloceanspaces.com/audio/' + track.audioURL + '.mp3'
+            player!.src = track.contenturl as string
 
             state.player.isPlaying = true
             state.nowPlaying = track 
@@ -147,19 +149,20 @@ export const AudioPlayer = createSlice({
                 const upnext: [AudioListItemPropType] = [...state.upnext] as [AudioListItemPropType]
                 const track: AudioListItemPropType = upnext.shift() as AudioListItemPropType
                 
-                try{
-                    httpclient.post(`http://127.0.0.1:5000/listen?audio_id=${track.id}`)
-                }
-                catch( err ){
-                    console.log( err)
-                }
+                // try{
+                //     httpclient.post(`http://127.0.0.1:5000/listen?audio_id=${track.id}`)
+                // }
+                // catch( err ){
+                //     console.log( err)
+                // }
                 
-                player!.src = 'https://prophile.nyc3.cdn.digitaloceanspaces.com/audio/' + track.audioURL + '.mp3'
+                player!.src = track.contenturl as string
 
                 state.nowPlaying = track 
                 state.upnext = upnext
 
-                return 
+                if( !state.player.isPlaying) state.player.isPlaying = true
+
             }
             else if ( state.queue.length > 0){
                 
@@ -187,11 +190,11 @@ export const AudioPlayer = createSlice({
             }
             
         },
-        setAudioHistory: (state, action) => {
-            return state = {
-                ...state, audioHistory: action.payload
-            }
-        },
+        // setAudioHistory: (state, action) => {
+        //     return state = {
+        //         ...state, audioHistory: action.payload
+        //     }
+        // },
         clearQueue: ( state ) => {
             state.queue = []
         },
@@ -257,7 +260,7 @@ export const  {
     togglePlayer, 
     addToQueue, 
     playNext, 
-    setAudioHistory, 
+    // setAudioHistory, 
     addToPlayNext, 
     clearQueue,
     setSavedTracks } = AudioPlayer.actions

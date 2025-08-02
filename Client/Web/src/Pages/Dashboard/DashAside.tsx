@@ -7,6 +7,7 @@ import { FaDollarSign, FaUpload } from "react-icons/fa";
 import { BsColumnsGap, BsFillFileBarGraphFill } from "react-icons/bs";
 import { RiArchiveDrawerFill } from "react-icons/ri";
 import { IoChevronBack } from "react-icons/io5";
+import { FaGears } from "react-icons/fa6";
 
 function DashAside(){
 
@@ -39,11 +40,17 @@ function DashAside(){
   const navigator = useNavigate()
     return(
         <div className="dash_aside">
-           <Link to={`/profile/${auth.user.id}`}> <li> <i><IoChevronBack/></i> Profile</li></Link>
-           <Link to={'/dashboard/'}><li style={activeStyle('dashboard')}><i><BsColumnsGap/></i> Dashboard</li></Link>
-           <Link to={'/dashboard/Uploads'}><li style={activeStyle('Uploads')} ><i> <RiArchiveDrawerFill/></i> MyContent</li></Link>
-           {/* <Link to={'/dashboard/Uploads'}><li><i> <BsFillFileBarGraphFill/></i> Analytics</li></Link> */}
-           {/* <Link to={'/dashboard/Uploads'}><li><i> <FaDollarSign/></i> Earnings</li></Link> */}
+            <div className="dash_aside">
+                <Link to={`/profile/${auth.user.id}`}> <li> <i><IoChevronBack/></i> Profile</li></Link>
+                <Link to={'/dashboard/'}><li style={activeStyle('dashboard')}><i><BsColumnsGap/></i> Dashboard</li></Link>
+                <Link to={'/dashboard/Uploads'}><li style={activeStyle('Uploads')} ><i> <RiArchiveDrawerFill/></i> MyContent</li></Link>
+                <Link to={'#'}><li><i> <BsFillFileBarGraphFill/></i> Analytics</li></Link>
+                <Link to={'#'}><li><i> <FaDollarSign/></i> Earnings</li></Link>
+            </div>
+            <div className="dash_aside_bottom">
+                <Link to={'/dashboard/settings'}><li style={activeStyle('Settings')} ><i> <FaGears/></i> Settings</li></Link>
+            </div>
+
         </div>
     )
 }

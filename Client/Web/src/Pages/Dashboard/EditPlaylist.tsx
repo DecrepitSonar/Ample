@@ -7,6 +7,8 @@ import httpclient from "../../httpclient"
 import { AudioItemPropType } from "../../utils/ObjectTypes"
 import { hideNotification, notifications, showNotification } from "../../utils/notificationSlice"
 import { useAppDispatch } from "../../utils/store"
+import AudioItem from "../../Components/AudioItem"
+import AudioListItem from "../../Components/AudioListItem"
 
 export default function EditPlaylist(){
   
@@ -17,10 +19,7 @@ export default function EditPlaylist(){
   
     const [modalOpen, setModalOpen ] = useState(false) 
     const [ modalForm, setModalForm ] = useState('')
-    const [ selectedTrack, setSelectedTrack ] = useState<{
-        id: string, 
-        playlist_id: string
-    }>({})
+    const [ selectedTrack, setSelectedTrack ] = useState<AudioItemPropType>()
   
     const [audioFile, setAudioFile] = useState<Blob>()
     const [imageFile, setImageFile] = useState<Blob>()
@@ -95,22 +94,24 @@ export default function EditPlaylist(){
 
         try{
             const response = await httpclient.delete(`http://127.0.0.1:5000/dashboard/edit/playlist/upload?id=${selectedTrack.id}&&playlist_id=${selectedTrack.playlist_id}`)
-            console.log( selectedTrack)
-            console.log( response )
+            // console.log( selectedTrack)
+            // console.log( response )
             
             if( response.status == 200){
                 
                 setModalOpen(false)
 
-                const data = () => {
+                const data =  (() =>  {
                     return response.data != null ? response.data : []
-                }
+                })()
+
 
                 setPageData({
                     head: pageData!.head,
                     body: data
                 })
                 
+                console.log( pageData)
                 dispatch(showNotification('Track Delete Successful'))
             
                 setTimeout(() => {
@@ -122,6 +123,41 @@ export default function EditPlaylist(){
             console.log( err)
         }
     }
+    const editTrack = async (e: React.SyntheticEvent) => {
+        e.preventDefault()
+  
+      const target = e.target as typeof e.target & {
+        image: {value: Blob},
+        title: {value: string},
+        genre: {value: string},
+        type: {value: string},
+        category: {value: string},
+        audio_file: {value: Blob}
+      } 
+  
+      const form = new FormData()
+      form.append('title', target.title.value)
+      form.append('genre', target.genre.value)
+      form.append('imageurl', pageData?.head.imageurl)
+      form.append('category', target.category.value)
+      // form.append('contenturl')
+      form.append('playlist_id', pageData?.head.id)
+      form.append('author_id', pageData?.head.author_id)
+      form.append('author', pageData?.head.author)
+      form.append('type', target.type.value )
+      form.append('audio_file', audioFile! )
+
+       form.forEach(item => {console.log( item)})
+
+       try{
+        const response = await httpclient.put('http://127.0.0.1:5000/dashboard/edit/playlist', form)
+        console.log( response )
+       }
+       catch( error ){
+        console.log( error )
+       }
+    }
+
     useEffect(() => {
       getPlaylistData()  
     },[])
@@ -138,7 +174,7 @@ export default function EditPlaylist(){
                     <button 
                       onClick={() => {
                         setModalOpen(true)
-                        setModalForm('playlist')
+                        setModalForm('Edit_playlist')
                       }}
                     className='playlist_Edit_button'>Edit</button>
                   </div>
@@ -159,7 +195,7 @@ export default function EditPlaylist(){
           <div className="uplod_moda_container" style={ modalOpen ? {'display': 'block'} : {'display': 'none'}}>
             {
               {
-                "playlist": 
+                "Edit_playlist": 
                   <div className="uplod_modal">
                     <h1>Edit Playlist</h1>
                     <form action="" onSubmit={(e: React.SyntheticEvent) => editPlaylist(e)}>
@@ -206,8 +242,8 @@ export default function EditPlaylist(){
                         </div>
                       </form>
                     </div>,   
-                  "audio": <div className="uplod_modal">
-                    <h1>Upload</h1>
+                  "upload_audio": <div className="uplod_modal">
+                    <h1>Add Track</h1>
                     <form action="" onSubmit={(e: React.SyntheticEvent) => uploadPlaylistTrack(e)}>
                         <label>Title</label>
                         <input 
@@ -254,15 +290,65 @@ export default function EditPlaylist(){
                         </div>
                       </form>
                     </div>,
-                  "delete": <div className="uplod_modal">
+                  "delete_audio": <div className="uplod_modal">
                     <h1>Delete Track</h1>
-                    <span>Are you sure you want to  delete?</span>
+                    <span style={{'display': 'block', 'margin': '20px 0'}}>Are you sure you want to  delete?</span>
+                        <AudioListItem {...selectedTrack}/>
                         <div className="form_button_container">
                           <button className="button_positive" onClick={() => deleteTrack() }>Delete</button>
                           <div className="button_cancel" onClick={() => setModalOpen( false )}>Cancel</div>
                         </div>
-                    </div>
-              }[modalForm]
+                    </div>,
+                'edit_audio': <div className="uplod_modal">
+                    <h1>Edit Track</h1>
+                    <form action="" onSubmit={(e: React.SyntheticEvent) => editTrack(e)}>
+                        <label>Title</label>
+                        <input 
+                        type="text"
+                        name="title" 
+                        // value={selectedTrack?.title}
+                        placeholder={selectedTrack?.title}
+                        />
+                        <label >Genre</label>
+                        <select value={selectedTrack?.genre } name="genre">
+                        <option value={'Hip-Hop'}>Hip-Hop</option>
+                        <option value={'Rap'}>Rap</option>
+                        <option value={'R&B'}>R&B</option>
+                        <option value={'Alternative'}>Alternative</option>
+                        <option value={'Indie'}>Indie</option>
+                        <option value={'Jazz'}>Jazz</option>
+                        </select>
+                        <label >Type</label>
+                        <select value={selectedTrack?.type} disabled name="type"
+                        // onChange={(e: React.ChangeEvent<HTMLSelectElement>) => setUploadType( e.currentTarget.value)}
+                        >
+                        <option value={'Single'}>Single</option>
+                        <option value={'Playlist'}>Playlist</option>
+                        <option value={'Track'}>Track</option>
+                        </select>
+                        <label >Category</label>
+                        <select value={selectedTrack?.category} name="category">
+                        <option value={'Music'}>Music</option>
+                        <option value={'Podcast'}>Podcast</option>
+                        </select>
+                        
+                        <label>Audio File</label>
+                        <div className="file_upload">
+                        <input 
+                        type="file" 
+                        name="audio_file" 
+                        onChange={(e: React.ChangeEvent<HTMLInputElement>) => setAudioFile(e.currentTarget.files![0])}
+                        />
+                        <span>Only mp3, wave file types are accepted. See usage guidelines for more details  <a href=""><i><BiInfoCircle/></i></a> </span>
+                        </div>
+                        
+                        <div className="form_button_container">
+                        <button type="submit" className="button_positive">Upload</button>
+                        <div className="button_cancel" onClick={() => setModalOpen( false )}>Cancel</div>
+                        </div>
+                    </form>
+                    </div>,
+                }[modalForm]
             }
           </div>
           <div className="playlist_body_container">
@@ -275,7 +361,7 @@ export default function EditPlaylist(){
                                 <span className="section_subheading">{pageData?.body.length} Tracks</span>
                             </div>
                             <button onClick={() => {
-                              setModalForm('audio')
+                              setModalForm('upload_audio')
                               setModalOpen(true)
                             }}><i><BsPlusCircle/></i></button>
                           </div>

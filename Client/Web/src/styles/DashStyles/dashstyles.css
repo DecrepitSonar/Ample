@@ -14,11 +14,47 @@
     align-items: center;
 }
 .dash_aside{
-    height: 100%;
+    /* height: 100%; */
+    display: flex;
     flex-direction: column;
-    gap: 20px;
+    justify-content: space-between;
+    /* gap: 20px; */
     background-color: #000;
 }
+.dash_aside_main{
+  /* border: 1px solid red */
+}
+.dash_aside_bottom{
+  /* border: 1px solid red */
+}
+.dash_aside button{
+  background-color: transparent;
+  border: 0;
+}
+.dash_aside button:hover{
+  border: 0
+}
+.dash_aside_bottom > button{
+
+    margin: 10px 20px;
+    justify-content: flex-start;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    padding: 10px 25px;
+    border: 0;
+    background-color: transparent;
+    color: #fff;
+    border-radius: 5px;
+}
+
+.dash_aside_bottom button i{
+  height: 20px;
+  width: 20px;
+  display: flex;
+  align-items: center;
+}
+
 .dash_aside li{
     list-style-type: none;
     margin: 10px 20px;
@@ -53,9 +89,9 @@
 .dash_main{
     width: 100%;
     /* padding: 20px 0;  */
-    margin-bottom: 50px;;
     overflow: scroll;
     position: relative;
+    padding-bottom: 100px;
 }
 .dash_main_content{ overflow: scroll }
 .dash_main header{
@@ -195,7 +231,7 @@
   }
 
   .uplod_moda_container{
-    position: absolute;
+    position: fixed;
     left: 0;
     right: 0;
     bottom: 0; 
@@ -210,10 +246,16 @@
     background-color: #000;
     width: 50%;
     margin: auto;
-    padding: 20px;
+    padding: 40px;
     border-radius: 20px;
   }
-  .uplod_modal form{}
+  .uplod_modal h1{
+    margin: 0px;
+    margin-bottom: 20px;
+  }
+  .uplod_modal form{
+    margin: 0px
+  }
   .uplod_modal label{
     padding: 5px 0;
     display: block;

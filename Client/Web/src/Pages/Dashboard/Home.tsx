@@ -117,6 +117,7 @@ function Home(){
             <tr>
               <th>Item</th>
               <th>Streams</th>
+              <th>Sales</th>
               <th>Type</th>
               <th>Uploaded</th>
             </tr>
@@ -133,6 +134,7 @@ function Home(){
                         </div> 
                         </td>
                       <td>{item.playcount}</td>
+                      <td>0</td>
                       <td>{item.type}</td>
                       <td>{item.upload_date}</td>
                     </tr>
