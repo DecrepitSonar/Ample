@@ -123,6 +123,8 @@ def updatePaymentSetings():
     print( request.form)
     return jsonify({}, 200)
 
+# @profile.route('/settings/payment', methods=['PUT'])
+
 @profile.route('/settings/security', methods=['GET'])
 def getSecuritySettings(): 
     print( request.form)

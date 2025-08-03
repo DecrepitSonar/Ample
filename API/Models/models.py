@@ -1337,6 +1337,15 @@ class Database:
                 print( cursor.statusmessage)
                 self.conn.commit()
 
+                cursor.execute("""
+                    SELECT * 
+                    FROM user_playlst
+                    WHERE user_id = '%s'
+                    ORDER BY date_created DESC
+                """)
+
+                print( cursor.statusmessage)
+
         except(self.conn.DatabaseError, Exception) as error:
             print( error )
         finally: 
