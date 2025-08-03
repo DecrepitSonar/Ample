@@ -24,6 +24,7 @@ export type stateAuthType = {
 }
 
 export type AudioListItemPropType = {
+    playlist_id: string | undefined
     id: string,
     title: string, 
     author: string, 

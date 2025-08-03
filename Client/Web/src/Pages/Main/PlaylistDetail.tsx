@@ -16,6 +16,9 @@ import { save } from '../../utils/librarySlice'
 import { BsPlusCircle } from 'react-icons/bs'
 import PlaylistItem from '../../Components/PlaylistItem'
 import httpclient from '../../httpclient'
+import PurchaseModal from '../../Components/PurchaseModal'
+import PlaylistsOptionsModal from '../../Components/PlaylistsOptionsModal'
+import PlaylistModal from '../../Components/ PlaylistModal'
 
 
 // const PlaylistTrackItem = (props: AudioItemPropType) => {
@@ -40,15 +43,19 @@ export default function PlaylistDetail() {
 
   const [ currentModal, setCurrentModal ] = useState('')
   const [playlistModalOpen, setPlaylistModalOpen ] =useState<boolean>(false)
+  const [purchaseModalOpen, setPurchaseModalOpen ] =useState<boolean>(false)
   const [ audioItem, setAudioItem ] = useState<AudioItemPropType>()
 
   const openPlaylistModal = (item: AudioItemPropType) => {
     setPlaylistModalOpen(true)
     setAudioItem(item)
     setCurrentModal('Playlist')
-    console.log( audioItem )
+    console.log( 'open')
   }
 
+  const openPurchaseModal = ( item: AudioItemPropType ) => {
+    setPurchaseModalOpen(true)
+  }
 
   useEffect(() => {
     httpclient.get(`http://127.0.0.1:5000/playlist?id=${params.id}`)
@@ -95,9 +102,10 @@ export default function PlaylistDetail() {
               </button>
               { 
                 playListITem != undefined &&
-                  isSaved(playListITem.head.playlist) ? 
+                isSaved(playListITem.head.playlist) ? 
                   <button style={{"color":"rgba(198, 161, 104,.8)"}} onClick={() => dispatch(save(playListITem.head.playlist))}> <BiSolidHeart/> </button> : 
-                  <button onClick={() => dispatch(save(playListITem.head.playlist))}> <BiHeart/></button> }
+                  <button onClick={() => dispatch(save(playListITem!.head.playlist))}> <BiHeart/></button> 
+              }
               <button onClick={(() => dispatch(addToQueue(playListITem?.head.tracks)))}><RiPlayList2Line/></button>
               <button><HiEllipsisHorizontal/></button>
             </div>
@@ -118,11 +126,12 @@ export default function PlaylistDetail() {
                       {
                         playListITem?.head.tracks.map( (item, count) =>{
                           return <PlaylistItem 
-                                    openPlaylistModal={openPlaylistModal}
-                                    isSaved={isSaved(item)} 
                                     key={count} 
-                                    trackNum={count} 
-                                    {...item}/>
+                                    item={item as AudioItemPropType}
+                                    index={count} 
+                                    openPurchaseModal={openPurchaseModal}
+                                    openPlaylistModal={openPlaylistModal}
+                          />
                         } )
                       }
                     </div> : <></>
@@ -192,6 +201,14 @@ export default function PlaylistDetail() {
           }
               
         </div>
+        {/* <PurchaseModal purchaseModalOpen={purchaseModalOpen}/> */}
+        <PlaylistModal 
+        playlistModalOpen={playlistModalOpen}
+        setCurrentModal={setCurrentModal}
+        currentModal={currentModal}
+        setPlaylistModalOpen={setPlaylistModalOpen}
+        audioItem={audioItem as AudioItemPropType}
+        /> 
     </div>
   )
 }

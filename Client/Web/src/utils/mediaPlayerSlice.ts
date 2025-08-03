@@ -230,11 +230,11 @@ export const AudioPlayer = createSlice({
             })
             
             const player: HTMLAudioElement = document.getElementById('audioPlayer') as HTMLAudioElement
-
-            player.src = 'https://prophile.nyc3.cdn.digitaloceanspaces.com/audio/' + action.payload.audioURL + '.mp3'
+            
+            player.src = action.payload.contenturl
             player.play()
-            state.player.isPlaying = true
 
+            state.player.isPlaying = true
             state.nowPlaying = action.payload
 
         }),

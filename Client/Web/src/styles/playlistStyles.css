@@ -47,6 +47,21 @@ audio{
     color: #6a6a6a;
     font-size: .9rem;
 }
+.playlist_item_buy_button{
+    /* border: 1px solid #575759; */
+    display: flex;
+    align-items: center;
+    padding: 0 20px;
+    height: 50px;
+    border-radius: 5px;
+    color: #575759;
+    font-size: small;
+}
+.playlist_item_buy_button:hover{
+    /* border: 1px solid #c6a168; */
+    /* background-color: #c6a0687a; */
+    color: #c6a168
+}
 .playlist_item_container:hover{
     border-left: 1px solid #c6a168;
 }

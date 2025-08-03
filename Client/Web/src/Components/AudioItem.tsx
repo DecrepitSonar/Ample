@@ -16,7 +16,7 @@ export default function AudioItem(props: AudioItemPropType){
     const dispatch = useAppDispatch()
     
     useEffect(() => {
-      console.log( props)
+      // console.log( props)
     })
 
     return(

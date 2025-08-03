@@ -1,8 +1,15 @@
 import React, { SyntheticEvent, useEffect, useState } from "react";
 import httpclient from "../httpclient";
 import PlaylistsOptionsModal from "./PlaylistsOptionsModal";
+import { AudioItemPropType } from "../utils/ObjectTypes";
 
-export default function PlaylistModal(props){
+export default function PlaylistModal(props:{
+  setCurrentModal: React.Dispatch<React.SetStateAction<string>>
+  currentModal: string
+  playlistModalOpen: boolean
+  setPlaylistModalOpen: Function
+  audioItem: AudioItemPropType
+}){
 
   const [ titleInput, setTitleInput ] = useState('')
 
@@ -22,10 +29,8 @@ export default function PlaylistModal(props){
     display: 'none'
   }
 
-
   return(
-    <div className="OptionsModalContainer" style={props.playlistModalOpen ? {} :  modalClosedStyle}>
-
+    <div className="ModalContainer" style={props.playlistModalOpen ? {} : modalClosedStyle}>
       {
         {
           "": <></>,
@@ -36,24 +41,22 @@ export default function PlaylistModal(props){
           />,
           "Create": 
             <form onSubmit={(e: React.FormEvent<HTMLFormElement>) => createNewPlaylist(e)} className="newPlaylistModal">
-              <h1>Create Playlist</h1>
-              <span>Create a name for your playlist </span>
+              <h1>New Playlist</h1>
+              <span>Name your new playlist </span>
               <br />
               <input 
                 onChange={ (e: React.ChangeEvent<HTMLInputElement>) => setTitleInput( e.target.value)}
                 name={'title'} 
                 type="text" 
                 placeholder="My Playlist"/>
-              <br />
-              <button className="submit_button_solid">Create</button>
-              <button onClick={() => props.setCurrentModal('Playlist')} className="submit_button_outline_negative">Cancel</button>
+
+              <div className="create_button_container">
+                <button className="submit_button_solid">Create</button>
+                <button onClick={() => props.setCurrentModal('Playlist')} className="submit_button_outline_negative">Cancel</button>
+              </div>
             </form>
         }[props.currentModal as string]
       }
     </div>
-  )
-}
-
-function CreateNewPlaylistModal(props){
-    
+  ) 
 }

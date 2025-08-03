@@ -1,6 +1,16 @@
 import React, { SyntheticEvent, useEffect, useState } from "react";
+import TrackStrip from "./TrackStrip";
+import { PiPlusBold } from "react-icons/pi";
+import httpclient from "../httpclient";
+import { PlaylistITemType, AudioItemPropType, AudioListItemPropType } from "../utils/ObjectTypes";
 
-export default function PlaylistsOptionsModal(props){
+export default function PlaylistsOptionsModal(props:
+  {
+    audioItem: AudioItemPropType
+    setCurrentModal: React.Dispatch<React.SetStateAction<string>>
+    setPlaylistModalOpen: Function
+  }
+){
 
   const [ playlists, setPlaylists ] = useState<[PlaylistITemType]>()
 
@@ -42,7 +52,7 @@ export default function PlaylistsOptionsModal(props){
       <div className="OptionsModal">
         <h1>Add to Playlists</h1>
         <div className="OptionsModal_main">
-          <Trackstrip {...props.audioItem} name={ props.audioItem.author}/>
+          <TrackStrip {...props.audioItem}/>
         </div>
         <div className="modalPlaylistList_header">
           <h3>My Playlists</h3>
@@ -61,9 +71,9 @@ export default function PlaylistsOptionsModal(props){
                         {
                           item.items && 
                           item.items.length > 0 ? 
-                          item.items.map( (image: string, index: number) => {
+                          item.items.map( (image: AudioListItemPropType, index: number) => {
                             return index <= 3 ?
-                             <img className='PlaylistItemImage' src={ image && `https://prophile.nyc3.cdn.digitaloceanspaces.com/images/${image.imageURL}.jpg`} alt="" />
+                             <img className='PlaylistItemImage' src={ image && `${image.imageurl}`} alt="" />
                              : <></>
                           }) : <img className='PlaylistItemImage' src={'/album.jpg'} alt="" />
                         }
@@ -75,7 +85,7 @@ export default function PlaylistsOptionsModal(props){
               }
             </div>
           </div>
-        <button className="submit_button_outline_negative" onClick={() => props.setPlaylistModalOpen()}>Close</button>
+        <button className="submit_button_outline_negative" onClick={() => props.setPlaylistModalOpen()}>Cancel</button>
       </div>
   )
 }

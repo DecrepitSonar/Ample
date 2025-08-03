@@ -85,7 +85,7 @@ export default function Listen() {
             pageData?.new.length > 0 &&
                 <section>
                     <h1>New </h1>
-                    <div className='h_list' style={ pageData?.new.length > 5 ?  {'justifyContent': 'space-between'} : {}} >
+                    <div className='h_list after' style={ pageData?.new.length > 5 ?  {'justifyContent': 'space-between'} : {}} >
                         {
                             pageData?.new.map( item => {
                                 return <AudioItem key={item.id} {...item}/>
@@ -113,7 +113,7 @@ export default function Listen() {
             pageData?.genres.alternative &&
                 <section>
                     <h1>New in Alternative</h1>
-                    <div className='h_list' style={ pageData?.genres.alternative.length > 5 ?  {'justifyContent': 'space-between'} : {}} >
+                    <div className='h_list after' style={ pageData?.genres.alternative.length > 0 ?  {'justifyContent': 'space-between'} : {}} >
                         {
                             pageData?.genres.alternative.map( item => {
                                 return <AudioItem {... item} />
@@ -127,7 +127,7 @@ export default function Listen() {
             pageData?.genres.rnb.length > 0 &&
                 <section>
                     <h1>New in R&B</h1>
-                    <div className='h_list' style={ pageData?.genres.rnb.length > 5 ?  {'justifyContent': 'space-between'} : {}} >
+                    <div className='h_list after' style={ pageData?.genres.rnb.length > 5 ?  {'justifyContent': 'space-between'} : {}} >
                         {
                             pageData?.genres.rnb.map( item => {
                                 return <AudioItem {... item}/>
@@ -143,7 +143,7 @@ export default function Listen() {
             pageData?.genres.hiphop.length > 0 &&
                 <section>
                     <h1>New in  Hip Hop</h1>
-                    <div className='h_list' style={ pageData?.genres.hiphop.length > 5 ?  {'justifyContent': 'space-between'} : {}} >
+                    <div className='h_list after' style={ pageData?.genres.hiphop.length > 0 ?  {'justifyContent': 'space-between'} : {}} >
                         {
                             pageData?.genres.hiphop.map( item => {
                                 return<AudioItem {...item}/>

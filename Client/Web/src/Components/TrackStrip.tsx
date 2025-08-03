@@ -9,10 +9,10 @@ export default function TrackStrip(props: AudioListItemPropType){
 
     return(
         <div className='small_list_item_container' onClick={() => dispatch(play(props))}>
-            <img className='small_list_item_image' src={`https://prophile.nyc3.cdn.digitaloceanspaces.com/images/${props.imageURL}.jpg`}/>
+            <img className='small_list_item_image' src={props.imageurl}/>
             <div className='small_list_item_detail_container'>
                 <span>{props.title}</span>
-                <span>{props.name}</span>
+                <span>{props.author}</span>
             </div>
             {/* <button className='ellipsis_button'><HiEllipsisHorizontal/></button> */}
         </div>
