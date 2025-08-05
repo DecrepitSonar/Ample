@@ -806,13 +806,22 @@ section h1{
   margin: 10px 0 ;
   color: #aaa;
 }
-.modalPlaylistItem{
+.modalPlaylistItemContainer{
+  width: 100%;
   display: flex;
   align-items: center;
+  justify-content: space-between;
   gap: 20px;
   border-radius: 5px;
 }
-.modalPlaylistItem:hover{
+.modalPlaylistItem{
+  width: 100%;
+  display: flex;
+  align-items: center;
+  gap: 50px;
+  border-radius: 5px;
+}
+.modalPlaylistItemContainer:hover{
   background-color: #c6a0686b;
 }
 .modalPlaylistItemImage{
@@ -823,10 +832,24 @@ section h1{
   grid-template-rows: repeat(2, auto);
   border-radius: 5px;
   overflow: hidden;
+  margin: auto 0
 }
 .PlaylistItemImage{
   width: 100%;
   display: block;
+}
+.modalPlaylistItem_delete{
+  color: #70707071;
+  margin: 20px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding:10px;
+  border-radius: 5px;
+  font-size: 1.4rem;
+}
+.modalPlaylistItem_delete:hover{
+  color: rgba(255, 0, 0, 0.845);;;
 }
 .notification_popup{
   padding: 20px;

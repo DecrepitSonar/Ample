@@ -2,6 +2,8 @@ import React, { SyntheticEvent, useEffect, useState } from "react";
 import httpclient from "../httpclient";
 import PlaylistsOptionsModal from "./PlaylistsOptionsModal";
 import { AudioItemPropType } from "../utils/ObjectTypes";
+import { showNotification, hideNotification } from "../utils/notificationSlice";
+import { useAppDispatch } from "../utils/store";
 
 export default function PlaylistModal(props:{
   setCurrentModal: React.Dispatch<React.SetStateAction<string>>
@@ -12,21 +14,34 @@ export default function PlaylistModal(props:{
 }){
 
   const [ titleInput, setTitleInput ] = useState('')
-
-  const createNewPlaylist = (e: React.FormEvent<HTMLFormElement>) =>{
-    e.preventDefault()
-
-    httpclient.post('http://127.0.0.1:5000/profile/library/playlist', 
-      {
-        "title": titleInput,
-      }
-    )
-
-    props.setCurrentModal('Playlist')
-  }
-
+  const dispatch = useAppDispatch()
   const modalClosedStyle = {
     display: 'none'
+  }
+
+  const createNewPlaylist = async (e: React.FormEvent<HTMLFormElement>) =>{
+    e.preventDefault()
+    try{
+      
+      const response = await httpclient.post('http://127.0.0.1:5000/profile/library/playlist', { "title": titleInput })
+      console.log( response )
+      
+      if ( response.status == 200){
+          // setPlaylists(response.data[0])
+                
+          dispatch(showNotification(`Playlist "${titleInput}" created`))
+  
+          setTimeout(() => {
+            dispatch(hideNotification())
+          }, 2000); 
+        }
+
+    }
+    catch( err ){
+      console.log( err )
+    }
+
+    props.setCurrentModal('Playlist')
   }
 
   return(

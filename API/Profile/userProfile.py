@@ -20,12 +20,22 @@ def handleSavedContent():
 
 @profile.route('/library', methods=['GET'])
 # @login_required
-def getUserProfile(user_id):  
+def getUserProfile():  
 
     user_id = databse.getUserBySession(request.cookies['xrftoken'])
-    print(databse.getSavedItems(user_id))
+    
+    library = []
+    
+    playlists = databse.getUserPlaylists(user_id)[0]
+    saved = databse.getSavedItems(user_id)
 
-    return jsonify(databse.getSavedItems(user_id))
+    for x in list(playlists):
+        library.append(x)
+
+    for x in list(saved):
+        library.append(x)
+    
+    return jsonify(library)
 
 @profile.route('/library/playlist', methods=['GET'])
 def getUserPlaylists(): 
@@ -33,6 +43,16 @@ def getUserPlaylists():
     user_id = databse.getUserBySession(request.cookies['xrftoken'])[0]
     playlists = databse.getUserPlaylists(user_id)
     print( playlists)
+
+    return jsonify(playlists)
+
+@profile.route('/library/playlist', methods=['DELETE'])
+def deletePlaylist(): 
+    user_id = databse.getUserBySession(request.cookies['xrftoken'])[0]
+    id = request.args['id']
+    databse.deletePlaylist(id)
+
+    playlists = databse.getUserPlaylists(user_id)
 
     return jsonify(playlists)
 @profile.route('/library/playlist', methods=['POST'])

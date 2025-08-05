@@ -66,9 +66,8 @@ function App() {
   const notificcations = useSelector( (state: RootState ) => state.notifications)
 
   useEffect( () => {
+    
     ( async () => {
-
-
       const user = JSON.parse(window.localStorage.getItem('user'))
 
       if( user != undefined ) {

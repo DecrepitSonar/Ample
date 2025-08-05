@@ -147,10 +147,11 @@ function UserProfile(props: {navState: String, setNavState: Function}) {
         <div className="page_body">
           <div className="profile_content_filter">
             <ul>
-              <li style={ props.navState == 'All' ? {'border-bottom': '2px solid rgb(198, 161, 104)'} : {}} onClick={() => props.setNavState('All')} >All</li>
-              <li style={ props.navState == 'Tracks' ? {'border-bottom': '2px solid rgb(198, 161, 104)'} : {}} onClick={() => props.setNavState('Tracks')}>Tracks</li>
-              <li style={ props.navState == 'Albums' ? {'border-bottom': '2px solid rgb(198, 161, 104)'} : {}} onClick={() => props.setNavState('Albums')}>Albums</li >
-              <li style={ props.navState == 'Subscriptions' ? {'border-bottom': '2px solid rgb(198, 161, 104)'} : {}} onClick={() => props.setNavState('Subscriptions')}>Subscribtions</li>
+              <li style={ props.navState == 'All' ? {'color': 'rgb(198, 161, 104)'} : {}} onClick={() => props.setNavState('All')} >All</li>
+              <li style={ props.navState == 'Tracks' ? {'color': 'rgb(198, 161, 104)'} : {}} onClick={() => props.setNavState('Tracks')}>Tracks</li>
+              <li style={ props.navState == 'Albums' ? {'color': 'rgb(198, 161, 104)'} : {}} onClick={() => props.setNavState('Albums')}>Albums</li >
+              <li style={ props.navState == 'Subscriptions' ? {'color': 'rgb(198, 161, 104)'} : {}} onClick={() => props.setNavState('Subscriptions')}>Subscribtions</li>
+              <li style={ props.navState == 'Playlists' ? {'color': 'rgb(198, 161, 104)'} : {}} onClick={() => props.setNavState('Playlists')}>My Playlists</li>
             </ul>
           </div>
           <div className={`page_body_content after`}>
@@ -173,7 +174,10 @@ function UserProfile(props: {navState: String, setNavState: Function}) {
 
                 'Subscriptions': library.library.length > 0 ? 
                   library.library.map( item =>  item.type == "Artist" && <UserAvi username={item.name} {...item}/> )
-                : <span className='empty_description'>You are not subscribed to anyone</span>
+                : <span className='empty_description'>You are not subscribed to anyone</span>,
+                // 'Playlists': library.library.length > 0 ? 
+                //   library.library.map( item =>  item.type == undefined && <AudioItem {...item}/> )
+                // : <span className='empty_description'>You are not subscribed to anyone</span>
               }[props.navState]
             }
           </div>

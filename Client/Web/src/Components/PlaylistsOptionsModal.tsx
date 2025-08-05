@@ -3,6 +3,9 @@ import TrackStrip from "./TrackStrip";
 import { PiPlusBold } from "react-icons/pi";
 import httpclient from "../httpclient";
 import { PlaylistITemType, AudioItemPropType, AudioListItemPropType } from "../utils/ObjectTypes";
+import { IoCloseCircle, IoCloseCircleOutline } from "react-icons/io5";
+import { showNotification, hideNotification } from "../utils/notificationSlice";
+import { useAppDispatch } from "../utils/store";
 
 export default function PlaylistsOptionsModal(props:
   {
@@ -13,7 +16,7 @@ export default function PlaylistsOptionsModal(props:
 ){
 
   const [ playlists, setPlaylists ] = useState<[PlaylistITemType]>()
-
+  const dispatch = useAppDispatch()
   const addTrackToPlaylist = async (track: AudioItemPropType, item: PlaylistITemType) => {
     
     try{
@@ -23,7 +26,14 @@ export default function PlaylistsOptionsModal(props:
           playlistId: item.id
         }
       )
-      setPlaylists(response.data[0])
+      if ( response.status == 200){
+        setPlaylists(response.data[0])       
+        dispatch(showNotification('Track Saved '))
+
+        setTimeout(() => {
+          dispatch(hideNotification())
+        }, 2000); 
+      }
     }
     catch( error ){
       console.log( error )
@@ -42,6 +52,27 @@ export default function PlaylistsOptionsModal(props:
     }
   }
 
+  const deletePlaylist = async(id: string) => {
+    try{
+      const response = await httpclient.delete(`http://127.0.0.1:5000/profile/library/playlist?id=${id}`)
+      console.log( response )
+
+      if ( response.status == 200){
+        setPlaylists(response.data[0])
+              
+        dispatch(showNotification('Playlist Deleted'))
+
+        setTimeout(() => {
+          dispatch(hideNotification())
+        }, 2000); 
+      }
+
+    }
+    catch( error){
+      console.log( error )
+    }
+    // console.log( id )
+  }
   useEffect(() => {
     getUserPlaylists()
     console.log( props.audioItem )
@@ -66,19 +97,22 @@ export default function PlaylistsOptionsModal(props:
                 playlists!.map( (item, index) => {
                   console.log( item )
                   return (
-                    <div  onClick={() => addTrackToPlaylist(props.audioItem, item)} key={index} className="modalPlaylistItem">
-                      <div className="modalPlaylistItemImage">
-                        {
-                          item.items && 
-                          item.items.length > 0 ? 
-                          item.items.map( (image: AudioListItemPropType, index: number) => {
-                            return index <= 3 ?
-                             <img className='PlaylistItemImage' src={ image && `${image.imageurl}`} alt="" />
-                             : <></>
-                          }) : <img className='PlaylistItemImage' src={'/album.jpg'} alt="" />
-                        }
+                    <div key={index} className="modalPlaylistItemContainer">
+                      <div onClick={() => addTrackToPlaylist(props.audioItem, item)} className="modalPlaylistItem">
+                        <div className="modalPlaylistItemImage">
+                          {
+                            item.items && 
+                            item.items.length > 0 ? 
+                            item.items.map( (image: AudioListItemPropType, index: number) => {
+                              return index >= 1 ?
+                              <img className='PlaylistItemImage' src={ image && `${image.imageurl}`} alt="" />
+                              : <img className='PlaylistItemImage' src={'/album.jpg'} alt="" />
+                            }) : <img className='PlaylistItemImage' src={'/album.jpg'} alt="" />
+                          }
+                        </div>
+                        <span>{item.title}</span>
                       </div>
-                      <span>{item.title}</span>
+                      <span className="modalPlaylistItem_delete"onClick={() => deletePlaylist( item.id)}><IoCloseCircleOutline/></span>
                     </div>
                     )
                 })

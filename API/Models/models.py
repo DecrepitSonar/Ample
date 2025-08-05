@@ -1283,7 +1283,10 @@ class Database:
                 array_agg(row_to_json(t))
             ) AS items
             FROM (
-                SELECT * FROM user_playlist WHERE author = '%s'
+                SELECT * 
+                FROM user_playlist 
+                WHERE author = '%s'
+                ORDER BY time_updated DESC
             ) t
         """ %user_id
 
@@ -1358,7 +1361,8 @@ class Database:
 
         sql = """
             UPDATE user_playlist 
-            SET items = items || %s
+            SET items = items || %s,
+                time_updated = CURRENT_TIME
             WHERE id = %s
         """
         
@@ -1371,15 +1375,16 @@ class Database:
                     cursor.execute(check_if_exists)
                     items =  cursor.fetchone()[0]
 
-                    print( items )
+                    print( 'items', items )
 
-                    if(list(items).__len__() < 1):
+                    if(list(items).__len__() < 1   ):
                         print( 'playlist empty')
                         
                         item = json.dumps(item)
                         
                         cursor.execute(sql, (item, id))
                         print(cursor.statusmessage)
+                        return 
                         
 
 
@@ -1396,6 +1401,31 @@ class Database:
                     item = json.dumps(item)
                     
                     cursor.execute(sql, (item, id))
+                    print(cursor.statusmessage)
+
+                     
+        except(self.conn.DatabaseError, Exception) as error:
+            print( error)
+
+        finally: 
+            self.conn.commit()
+            self.conn.close()
+            return
+    def deletePlaylist(self, id):
+
+        if self.conn.closed: 
+            self.__init__()
+
+            sql = """
+                DELETE FROM user_playlist 
+                WHERE id = '%s'
+                
+            """ %id
+
+        try: 
+            with self.conn.cursor() as cursor:
+                    
+                    cursor.execute(sql)
                     print(cursor.statusmessage)
 
                      
